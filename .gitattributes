@@ -1,0 +1,9 @@
+releases/application-3.0.0/MacOS/Notes.app/Contents/runtime/Contents/Home/lib/modules filter=lfs diff=lfs merge=lfs -text
+releases/application-4.0.0/Windows/Notes/runtime/lib/modules filter=lfs diff=lfs merge=lfs -text
+releases/application-4.0.0/MacOS/Notes.app/Contents/runtime/Contents/Home/lib/modules filter=lfs diff=lfs merge=lfs -text
+releases/application-3.0.0/Windows/Notes/runtime/lib/modules filter=lfs diff=lfs merge=lfs -text
+Notes*.pkg filter=lfs diff=lfs merge=lfs -text
+Notes*.dmg filter=lfs diff=lfs merge=lfs -text
+Notes*.exe filter=lfs diff=lfs merge=lfs -text
+Notes*.msi filter=lfs diff=lfs merge=lfs -text
+releases/application-3.0.0/Notes.app/Contents/runtime/Contents/Home/lib/modules filter=lfs diff=lfs merge=lfs -text
