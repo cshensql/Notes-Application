@@ -4,3 +4,6 @@ out/
 .gradle
 .DS_Store
 www/public
+
+# Ignore Gradle build output directory
+build
