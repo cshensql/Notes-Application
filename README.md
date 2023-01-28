@@ -5,9 +5,9 @@ This is a notes application designed for students who want a versatile app for t
 
 ## Team members
 Andy Yang - yz8yang@uwaterloo.ca
-Charles Shen -
-Benjamin Du -
-Yuying Li -
+Charles Shen - c2999shen@uwaterloo.ca
+Benjamin Du - h39du@uwaterloo.ca
+Yuying Li - y2786li@uwaterloo.ca
 
 ## Quick-start
 How to install and launch your application. If there is a dependency (e.g. "requires a network connection to operate") list it here.
