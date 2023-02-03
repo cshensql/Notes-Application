@@ -9,6 +9,9 @@ Charles Shen - c2999shen@uwaterloo.ca
 Benjamin Du - h39du@uwaterloo.ca
 Yuying Li - y2786li@uwaterloo.ca
 
+## Project Review Requirements
+https://docs.google.com/document/d/1t-xZfA8tPVKafwNlTAlWANI3tw-mf2jXsbvjtk_wxWA/edit
+
 ## Quick-start
 How to install and launch your application. If there is a dependency (e.g. "requires a network connection to operate") list it here.
 
