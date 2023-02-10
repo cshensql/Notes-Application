@@ -2,23 +2,14 @@ package net.codebot.application
 
 import javafx.application.Application
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.control.*
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
-import net.codebot.shared.SysInfo
 import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
-import java.io.File
-import java.io.FileInputStream
-import java.util.*
+import javafx.scene.web.HTMLEditor
 
 class Main : Application()  {
     override fun start(stage: Stage) {
