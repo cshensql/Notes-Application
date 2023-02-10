@@ -4,4 +4,4 @@ package business
 data class Group(
     var name: String,
     val noteList: MutableList<Note> = mutableListOf<Note>()
-) : Pwd()
+)
