@@ -42,8 +42,8 @@ class Main : Application()  {
 
         // create and show the scene
         val scene = Scene(layout)
-        stage.width = 800.0
-        stage.height = 500.0
+        stage.width = 900.0
+        stage.height = 600.0
         stage.scene = scene
         stage.title = "Notes"
         stage.isResizable = false
