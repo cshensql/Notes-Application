@@ -9,19 +9,30 @@ import javafx.stage.Stage
 import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
+import business.Model
 import javafx.scene.web.HTMLEditor
 
 class Main : Application()  {
     override fun start(stage: Stage) {
 
+        // create model
+        val model = Model()
+
+
+
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val layout = BorderPane()
-        val menuBar = MenuBarView()
+        val menuBar = MenuBarView(model)
+        val fileList = FileListView(model)
+
+        // add views to model
+        model.addView(menuBar)
+        model.addView(fileList)
 
         // build the scene graph
         layout.top = menuBar
-        layout.left = FileListView()
+        layout.left = fileList
         layout.padding = javafx.geometry.Insets(10.0,0.0,0.0,0.0)
         val backgroundFill = BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)
         val newBackground = Background(backgroundFill)

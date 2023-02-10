@@ -6,8 +6,12 @@ import javafx.scene.control.MenuItem
 import javafx.scene.control.RadioMenuItem
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import business.Model
 
-class MenuBarView() : IView, MenuBar() {
+class MenuBarView(model: Model) : IView, MenuBar() {
+    // Model
+    private val model = model
+
     // top: menubar
     private val noteMenu = Menu("Note")
     private val groupMenu = Menu("Group")
@@ -49,7 +53,7 @@ class MenuBarView() : IView, MenuBar() {
         // Set actions for each submenu item
         // TODO: Add actual actions once model is done
         addNote.setOnAction {
-            println("Add note pressed")
+            model.addNote()
         }
 
         deleteNote.setOnAction {

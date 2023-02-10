@@ -1,11 +1,13 @@
 package presentation
+import business.Model
 
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
-class FileListView() : IView, TreeView<String>() {
+class FileListView(model: Model) : IView, TreeView<String>() {
+    private val model = model
 
     private val groupRoot = TreeItem("Groups")
 
@@ -24,9 +26,6 @@ class FileListView() : IView, TreeView<String>() {
 
         groupRoot.isExpanded = true
         noteRoot.isExpanded = true
-        val mockGroup1 = TreeItem("Mock Group 1")
-        val mockGroup2 = TreeItem("Mock Group 2")
-        groupRoot.children.addAll(mockGroup1, mockGroup2)
 
         root.children.addAll(groupRoot, noteRoot)
         this.setRoot(root)
@@ -34,6 +33,14 @@ class FileListView() : IView, TreeView<String>() {
     }
 
     override fun updateView() {
-        TODO("Not yet implemented")
+        groupRoot.children.clear()
+        noteRoot.children.clear()
+
+        for (entry in model.noteList) {
+            val noteItem = TreeItem(entry.value.title)
+            noteRoot.children.add(noteItem)
+        }
+
+        this.refresh()
     }
 }
