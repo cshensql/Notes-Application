@@ -16,6 +16,8 @@ class ContentView(): IView, VBox() {
     init {
         this.children.addAll(toolbar, htmlEditor)
 
+        this.isFocusTraversable = false
+
         htmlEditor.isFocusTraversable = false
         toolbar.isFocusTraversable = false
 

@@ -10,9 +10,19 @@ import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
 import business.Model
+import java.util.prefs.Preferences
 import javafx.scene.web.HTMLEditor
+import javafx.stage.Screen
 
 class Main : Application()  {
+    // Constants used to save window size and position
+    private val WINDOW_POSITION_X = "Window_Position_X"
+    private val WINDOW_POSITION_Y = "Window_Position_Y"
+    private val WINDOW_WIDTH = "Window_Width"
+    private val WINDOW_HEIGHT = "Window_Height"
+    private val DEFAULT_WIDTH: Double = 870.0
+    private val DEFAULT_HEIGHT: Double = 720.0
+    private val NODE_NAME = "Main"
     override fun start(stage: Stage) {
 
         // create model
@@ -45,11 +55,12 @@ class Main : Application()  {
 
         // create and show the scene
         val scene = Scene(layout)
-        stage.width = 1000.0
-        stage.height = 800.0
+        stage.width = DEFAULT_WIDTH
+        stage.height = DEFAULT_HEIGHT
 
         // set the minimum size of the window
-        stage.minHeight = 500.0
+        stage.minHeight = 350.0
+        stage.minWidth = 500.0
 
         stage.isResizable = true
         stage.scene = scene
@@ -61,6 +72,35 @@ class Main : Application()  {
         layout.prefHeightProperty().bind(scene.heightProperty())
         contentView.prefWidthProperty().bind(scene.widthProperty())
 
+        // Get screen info
+        val screenBounds = Screen.getPrimary().visualBounds
+        val defaultXPosition = (screenBounds.width - stage.width) / 2
+        val defaultYPosition = (screenBounds.height - stage.height) / 2
+
+        // Ideas for the code about getting and saving window location and size
+        // are from here
+        // http://broadlyapplicable.blogspot.com/2015/02/javafx-restore-window-size-position.html
+
+        // Get window location from user preferences
+        val userPrefs = Preferences.userRoot().node(NODE_NAME)
+        val windowPositionX = userPrefs.getDouble(WINDOW_POSITION_X, defaultXPosition)
+        val windowPositionY = userPrefs.getDouble(WINDOW_POSITION_Y, defaultYPosition)
+        val windowWidth = userPrefs.getDouble(WINDOW_WIDTH, DEFAULT_WIDTH)
+        val windowHeight = userPrefs.getDouble(WINDOW_HEIGHT, DEFAULT_HEIGHT)
+        stage.x = windowPositionX
+        stage.y = windowPositionY
+        stage.width = windowWidth
+        stage.height = windowHeight
+
+
+        // Store the window size and location when the stage closes
+        stage.setOnCloseRequest {
+            val userPrefs = Preferences.userRoot().node(NODE_NAME)
+            userPrefs.putDouble(WINDOW_POSITION_X, stage.x)
+            userPrefs.putDouble(WINDOW_POSITION_Y, stage.y)
+            userPrefs.putDouble(WINDOW_WIDTH, stage.width)
+            userPrefs.putDouble(WINDOW_HEIGHT, stage.height)
+        }
 
         stage.show()
     }
