@@ -39,16 +39,29 @@ class Main : Application()  {
         layout.background = newBackground
 
         // TODO: Need to update this to show selected notes
-        layout.center = ContentView()
+        val contentView = ContentView()
+        layout.center = contentView
 
 
         // create and show the scene
         val scene = Scene(layout)
-        stage.width = 900.0
-        stage.height = 600.0
+        stage.width = 1000.0
+        stage.height = 800.0
+
+        // set the minimum size of the window
+        stage.minHeight = 500.0
+
+        stage.isResizable = true
         stage.scene = scene
         stage.title = "Notes"
-        stage.isResizable = false
+
+
+        // Bind the width and height properties for each view
+        layout.prefWidthProperty().bind(scene.widthProperty())
+        layout.prefHeightProperty().bind(scene.heightProperty())
+        contentView.prefWidthProperty().bind(scene.widthProperty())
+
+
         stage.show()
     }
 }
