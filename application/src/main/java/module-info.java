@@ -5,5 +5,6 @@ module application {
     requires java.prefs;
     requires kotlinx.coroutines.core.jvm;
     requires shared;
+    requires org.jsoup;
     exports net.codebot.application;
 }

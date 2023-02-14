@@ -10,7 +10,7 @@ class Note(
     var isRecentlyDeleted: Boolean = false,
     var requiresPwd: Boolean = false,
     var isLocked: Boolean = false,
-)  {
+) {
     private var pwd = ""
 
     // creation date of the note
@@ -24,6 +24,7 @@ class Note(
         lastModified = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))
     }
+
     fun getPwd(): String = this.pwd
 
     fun changePwd(newPwd: String, verify: String = "") {
@@ -34,6 +35,7 @@ class Note(
             pwd = newPwd
         }
     }
+
     fun removePwd(verify: String) {
         if (verify == pwd) {
             pwd = ""

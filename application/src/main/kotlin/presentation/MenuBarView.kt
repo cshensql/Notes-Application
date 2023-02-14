@@ -1,12 +1,13 @@
 package presentation
 
+import business.Model
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
-import javafx.scene.control.RadioMenuItem
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import business.Model
 
 class MenuBarView(model: Model) : IView, MenuBar() {
     // Model
@@ -35,7 +36,6 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     private val searchByContent = MenuItem("Search By Note Content")
 
 
-
     init {
         // Set hotkeys for each feature
         addNote.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.CONTROL_DOWN)
@@ -53,7 +53,12 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         // Set actions for each submenu item
         // TODO: Add actual actions once model is done
         addNote.setOnAction {
-            model.addNote()
+            val isAdded =  model.addNote()
+            if (!isAdded) {
+                val alert = Alert(AlertType.WARNING,
+                    "There is an empty note already, new note not created")
+                alert.show()
+            }
         }
 
         deleteNote.setOnAction {
@@ -110,7 +115,6 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
     }
-
 
 
     override fun updateView() {

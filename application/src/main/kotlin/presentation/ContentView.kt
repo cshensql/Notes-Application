@@ -1,19 +1,15 @@
 package presentation
 
-import javafx.geometry.Insets
+import business.Model
 import javafx.scene.control.Button
-import javafx.scene.control.TextArea
 import javafx.scene.control.ToolBar
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.CornerRadii
-import javafx.scene.layout.FlowPane
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
 import javafx.scene.web.HTMLEditor
+import org.jsoup.Jsoup
 
-class ContentView(): IView, VBox() {
+class ContentView(private val model: Model) : IView, VBox() {
     private val toolbar = ToolBar()
     private val saveButton = Button("Save")
     private val htmlEditor = HTMLEditor()
@@ -32,19 +28,26 @@ class ContentView(): IView, VBox() {
         toolbar.items.add(saveButton)
 
         saveButton.setOnAction {
-            // Need to write code to get and update note content
-            // notify model to update related properties
-            println("Clicked")
+            val body = htmlEditor.htmlText
+            // use the Jsoup to parse the HTML string into a Document
+            val doc = Jsoup.parse(body)
+            val title = doc.body().firstElementChild()?.text()
+
+            model.changeSelectionContent(
+                title ?: model.getCurrSelected().title,
+                body
+            )
         }
 
 
         toolbar.prefWidthProperty().bind(this.widthProperty())
         htmlEditor.prefWidthProperty().bind(this.widthProperty())
         htmlEditor.prefHeightProperty().bind(this.heightProperty())
-
     }
 
     override fun updateView() {
-        TODO("Not yet implemented")
+        htmlEditor.setHtmlText(model.getCurrSelected().body)
+
+//        this.children.addAll(toolbar, htmlEditor)
     }
 }

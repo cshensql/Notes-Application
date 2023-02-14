@@ -1,20 +1,22 @@
 package net.codebot.application
 
+import business.Model
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.CornerRadii
 import javafx.scene.paint.Color
+import javafx.stage.Screen
 import javafx.stage.Stage
 import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
-import business.Model
 import java.util.prefs.Preferences
-import javafx.scene.web.HTMLEditor
-import javafx.stage.Screen
 
-class Main : Application()  {
+class Main : Application() {
     // Constants used to save window size and position
     private val WINDOW_POSITION_X = "Window_Position_X"
     private val WINDOW_POSITION_Y = "Window_Position_Y"
@@ -27,7 +29,6 @@ class Main : Application()  {
 
         // create model
         val model = Model()
-
 
 
         // create the root of the scene graph
@@ -43,14 +44,15 @@ class Main : Application()  {
         // build the scene graph
         layout.top = menuBar
         layout.left = fileList
-        layout.padding = javafx.geometry.Insets(10.0,0.0,0.0,0.0)
+        layout.padding = javafx.geometry.Insets(10.0, 0.0, 0.0, 0.0)
         val backgroundFill = BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)
         val newBackground = Background(backgroundFill)
         layout.background = newBackground
 
         // TODO: Need to update this to show selected notes
-        val contentView = ContentView()
+        val contentView = ContentView(model)
         layout.center = contentView
+        model.addView(contentView)
 
 
         // create and show the scene
