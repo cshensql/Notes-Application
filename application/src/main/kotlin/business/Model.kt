@@ -1,5 +1,7 @@
 package business
 
+import javafx.scene.control.Alert
+import javafx.scene.control.TextInputDialog
 import presentation.IView
 
 class Model {
@@ -9,8 +11,8 @@ class Model {
     val groupList = mutableListOf<Group>()
     private var currSelected = Note("", "")   // represent empty selection
 
-    // note specific function
-    fun addNote(): Boolean {
+    // note specific functions
+    fun addNote() : Boolean {
         val newNote = Note()
         var containsNewNote = false
         var isAdded = false
@@ -77,6 +79,13 @@ class Model {
         notifyViews()
     }
 
+    // group specific functions
+    fun addGroup(groupName:String) {
+        val newGroup = Group()
+        newGroup.name = groupName
+        groupList.add(newGroup)
+        notifyViews()
+    }
 
     // general functions
     fun addView(view: IView) {

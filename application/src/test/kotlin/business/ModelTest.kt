@@ -180,4 +180,12 @@ class ModelTest {
                     && model.getCurrSelected().body == ""
         )
     }
+    // Group tests
+    @Test
+    fun addGroup() {
+        val newGroupName = "TestGroup1"
+        val expectedGroup = Group(newGroupName)
+        model.addGroup(newGroupName)
+        assert(model.groupList.contains(expectedGroup))
+    }
 }

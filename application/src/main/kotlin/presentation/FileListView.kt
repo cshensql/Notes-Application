@@ -78,6 +78,11 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             dateCreatedList.add(entry.key)
         }
 
+        for (entry in model.groupList) {
+            val groupItem = TreeItem(entry.name)
+            groupRoot.children.add(groupItem)
+        }
+
         val newNumOfNotes = noteRoot.children.size
 
         // A note is added or deleted in the Notes section

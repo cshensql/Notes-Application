@@ -1,5 +1,6 @@
 package presentation
 
+import business.Group
 import business.Model
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
@@ -31,7 +32,6 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     // Search Menu Sub options
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
-
 
     init {
         // Set hotkeys for each feature
@@ -94,7 +94,29 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         }
 
         addGroup.setOnAction {
-            println("Add group pressed")
+            val renamePrompt = TextInputDialog()
+            renamePrompt.title = "Create Group"
+            renamePrompt.headerText = "Enter the New Name for the Group"
+            val result = renamePrompt.showAndWait()
+            var newGroupName: String = ""
+            if (result.isPresent) {
+                newGroupName = renamePrompt.editor.text
+                if (newGroupName == "") {
+                    showErrorMessage("Empty Group names are not allowed")
+                } else {
+                    var isDuplicateGroupName = false
+                    for (group in this.model.groupList) {
+                        if (group.name == newGroupName) {
+                            showErrorMessage("Duplicate Group names are not allowed")
+                            isDuplicateGroupName = true
+                            break
+                        }
+                    }
+                    if (!isDuplicateGroupName) {
+                        model.addGroup(newGroupName)
+                    }
+                }
+            }
         }
 
         deleteGroup.setOnAction {
@@ -132,7 +154,13 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         searchMenu.items.add(searchByContent)
     }
 
-
+    // display error message function
+    private fun showErrorMessage(message: String) {
+        val alert = Alert(Alert.AlertType.ERROR)
+        alert.title = "Warning"
+        alert.headerText = message
+        alert.showAndWait()
+    }
 
     override fun updateView() {
 
