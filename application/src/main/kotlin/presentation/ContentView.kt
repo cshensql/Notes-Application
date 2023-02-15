@@ -32,7 +32,8 @@ class ContentView(private val model: Model) : IView, VBox() {
             // use the Jsoup to parse the HTML string into a Document
             val doc = Jsoup.parse(body)
             val title = doc.body().firstElementChild()?.text()
-
+            // update the lastModified field of the selected note
+            model.getCurrSelected().updateModified()
             model.changeSelectionContent(
                 title ?: model.getCurrSelected().title,
                 body
@@ -46,8 +47,6 @@ class ContentView(private val model: Model) : IView, VBox() {
     }
 
     override fun updateView() {
-        htmlEditor.setHtmlText(model.getCurrSelected().body)
-
-//        this.children.addAll(toolbar, htmlEditor)
+        htmlEditor.htmlText = model.getCurrSelected().body
     }
 }

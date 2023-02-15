@@ -1,0 +1,183 @@
+package business
+
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+class ModelTest {
+    private var model = Model()
+
+    @BeforeEach
+    fun setUp() {
+        model = Model()
+    }
+
+    @Test
+    fun getNoteList() {
+        val emptyMap = mutableMapOf<String, Note>()
+        assert(emptyMap == model.noteList)
+
+        for (i in 1..4) {
+            model.noteList[i.toString()] = Note("note$i", "something")
+        }
+
+        assert("note1" == model.noteList["1"]?.title)
+        assert("note2" == model.noteList["2"]?.title)
+        assert("note3" == model.noteList["3"]?.title)
+        assert("note4" == model.noteList["4"]?.title)
+    }
+
+    @Test
+    fun getGroupList() {
+        val empty = mutableListOf<Group>()
+        assert(model.groupList == empty)
+        val note1 = Note("1")
+        val note2 = Note("2")
+        val note3 = Note("3")
+
+        val data = mutableListOf<Group>(
+            Group(
+                "group1",
+                mutableListOf(note1)
+            ),
+            Group(
+                "group2",
+                mutableListOf(note2, note3)
+            )
+        )
+        model.groupList.add(
+            Group(
+                "group1",
+                mutableListOf(note1)
+            )
+        )
+        model.groupList.add(
+            Group(
+                "group2",
+                mutableListOf(note2, note3)
+            )
+        )
+        assert(data == model.groupList)
+    }
+
+    @Test
+    fun addNote() {
+        assert(model.addNote())
+        // can not add multiple new note
+        assert(!model.addNote())
+        assert(model.getCurrSelected().title == "New Note")
+        assert(model.getCurrSelected().body == "")
+    }
+
+    @Test
+    fun deleteNote() {
+        // store some data into the model
+        val note1 = Note("1")
+        // let the thread wait for 1 millisecond to make sure
+        Thread.sleep(1L)
+        val note2 = Note("2")
+        Thread.sleep(1L)
+        val note3 = Note("3")
+
+        val group1 = Group(
+            "1",
+            mutableListOf(note1)
+        )
+        model.groupList.add(group1)
+
+        val group2 = Group(
+            "2",
+            mutableListOf(note2, note3)
+        )
+        model.groupList.add(group2)
+
+
+        model.noteList["3"] = Note("note3", "something")
+        model.noteList["4"] = Note("note4", "something")
+
+        this.deleteEmptyNoteTest(model)
+
+        val id1 = "3"
+        val id2 = "4"
+        val id3 = note1.dateCreated
+        val id4 = note2.dateCreated
+        val id5 = note3.dateCreated
+
+
+        model.deleteNote(mutableListOf(id1, id3))
+        assert(model.noteList.size == 1)
+        assert(model.groupList[0].noteList.size == 0)
+
+        model.deleteNote(mutableListOf(id2, id4))
+        assert(model.noteList.isEmpty())
+        assert(model.groupList[1].noteList.size == 1)
+
+        model.deleteNote(mutableListOf(id5))
+        assert(model.groupList[1].noteList.size == 0)
+    }
+
+    private fun modelDataCopy(model: Model): Pair<Map<String, Note>, MutableList<Group>> {
+        val noteListCopy = model.noteList.toMap()
+        val groupListCopy = mutableListOf<Group>()
+        model.groupList.forEach {
+            groupListCopy.add(Group(it.name, it.noteList.toMutableList()))
+        }
+        return Pair(noteListCopy, groupListCopy)
+    }
+
+    private fun deleteEmptyNoteTest(model: Model) {
+        // make deep copies of the original model
+        val (noteListCopy, groupListCopy) = modelDataCopy(model)
+        val empty = mutableListOf<String>()
+        model.deleteNote(empty)
+        assert(model.noteList == noteListCopy)
+        assert(model.groupList == groupListCopy)
+    }
+
+
+    @Test
+    fun getCurrSelected() {
+        val note = model.getCurrSelected()
+        assert(note.title == "")
+        assert(note.body == "")
+    }
+
+    @Test
+    fun updateSelection() {
+        model.updateSelection("not possible")
+        val note = model.getCurrSelected()
+        assert(note.title == "" && note.body == "")
+        val new = Note()
+        val id = new.dateCreated
+        model.noteList[id] = new
+        val strange = "strange key value"
+        val new1 = Note("2")
+        model.noteList[strange] = new1
+
+        model.updateSelection(id)
+        assert(
+            model.getCurrSelected().title == "New Note"
+                    && model.getCurrSelected().body == ""
+        )
+
+        model.updateSelection(strange)
+        assert(
+            model.getCurrSelected().title == "2"
+                    && model.getCurrSelected().body == ""
+        )
+    }
+
+    @Test
+    fun changeSelectionContent() {
+        model.changeSelectionContent("new", "something")
+        assert(
+            model.getCurrSelected().title == "new"
+                    && model.getCurrSelected().body == "something"
+        )
+
+        model.changeSelectionContent("", "")
+        assert(
+            model.getCurrSelected().title == ""
+                    && model.getCurrSelected().body == ""
+        )
+    }
+}

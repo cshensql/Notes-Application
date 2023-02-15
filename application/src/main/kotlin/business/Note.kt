@@ -27,19 +27,26 @@ class Note(
 
     fun getPwd(): String = this.pwd
 
-    fun changePwd(newPwd: String, verify: String = "") {
-        if (pwd == "") {
-            requiresPwd = true
+    // return true when pwd successfully changed
+    fun changePwd(newPwd: String, verify: String = ""): Boolean{
+        if (!requiresPwd) {
             pwd = newPwd
+            requiresPwd = true
+            return true
         } else if (verify == pwd) {
             pwd = newPwd
+            return true
         }
+        return false
     }
 
-    fun removePwd(verify: String) {
+    // return true when pwd is successfully removed
+    fun removePwd(verify: String): Boolean {
         if (verify == pwd) {
             pwd = ""
             requiresPwd = false
+            return true
         }
+        return false
     }
 }
