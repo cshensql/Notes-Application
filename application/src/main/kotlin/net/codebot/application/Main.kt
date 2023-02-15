@@ -36,24 +36,21 @@ class Main : Application() {
         val layout = BorderPane()
         val menuBar = MenuBarView(model)
         val fileList = FileListView(model)
+        val contentView = ContentView(model)
 
         // add views to model
         model.addView(menuBar)
         model.addView(fileList)
+        model.addView(contentView)
 
         // build the scene graph
         layout.top = menuBar
         layout.left = fileList
+        layout.center = contentView
         layout.padding = javafx.geometry.Insets(10.0, 0.0, 0.0, 0.0)
         val backgroundFill = BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)
         val newBackground = Background(backgroundFill)
         layout.background = newBackground
-
-        // TODO: Need to update this to show selected notes
-        val contentView = ContentView(model)
-        layout.center = contentView
-        model.addView(contentView)
-
 
         // create and show the scene
         val scene = Scene(layout)

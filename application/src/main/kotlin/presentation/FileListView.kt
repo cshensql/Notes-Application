@@ -35,7 +35,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         this.isFocusTraversable = false
 
         this.setOnMouseClicked {
-            println(getNoteRootIndex())
             val (isUnderNoteRoot, pos) = isUnderNoteRoot()
             if (isUnderNoteRoot) {
                 val dateCreated = dateCreatedList[pos - 1]
@@ -46,7 +45,16 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
     }
 
-    private fun getNoteRootIndex() = noteRoot.parent.children.indexOf(noteRoot) + 1
+    private fun getNoteRootIndex(): Int{
+        var retval =  noteRoot.parent.children.indexOf(noteRoot) + 1
+        if (groupRoot.isExpanded) {
+            retval += groupRoot.children.size
+            for (group in groupRoot.children){
+                if (group.isExpanded) retval += group.children.size
+            }
+        }
+        return retval
+    }
 
     private fun isUnderNoteRoot(): Pair<Boolean, Int> {
         val noteRootIndex = getNoteRootIndex()
@@ -62,6 +70,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         groupRoot.children.clear()
         noteRoot.children.clear()
         dateCreatedList.clear()
+
 
         for (entry in model.noteList) {
             val noteItem = TreeItem(entry.value.title)
@@ -82,7 +91,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 this.selectionModel.select(newIndex + 1 + getNoteRootIndex())
             }
         } else {
-            // TODO: Update selection if note is added or deleted in the Group area
+            // TODO: Update selection if note is added or deleted in the Groups area
             this.selectionModel.select(selectedIndex)
         }
 

@@ -1,11 +1,8 @@
 package presentation
 
 import business.Model
-import javafx.scene.control.Alert
+import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuItem
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 
@@ -38,7 +35,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
 
     init {
         // Set hotkeys for each feature
-        addNote.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.CONTROL_DOWN)
+        addNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)
         deleteNote.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)
         lockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
         groupNotes.accelerator = KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN)
@@ -51,7 +48,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
 
 
         // Set actions for each submenu item
-        // TODO: Add actual actions once model is done
+
         addNote.setOnAction {
             val isAdded =  model.addNote()
             if (!isAdded) {
@@ -62,7 +59,26 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         }
 
         deleteNote.setOnAction {
-            println("Delete note pressed")
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val deleteNoteView = DeleteNoteView(model)
+
+            dialogPane.content = deleteNoteView
+            alert.title = "Delete"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+
+            val result = alert.showAndWait()
+
+            if (!result.isPresent) {
+                // alert is exited, no button has been pressed.
+            } else if (result.get() == ButtonType.OK) {
+                val selectedItems = deleteNoteView.getDateCreatedList()
+                model.deleteNote(selectedItems)
+            } else if (result.get() == ButtonType.CANCEL){
+                // cancel button is pressed
+            }
         }
 
         lockNote.setOnAction {
@@ -115,6 +131,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
     }
+
 
 
     override fun updateView() {

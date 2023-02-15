@@ -10,7 +10,7 @@ class Model {
     private var currSelected = Note("", "")   // represent empty selection
 
     // note specific function
-    fun addNote() : Boolean {
+    fun addNote(): Boolean {
         val newNote = Note()
         var containsNewNote = false
         var isAdded = false
@@ -31,6 +31,34 @@ class Model {
 
     fun addNoteUnderGroup() {
         // TODO
+    }
+
+    fun deleteNote(dateCreatedList: MutableList<String>) {
+        val selectedNote = currSelected.dateCreated
+        dateCreatedList.forEach {
+            if (noteList.containsKey(it)) {
+                // make currSelected field points to an empty note if removed
+                if (it == selectedNote) currSelected = Note("", "")
+                noteList.remove(it)
+            } else {
+                var flag = false
+                for (group in groupList) {
+                    val noteList = group.noteList
+                    for (i in 0 until noteList.size) {
+                        val note = noteList[i]
+                        if (note.dateCreated == it) {
+                            // make currSelected field points to an empty note if removed
+                            if (it == selectedNote) currSelected = Note("", "")
+                            noteList.removeAt(i)
+                            flag = true
+                            break
+                        }
+                    }
+                    if (flag) break
+                }
+            }
+        }
+        notifyViews()
     }
 
     fun getCurrSelected() = currSelected
@@ -59,7 +87,7 @@ class Model {
         views.remove(view)
     }
 
-    fun notifyViews() {
+    private fun notifyViews() {
         for (view in views) {
             view.updateView()
         }
