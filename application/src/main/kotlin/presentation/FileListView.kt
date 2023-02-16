@@ -65,7 +65,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     override fun updateView() {
         val selectedIndex = this.selectionModel.selectedIndex
         val numOfNotes = noteRoot.children.size
-
+        // position of the current selection relative to noteRoot
+        val posToNoteRoot = selectedIndex - getNoteRootIndex()
         // remove all current content
         groupRoot.children.clear()
         noteRoot.children.clear()
@@ -94,8 +95,9 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 this.selectionModel.select(newIndex + 1 + getNoteRootIndex())
             }
         } else {
-            // TODO: Update selection if note is added or deleted in the Groups area
-            this.selectionModel.select(selectedIndex)
+            // Groups/Notes are added under the Groups section
+            // fix the selection problem temporarily, need to update this later
+            this.selectionModel.select(getNoteRootIndex() + posToNoteRoot)
         }
 
         this.refresh()
