@@ -188,4 +188,26 @@ class ModelTest {
         model.addGroup(newGroupName)
         assert(model.groupList.contains(expectedGroup))
     }
+
+    @Test
+    fun deleteGroup() {
+        val newGroupName1 = "TestGroup1"
+        val expectedGroup1 = Group(newGroupName1)
+        model.addGroup(newGroupName1)
+        val newGroupName2 = "TestGroup2"
+        val expectedGroup2 = Group(newGroupName2)
+        model.addGroup(newGroupName2)
+        val newGroupName3 = "TestGroup3"
+        val expectedGroup3 = Group(newGroupName3)
+        model.addGroup(newGroupName3)
+        assert(model.groupList.contains(expectedGroup1))
+        assert(model.groupList.contains(expectedGroup2))
+        assert(model.groupList.contains(expectedGroup3))
+        val groupListToDelete = mutableListOf<Group>()
+        groupListToDelete.add(expectedGroup1)
+        groupListToDelete.add(expectedGroup2)
+        groupListToDelete.add(expectedGroup3)
+        model.deleteGroup(groupListToDelete)
+        assert(model.groupList.isEmpty())
+    }
 }

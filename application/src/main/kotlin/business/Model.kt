@@ -87,6 +87,13 @@ class Model {
         notifyViews()
     }
 
+    fun deleteGroup(groupSelectedList: MutableList<Group>){
+        for (entry in groupSelectedList) {
+            groupList.remove(entry)
+        }
+        notifyViews()
+    }
+
     // general functions
     fun addView(view: IView) {
         views.add(view)
