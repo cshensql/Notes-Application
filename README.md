@@ -4,9 +4,9 @@
 This is a notes application designed for students who want a versatile app for taking quick notes, reminders, and lists, as well as taking and storing larger texts for school.
 
 ## Team members
-Andy Yang - yz8yang@uwaterloo.ca
-Charles Shen - c2999shen@uwaterloo.ca
-Benjamin Du - h39du@uwaterloo.ca
+Andy Yang - yz8yang@uwaterloo.ca <br />
+Charles Shen - c2999shen@uwaterloo.ca <br />
+Benjamin Du - h39du@uwaterloo.ca <br />
 Yuying Li - y2786li@uwaterloo.ca
 
 ## Project Review Requirements
@@ -20,9 +20,8 @@ Optional, but often helpful to have a screenshot or demo-video for new users.
 
 ## Releases
 Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
-* see ![release page](assets/release-page.png)
-
-
+* see ![release page](assets/release-page.png) <br />
+1. Sprint 1 Release Note: https://docs.google.com/document/d/1hh97z5v7OMlaif3IH1kHK93rcIUQVf9ReFG0zE3yVtE/edit?usp=sharing
 
 
 ## EVERYTHING BELOW THIS IS DEFAULTED (REMOVE IF WE DONT SEE USE FOR THE TIPS)
