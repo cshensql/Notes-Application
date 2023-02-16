@@ -71,7 +71,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         noteRoot.children.clear()
         dateCreatedList.clear()
 
-
         for (entry in model.noteList) {
             val noteItem = TreeItem(entry.value.title)
             noteRoot.children.add(noteItem)
@@ -84,7 +83,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
 
         val newNumOfNotes = noteRoot.children.size
-
         // A note is added or deleted in the Notes section
         if (newNumOfNotes != numOfNotes) {
             val newIndex = dateCreatedList.indexOf(model.getCurrSelected().dateCreated)

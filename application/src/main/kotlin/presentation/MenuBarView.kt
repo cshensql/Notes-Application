@@ -120,7 +120,26 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         }
 
         deleteGroup.setOnAction {
-            println("Delete group pressed")
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val deleteGroupView = DeleteGroupView(model)
+
+            dialogPane.content = deleteGroupView
+            alert.title = "Delete"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+
+            val result = alert.showAndWait()
+
+            if (!result.isPresent) {
+                // alert is exited, no button has been pressed.
+            } else if (result.get() == ButtonType.OK) {
+                val selectedItems = deleteGroupView.getGroupSelectedList()
+                model.deleteGroup(selectedItems)
+            } else if (result.get() == ButtonType.CANCEL){
+                // cancel button is pressed
+            }
         }
 
         renameGroup.setOnAction {
