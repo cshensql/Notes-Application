@@ -137,4 +137,15 @@ class NoteTest {
         note.isLocked = true
         assert(note.isLocked)
     }
+
+    @Test
+    fun testInitialGroupName() {
+        assert(note.groupName == "")
+    }
+
+    @Test
+    fun testSettingGroupName() {
+        note.groupName = "group 1"
+        assert(note.groupName == "group 1")
+    }
 }

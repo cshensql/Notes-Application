@@ -10,6 +10,7 @@ class Note(
     var isRecentlyDeleted: Boolean = false,
     var requiresPwd: Boolean = false,
     var isLocked: Boolean = false,
+    var groupName: String = ""
 ) {
     private var pwd = ""
 

@@ -94,11 +94,11 @@ class Main : Application() {
 
         // Store the window size and location when the stage closes
         stage.setOnCloseRequest {
-            val userPrefs = Preferences.userRoot().node(NODE_NAME)
-            userPrefs.putDouble(WINDOW_POSITION_X, stage.x)
-            userPrefs.putDouble(WINDOW_POSITION_Y, stage.y)
-            userPrefs.putDouble(WINDOW_WIDTH, stage.width)
-            userPrefs.putDouble(WINDOW_HEIGHT, stage.height)
+            val userPref = Preferences.userRoot().node(NODE_NAME)
+            userPref.putDouble(WINDOW_POSITION_X, stage.x)
+            userPref.putDouble(WINDOW_POSITION_Y, stage.y)
+            userPref.putDouble(WINDOW_WIDTH, stage.width)
+            userPref.putDouble(WINDOW_HEIGHT, stage.height)
         }
 
         stage.show()
