@@ -1,6 +1,7 @@
 package net.codebot.application
 
 import business.Model
+import business.WindowConfig
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
@@ -80,7 +81,16 @@ class Main : Application() {
         // are from here
         // http://broadlyapplicable.blogspot.com/2015/02/javafx-restore-window-size-position.html
 
+        var windowConfig = WindowConfig(
+            positionX = defaultXPosition,
+            positionY = defaultYPosition,
+            width = DEFAULT_WIDTH,
+            height = DEFAULT_HEIGHT
+        )
+
         // Get window location from user preferences
+        // TODO: If the WindowConfig JSON file does not exist, then we get the data from userPrefs.
+        //  If the WindowConfig JSON file exists, then we get the data from JSON file
         val userPrefs = Preferences.userRoot().node(NODE_NAME)
         val windowPositionX = userPrefs.getDouble(WINDOW_POSITION_X, defaultXPosition)
         val windowPositionY = userPrefs.getDouble(WINDOW_POSITION_Y, defaultYPosition)
@@ -99,6 +109,13 @@ class Main : Application() {
             userPref.putDouble(WINDOW_POSITION_Y, stage.y)
             userPref.putDouble(WINDOW_WIDTH, stage.width)
             userPref.putDouble(WINDOW_HEIGHT, stage.height)
+
+            windowConfig.positionX = stage.x
+            windowConfig.positionY = stage.y
+            windowConfig.width = stage.width
+            windowConfig.height = stage.height
+
+            // TODO: Update the corresponding JSON file
         }
 
         stage.show()
