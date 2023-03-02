@@ -143,7 +143,49 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         }
 
         renameGroup.setOnAction {
-            println("Rename group pressed")
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val renameGroupView = RenameGroupView(model)
+
+            dialogPane.content = renameGroupView
+            alert.title = "Rename"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+
+            val result = alert.showAndWait()
+
+            if (!result.isPresent) {
+                // alert is exited, no button has been pressed.
+            } else if (result.get() == ButtonType.OK) {
+                val selectedGroup = renameGroupView.getGroupSelected()
+                // rename dialog pop up below
+                val renamePrompt = TextInputDialog()
+                renamePrompt.title = "Rename Group"
+                renamePrompt.headerText = "Enter the New Name for the Group"
+                val result = renamePrompt.showAndWait()
+                var newGroupName: String = ""
+                if (result.isPresent) {
+                    newGroupName = renamePrompt.editor.text
+                    if (newGroupName == "") {
+                        showErrorMessage("Empty Group names are not allowed")
+                    } else {
+                        var isDuplicateGroupName = false
+                        for (group in this.model.groupList) {
+                            if (group.name == newGroupName) {
+                                showErrorMessage("Duplicate Group names are not allowed")
+                                isDuplicateGroupName = true
+                                break
+                            }
+                        }
+                        if (!isDuplicateGroupName) {
+                            model.renameGroup(newGroupName, selectedGroup)
+                        }
+                    }
+                }
+            } else if (result.get() == ButtonType.CANCEL){
+                // cancel button is pressed
+            }
         }
 
         searchByContent.setOnAction {
