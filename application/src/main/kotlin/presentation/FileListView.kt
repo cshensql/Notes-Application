@@ -19,6 +19,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
 
+    private val MAX_CHAR_SHOWN: Int = 14
+
     init {
         val groupIcon = ImageView(Image("groupIcon.png", 18.0, 18.0, true, true))
 
@@ -73,7 +75,12 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         dateCreatedList.clear()
 
         for (entry in model.noteList) {
-            val noteItem = TreeItem(entry.value.title)
+            var titleShown = entry.value.title
+            if (titleShown.length > MAX_CHAR_SHOWN) {
+                titleShown = titleShown.substring(0, MAX_CHAR_SHOWN)
+                titleShown += "..."
+            }
+            val noteItem = TreeItem(titleShown)
             noteRoot.children.add(noteItem)
             dateCreatedList.add(entry.key)
         }

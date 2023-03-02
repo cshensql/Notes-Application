@@ -26,6 +26,8 @@ class Main : Application() {
     private val DEFAULT_WIDTH: Double = 870.0
     private val DEFAULT_HEIGHT: Double = 720.0
     private val NODE_NAME = "Main"
+    private val MIN_FILELIST_WIDTH: Double = 110.0
+    private val MAX_FILELIST_WIDTH: Double = 200.0
     override fun start(stage: Stage) {
 
         // create model
@@ -67,10 +69,21 @@ class Main : Application() {
         stage.title = "Notes"
 
 
+
         // Bind the width and height properties for each view
         layout.prefWidthProperty().bind(scene.widthProperty())
         layout.prefHeightProperty().bind(scene.heightProperty())
         contentView.prefWidthProperty().bind(scene.widthProperty())
+        scene.widthProperty().addListener { observable, oldValue, newValue ->
+            var expectedValue = newValue.toDouble() / 6
+            if (expectedValue < MIN_FILELIST_WIDTH) {
+                expectedValue = MIN_FILELIST_WIDTH
+            } else if (expectedValue > MAX_FILELIST_WIDTH) {
+                expectedValue = MAX_FILELIST_WIDTH
+            }
+
+            fileList.prefWidth = expectedValue
+        }
 
         // Get screen info
         val screenBounds = Screen.getPrimary().visualBounds
