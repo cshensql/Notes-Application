@@ -19,7 +19,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
 
-    private val MAX_CHAR_SHOWN: Int = 14
+    private val MAX_CHAR_SHOWN: Int = 15
 
     init {
         val groupIcon = ImageView(Image("groupIcon.png", 18.0, 18.0, true, true))
@@ -86,7 +86,12 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
 
         for (entry in model.groupList) {
-            val groupItem = TreeItem(entry.name)
+            var nameShown = entry.name
+            if (nameShown.length > MAX_CHAR_SHOWN) {
+                nameShown = nameShown.substring(0, MAX_CHAR_SHOWN)
+                nameShown += "..."
+            }
+            val groupItem = TreeItem(nameShown)
             groupRoot.children.add(groupItem)
         }
 
