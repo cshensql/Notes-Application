@@ -158,15 +158,15 @@ class MenuBarView(model: Model) : IView, MenuBar() {
 
             val result = alert.showAndWait()
 
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent && result.get() == ButtonType.OK) {
                 val selectedGroup = renameGroupView.getGroupSelected()
                 // rename dialog pop up below
                 val renamePrompt = TextInputDialog()
                 renamePrompt.title = "Rename Group"
                 renamePrompt.headerText = "Enter the New Name for the Group"
-                val result = renamePrompt.showAndWait()
+                val renamePromptResult = renamePrompt.showAndWait()
                 var newGroupName: String = ""
-                if (result.isPresent) {
+                if (renamePromptResult.isPresent) {
                     newGroupName = renamePrompt.editor.text
                     if (isAllowedGroupName(newGroupName)) {
                         model.renameGroup(newGroupName, selectedGroup)

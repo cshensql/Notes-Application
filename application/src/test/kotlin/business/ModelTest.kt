@@ -212,7 +212,18 @@ class ModelTest {
     }
 
     @Test
-    fun renameGroup() {
+    fun renameGroupWithoutNotes() {
+        val newGroupName1 = "TestGroup1"
+        val renameGroupName = "RenameGroup"
+        val group1 = Group()
+        group1.name = newGroupName1
+        model.groupList.add(group1)
+        model.renameGroup(renameGroupName, group1)
+        assert(group1.name == renameGroupName)
+    }
+
+    @Test
+    fun renameGroupWithNotes() {
         val newGroupName1 = "TestGroup1"
         val newGroupName2 = "TestGroup2"
         val renameGroupName = "RenameGroup"
