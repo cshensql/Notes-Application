@@ -1,9 +1,9 @@
 package presentation
 
 import business.Model
+import javafx.beans.binding.Bindings
+import javafx.scene.control.*
 
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
@@ -22,6 +22,57 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     private val MAX_CHAR_SHOWN: Int = 15
 
     init {
+        setupCategories()
+        setupClickAction()
+        setupContextMenuForTreeItem()
+
+
+    }
+
+    private fun setupContextMenuForTreeItem() {
+        val lockNoteItem = MenuItem("Lock Note")
+        lockNoteItem.setOnAction {
+            val alert = Alert(Alert.AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val lockNoteView = LockNoteView()
+
+            dialogPane.content = lockNoteView
+            alert.title = "Lock Note"
+            alert.isResizable = true
+            alert.width = 500.0
+            alert.height = 600.0
+
+            val result = alert.showAndWait()
+
+            if (result.isPresent && result.get() == ButtonType.OK) {
+
+            }
+        }
+
+
+        val contextMenu = ContextMenu(lockNoteItem)
+        this.contextMenu = contextMenu
+        this.setOnContextMenuRequested {
+            if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
+                this.contextMenu.hide()
+            }
+        }
+    }
+
+
+    private fun setupClickAction() {
+        this.setOnMouseClicked {
+            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
+            if (isUnderNoteRoot) {
+                val dateCreated = dateCreatedList[pos - 1]
+                model.updateSelection(dateCreated)
+            } else { // selection is not under "Notes"
+                // TODO
+            }
+        }
+    }
+
+    private fun setupCategories() {
         val groupIcon = ImageView(Image("groupIcon.png", 18.0, 18.0, true, true))
 
         groupRoot.graphic = groupIcon
@@ -35,16 +86,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         root.children.addAll(groupRoot, noteRoot)
         this.setRoot(root)
         this.isFocusTraversable = false
-
-        this.setOnMouseClicked {
-            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
-            if (isUnderNoteRoot) {
-                val dateCreated = dateCreatedList[pos - 1]
-                model.updateSelection(dateCreated)
-            } else { // selection is not under "Notes"
-                // TODO
-            }
-        }
     }
 
     private fun getNoteRootIndex(): Int{
