@@ -46,6 +46,21 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         searchByContent.accelerator = KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN)
         searchByTitle.accelerator = KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)
 
+        // check for duplicate group name
+
+        fun isAllowedGroupName(inputGroupName: String): Boolean {
+            if (inputGroupName == "") {
+                showErrorMessage("Empty Group names are not allowed")
+                return false
+            }
+            for (group in this.model.groupList) {
+                if (group.name == inputGroupName) {
+                    showErrorMessage("Duplicate Group names are not allowed")
+                    return false
+                }
+            }
+            return true
+        }
 
         // Set actions for each submenu item
 
@@ -101,20 +116,8 @@ class MenuBarView(model: Model) : IView, MenuBar() {
             var newGroupName: String = ""
             if (result.isPresent) {
                 newGroupName = renamePrompt.editor.text
-                if (newGroupName == "") {
-                    showErrorMessage("Empty Group names are not allowed")
-                } else {
-                    var isDuplicateGroupName = false
-                    for (group in this.model.groupList) {
-                        if (group.name == newGroupName) {
-                            showErrorMessage("Duplicate Group names are not allowed")
-                            isDuplicateGroupName = true
-                            break
-                        }
-                    }
-                    if (!isDuplicateGroupName) {
-                        model.addGroup(newGroupName)
-                    }
+                if (isAllowedGroupName(newGroupName)) {
+                    model.addGroup(newGroupName)
                 }
             }
         }
@@ -143,7 +146,33 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         }
 
         renameGroup.setOnAction {
-            println("Rename group pressed")
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val renameGroupView = RenameGroupView(model)
+
+            dialogPane.content = renameGroupView
+            alert.title = "Rename"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+
+            val result = alert.showAndWait()
+
+            if (result.isPresent && result.get() == ButtonType.OK) {
+                val selectedGroup = renameGroupView.getGroupSelected()
+                // rename dialog pop up below
+                val renamePrompt = TextInputDialog()
+                renamePrompt.title = "Rename Group"
+                renamePrompt.headerText = "Enter the New Name for the Group"
+                val renamePromptResult = renamePrompt.showAndWait()
+                var newGroupName: String = ""
+                if (renamePromptResult.isPresent) {
+                    newGroupName = renamePrompt.editor.text
+                    if (isAllowedGroupName(newGroupName)) {
+                        model.renameGroup(newGroupName, selectedGroup)
+                    }
+                }
+            }
         }
 
         searchByContent.setOnAction {

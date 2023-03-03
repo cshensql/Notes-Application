@@ -94,6 +94,19 @@ class Model {
         notifyViews()
     }
 
+    fun renameGroup(newName: String, groupRenamed: Group) {
+        for (entry in groupList) {
+            if (entry == groupRenamed) {
+                entry.name = newName
+                for (item in entry.noteList) {
+                    item.groupName = newName
+                }
+                break
+            }
+        }
+        notifyViews()
+    }
+
     // general functions
     fun addView(view: IView) {
         views.add(view)
