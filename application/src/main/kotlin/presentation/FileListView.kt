@@ -74,19 +74,19 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         noteRoot.children.clear()
         dateCreatedList.clear()
 
-        for (entry in model.noteList) {
-            var titleShown = entry.value.title
+        for (note in model.noteList) {
+            var titleShown = note.value.title
             if (titleShown.length > MAX_CHAR_SHOWN) {
                 titleShown = titleShown.substring(0, MAX_CHAR_SHOWN)
                 titleShown += "..."
             }
             val noteItem = TreeItem(titleShown)
             noteRoot.children.add(noteItem)
-            dateCreatedList.add(entry.key)
+            dateCreatedList.add(note.key)
         }
 
-        for (entry in model.groupList) {
-            var nameShown = entry.name
+        for (group in model.groupList) {
+            var nameShown = group.name
             if (nameShown.length > MAX_CHAR_SHOWN) {
                 nameShown = nameShown.substring(0, MAX_CHAR_SHOWN)
                 nameShown += "..."
