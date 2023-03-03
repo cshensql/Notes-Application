@@ -18,14 +18,6 @@ import presentation.MenuBarView
 import java.util.prefs.Preferences
 
 class Main : Application() {
-    // Constants used to save window size and position
-    private val WINDOW_POSITION_X = "Window_Position_X"
-    private val WINDOW_POSITION_Y = "Window_Position_Y"
-    private val WINDOW_WIDTH = "Window_Width"
-    private val WINDOW_HEIGHT = "Window_Height"
-    private val DEFAULT_WIDTH: Double = 870.0
-    private val DEFAULT_HEIGHT: Double = 720.0
-    private val NODE_NAME = "Main"
     override fun start(stage: Stage) {
 
         // create model
@@ -55,8 +47,8 @@ class Main : Application() {
 
         // create and show the scene
         val scene = Scene(layout)
-        stage.width = DEFAULT_WIDTH
-        stage.height = DEFAULT_HEIGHT
+        stage.width = ConfigData.DEFAULT_WIDTH
+        stage.height = ConfigData.DEFAULT_HEIGHT
 
         // set the minimum size of the window
         stage.minHeight = 350.0
@@ -67,10 +59,23 @@ class Main : Application() {
         stage.title = "Notes"
 
 
+
         // Bind the width and height properties for each view
         layout.prefWidthProperty().bind(scene.widthProperty())
         layout.prefHeightProperty().bind(scene.heightProperty())
         contentView.prefWidthProperty().bind(scene.widthProperty())
+
+        // Whenever the window size changes, see if we need to change the file list width
+        scene.widthProperty().addListener { observable, oldValue, newValue ->
+            var expectedValue = newValue.toDouble() / 6
+            if (expectedValue < ConfigData.MIN_FILELIST_WIDTH) {
+                expectedValue = ConfigData.MIN_FILELIST_WIDTH
+            } else if (expectedValue > ConfigData.MAX_FILELIST_WIDTH) {
+                expectedValue = ConfigData.MAX_FILELIST_WIDTH
+            }
+
+            fileList.prefWidth = expectedValue
+        }
 
         // Get screen info
         val screenBounds = Screen.getPrimary().visualBounds
@@ -84,18 +89,18 @@ class Main : Application() {
         var windowConfig = WindowConfig(
             positionX = defaultXPosition,
             positionY = defaultYPosition,
-            width = DEFAULT_WIDTH,
-            height = DEFAULT_HEIGHT
+            width = ConfigData.DEFAULT_WIDTH,
+            height = ConfigData.DEFAULT_HEIGHT
         )
 
         // Get window location from user preferences
         // TODO: If the WindowConfig JSON file does not exist, then we get the data from userPrefs.
         //  If the WindowConfig JSON file exists, then we get the data from JSON file
-        val userPrefs = Preferences.userRoot().node(NODE_NAME)
-        val windowPositionX = userPrefs.getDouble(WINDOW_POSITION_X, defaultXPosition)
-        val windowPositionY = userPrefs.getDouble(WINDOW_POSITION_Y, defaultYPosition)
-        val windowWidth = userPrefs.getDouble(WINDOW_WIDTH, DEFAULT_WIDTH)
-        val windowHeight = userPrefs.getDouble(WINDOW_HEIGHT, DEFAULT_HEIGHT)
+        val userPrefs = Preferences.userRoot().node(ConfigData.NODE_NAME)
+        val windowPositionX = userPrefs.getDouble(ConfigData.WINDOW_POSITION_X, defaultXPosition)
+        val windowPositionY = userPrefs.getDouble(ConfigData.WINDOW_POSITION_Y, defaultYPosition)
+        val windowWidth = userPrefs.getDouble(ConfigData.WINDOW_WIDTH, ConfigData.DEFAULT_WIDTH)
+        val windowHeight = userPrefs.getDouble(ConfigData.WINDOW_HEIGHT, ConfigData.DEFAULT_HEIGHT)
         stage.x = windowPositionX
         stage.y = windowPositionY
         stage.width = windowWidth
@@ -104,11 +109,11 @@ class Main : Application() {
 
         // Store the window size and location when the stage closes
         stage.setOnCloseRequest {
-            val userPref = Preferences.userRoot().node(NODE_NAME)
-            userPref.putDouble(WINDOW_POSITION_X, stage.x)
-            userPref.putDouble(WINDOW_POSITION_Y, stage.y)
-            userPref.putDouble(WINDOW_WIDTH, stage.width)
-            userPref.putDouble(WINDOW_HEIGHT, stage.height)
+            val userPref = Preferences.userRoot().node(ConfigData.NODE_NAME)
+            userPref.putDouble(ConfigData.WINDOW_POSITION_X, stage.x)
+            userPref.putDouble(ConfigData.WINDOW_POSITION_Y, stage.y)
+            userPref.putDouble(ConfigData.WINDOW_WIDTH, stage.width)
+            userPref.putDouble(ConfigData.WINDOW_HEIGHT, stage.height)
 
             windowConfig.positionX = stage.x
             windowConfig.positionY = stage.y
