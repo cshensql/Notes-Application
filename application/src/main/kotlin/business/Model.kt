@@ -98,6 +98,9 @@ class Model {
         for (entry in groupList) {
             if (entry == groupRenamed) {
                 entry.name = newName
+                for (item in entry.noteList) {
+                    item.groupName = newName
+                }
                 break
             }
         }

@@ -210,4 +210,29 @@ class ModelTest {
         model.deleteGroup(groupListToDelete)
         assert(model.groupList.isEmpty())
     }
+
+    @Test
+    fun renameGroup() {
+        val newGroupName1 = "TestGroup1"
+        val newGroupName2 = "TestGroup2"
+        val renameGroupName = "RenameGroup"
+        val note1 = Note()
+        note1.title = "note1"
+        note1.groupName = newGroupName1
+        val note2 = Note()
+        note2.title = "note2"
+        note2.groupName = newGroupName1
+        val group1 = Group()
+        group1.name = newGroupName1
+        group1.noteList = mutableListOf<Note>(note1,note2)
+        val group2 = Group()
+        group2.name = newGroupName2
+        model.groupList.add(group1)
+        model.groupList.add(group2)
+        model.renameGroup(renameGroupName,group1)
+        assert(group1.name == renameGroupName)
+        for (item in group1.noteList) {
+            assert(item.groupName == renameGroupName)
+        }
+    }
 }
