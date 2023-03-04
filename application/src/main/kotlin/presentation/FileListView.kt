@@ -98,8 +98,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 this.contextMenu.hide()
             } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
                 val (isUnderNoteRoot, pos) = isUnderNoteRoot()
-                val dateCreated = dateCreatedList[pos - 1]
-                val noteIsLocked = model.noteList[dateCreated]?.isLocked ?: false
+                val currSelectedNote = model.getCurrSelected()
+                val noteIsLocked = currSelectedNote?.isLocked ?: false
                 contextMenu.items.clear()
                 if (noteIsLocked) {
                     contextMenu.items.add(unlockNoteItem)
