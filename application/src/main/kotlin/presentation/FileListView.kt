@@ -6,6 +6,7 @@ import javafx.scene.control.*
 
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import java.util.*
 
 class FileListView(model: Model) : IView, TreeView<String>() {
     private val model = model
@@ -15,6 +16,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     private val noteRoot = TreeItem("Notes")
 
     private val root = TreeItem("Categories")
+
+    private val lockNoteView = LockNoteView()
 
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
@@ -34,7 +37,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         lockNoteItem.setOnAction {
             val alert = Alert(Alert.AlertType.CONFIRMATION)
             val dialogPane = alert.dialogPane
-            val lockNoteView = LockNoteView()
 
             dialogPane.content = lockNoteView
             alert.title = "Lock Note"
@@ -42,13 +44,10 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             alert.width = 500.0
             alert.height = 600.0
 
-            val result = alert.showAndWait()
-
-            if (result.isPresent && result.get() == ButtonType.OK) {
-
+            while (!checkValidityofPassword(alert.showAndWait())) {
+                // repeat this process
             }
         }
-
 
         val contextMenu = ContextMenu(lockNoteItem)
         this.contextMenu = contextMenu
@@ -57,6 +56,26 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 this.contextMenu.hide()
             }
         }
+    }
+
+    private fun checkValidityofPassword(result: Optional<ButtonType>): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            val password = lockNoteView.getPassword()
+            val verifiedPassword = lockNoteView.getVerifiedPassword()
+            val passwordHint = lockNoteView.getPasswordHint()
+            if (password.isNullOrBlank() || password.isEmpty() || verifiedPassword.isNullOrBlank() || verifiedPassword.isEmpty()) {
+                showEmptyPasswordWarning()
+                lockNoteView.clearInputPassword()
+                return false
+            }
+        }
+        return true
+    }
+    private fun showEmptyPasswordWarning() {
+        val alert = Alert(Alert.AlertType.WARNING)
+        alert.title = "Blank Password"
+        alert.contentText = "You entered blank / empty string for either 'Password' or 'Verify'. Please enter again"
+        alert.showAndWait()
     }
 
 

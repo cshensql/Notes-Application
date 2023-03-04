@@ -69,6 +69,23 @@ class LockNoteView(): VBox() {
         this.children.add(passwordInput)
         this.children.add(passwordVerify)
         this.children.add(passwordHint)
+    }
 
+    fun getPassword(): String {
+            return passwordEnterField.text
+    }
+
+    fun getVerifiedPassword(): String {
+            return passwordVerifyField.text
+
+    }
+
+    fun getPasswordHint(): String {
+        return passwordHintInputField.text
+    }
+
+    fun clearInputPassword() {
+        passwordEnterField.text = ""
+        passwordVerifyField.text = ""
     }
 }
