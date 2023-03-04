@@ -20,8 +20,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     private val root = TreeItem("Categories")
 
-    private val lockNoteView = LockNoteView()
-
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
 
@@ -35,41 +33,60 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     }
 
+    fun unlockNote() {
+        val currSelectedNote = model.getCurrSelected()
+        if (currSelectedNote == null) { return }
+        val passwordHint = currSelectedNote.passwordHint
+        val correctPassword = currSelectedNote.getPwd()
+
+        if (correctPassword != null) {
+            var shouldStop = false
+            while (!shouldStop) {
+                val alert = Alert(Alert.AlertType.CONFIRMATION)
+                val inputView = VBox()
+                val inputField = PasswordField()
+                inputView.children.add(inputField)
+                inputView.alignment = Pos.CENTER_LEFT
+                inputView.spacing = 10.0
+                if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
+                    inputView.children.add(Text("Hint: " + passwordHint))
+                }
+                alert.headerText = "Please enter the password"
+                alert.dialogPane.content = inputView
+                shouldStop = confirmPassword(alert.showAndWait(), inputField.text, correctPassword)
+            }
+        }
+    }
+    fun lockNote() {
+        val possiblePassword = model.getCurrSelected()?.getPwd() ?: ""
+        if (model.getCurrSelected() != null && possiblePassword.isNotEmpty()) {
+            model.lockNote()
+        } else {
+            val lockNoteView = LockNoteView()
+            var shouldStop = false
+
+            while (!shouldStop) {
+                val alert = Alert(Alert.AlertType.CONFIRMATION)
+                val dialogPane = alert.dialogPane
+
+                dialogPane.content = lockNoteView
+                alert.title = "Lock Note"
+                alert.isResizable = true
+                alert.width = 500.0
+                alert.height = 600.0
+                shouldStop = checkValidityofPassword(alert.showAndWait(), lockNoteView)
+            }
+        }
+    }
     private fun setupContextMenuForTreeItem() {
         val lockNoteItem = MenuItem("Lock Note")
         val unlockNoteItem = MenuItem("Unlock Note")
         lockNoteItem.setOnAction {
-            val alert = Alert(Alert.AlertType.CONFIRMATION)
-            val dialogPane = alert.dialogPane
-
-            dialogPane.content = lockNoteView
-            alert.title = "Lock Note"
-            alert.isResizable = true
-            alert.width = 500.0
-            alert.height = 600.0
-
-            while (!checkValidityofPassword(alert.showAndWait())) {
-                // repeat this process
-            }
+            lockNote()
         }
 
         unlockNoteItem.setOnAction {
-            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
-            val dateCreated = dateCreatedList[pos - 1]
-            val passwordHint = model.noteList[dateCreated]?.passwordHint ?: ""
-            val textPrompt = TextInputDialog()
-            val inputView = VBox()
-            val inputField = PasswordField()
-            inputView.children.add(inputField)
-            inputView.alignment = Pos.CENTER_LEFT
-            inputView.spacing = 10.0
-            if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
-                inputView.children.add(Text("Hint: " + passwordHint))
-            }
-            textPrompt.headerText = "Please enter the password"
-            textPrompt.dialogPane.content = inputView
-            textPrompt.showAndWait()
-
+            unlockNote()
         }
 
 
@@ -93,7 +110,21 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
     }
 
-    private fun checkValidityofPassword(result: Optional<ButtonType>): Boolean {
+    private fun confirmPassword(result: Optional<ButtonType>, passwordEntered: String, correctPassword: String): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            if (passwordEntered != correctPassword) {
+                val alert = Alert(Alert.AlertType.WARNING)
+                alert.title = "Incorret Password"
+                alert.contentText = "The password entered does not match the one we have. Please enter again."
+                alert.showAndWait()
+                return false
+            }
+            model.unlockNote()
+            return true
+        }
+        return true
+    }
+    private fun checkValidityofPassword(result: Optional<ButtonType>, lockNoteView: LockNoteView): Boolean {
         if (result.isPresent && result.get() == ButtonType.OK) {
             val password = lockNoteView.getPassword()
             val verifiedPassword = lockNoteView.getVerifiedPassword()
@@ -106,11 +137,14 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             } else if (password != verifiedPassword) {
                 showWarningForUnacceptablePassword("Passwords Don't Match",
                     "Your 'Password' and 'Verify' does not match. Please enter again")
+                return false
             } else {
                 model.lockNote(password, passwordHint)
                 return true
             }
         }
+        lockNoteView.clearHint()
+        lockNoteView.clearInputPassword()
         return true
     }
     private fun showWarningForUnacceptablePassword(warningTitle: String, warningContent: String) {
@@ -130,6 +164,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             } else { // selection is not under "Notes"
                 // TODO
                 // Temporary; will add more in later section
+                // TODO: Use if the note has a child and whether it is a group name to decide
+                // TODO: We can use the group name to help locate the note and get the date created
                 model.updateSelection("")
             }
         }
@@ -148,6 +184,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
         root.children.addAll(groupRoot, noteRoot)
         this.setRoot(root)
+        root.isExpanded = true
         this.isFocusTraversable = false
     }
 

@@ -88,4 +88,8 @@ class LockNoteView(): VBox() {
         passwordEnterField.text = ""
         passwordVerifyField.text = ""
     }
+
+    fun clearHint() {
+        passwordHintInputField.text = ""
+    }
 }

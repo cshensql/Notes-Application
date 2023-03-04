@@ -19,7 +19,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     // Note Menu Sub options
     private val addNote = MenuItem("Add Note")
     private val deleteNote = MenuItem("Delete Note")
-    private val lockNote = MenuItem("Lock Note")
+    private val lockOrUnlockNote = MenuItem("Lock Note")
     private val groupNotes = MenuItem("Group Notes")
     private val moveNotes = MenuItem("Move Notes")
 
@@ -37,7 +37,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         // Set hotkeys for each feature
         addNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)
         deleteNote.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.CONTROL_DOWN)
-        lockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
+        lockOrUnlockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
         groupNotes.accelerator = KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN)
         moveNotes.accelerator = KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN)
         addGroup.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.ALT_DOWN)
@@ -94,10 +94,6 @@ class MenuBarView(model: Model) : IView, MenuBar() {
             } else if (result.get() == ButtonType.CANCEL){
                 // cancel button is pressed
             }
-        }
-
-        lockNote.setOnAction {
-            println("Lock note pressed")
         }
 
         groupNotes.setOnAction {
@@ -192,7 +188,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         // Add submenu to their corresponding menu
         noteMenu.items.add(addNote)
         noteMenu.items.add(deleteNote)
-        noteMenu.items.add(lockNote)
+        noteMenu.items.add(lockOrUnlockNote)
         noteMenu.items.add(groupNotes)
         noteMenu.items.add(moveNotes)
         groupMenu.items.add(addGroup)
@@ -211,6 +207,28 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     }
 
     override fun updateView() {
-
+        val currSelectedNote = model.getCurrSelected()
+        if (currSelectedNote != null) {
+            val isLocked = currSelectedNote?.isLocked ?: false
+            if (isLocked) {
+                lockOrUnlockNote.text = "Unlock Note"
+                lockOrUnlockNote.setOnAction {
+                    FileListView(model).unlockNote()
+                }
+            } else {
+                lockOrUnlockNote.text = "Lock Note"
+                lockOrUnlockNote.setOnAction {
+                    FileListView(model).lockNote()
+                }
+            }
+        } else {
+            lockOrUnlockNote.text = "Lock Note"
+            lockOrUnlockNote.setOnAction {
+                val alert = Alert(AlertType.WARNING)
+                alert.title = "No Note Selected"
+                alert.contentText = "Please select a note first"
+                alert.showAndWait()
+            }
+        }
     }
 }

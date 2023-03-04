@@ -8,7 +8,6 @@ class Note(
     var body: String = "",
     // flag
     var isRecentlyDeleted: Boolean = false,
-    var password: String = "",
     var isLocked: Boolean = false,
     var passwordHint: String = "",
     var groupName: String = ""
