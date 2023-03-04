@@ -2,10 +2,13 @@ package presentation
 
 import business.Model
 import javafx.beans.binding.Bindings
+import javafx.geometry.Pos
 import javafx.scene.control.*
 
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.VBox
+import javafx.scene.text.Text
 import java.util.*
 
 class FileListView(model: Model) : IView, TreeView<String>() {
@@ -34,6 +37,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     private fun setupContextMenuForTreeItem() {
         val lockNoteItem = MenuItem("Lock Note")
+        val unlockNoteItem = MenuItem("Unlock Note")
         lockNoteItem.setOnAction {
             val alert = Alert(Alert.AlertType.CONFIRMATION)
             val dialogPane = alert.dialogPane
@@ -49,11 +53,42 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             }
         }
 
+        unlockNoteItem.setOnAction {
+            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
+            val dateCreated = dateCreatedList[pos - 1]
+            val passwordHint = model.noteList[dateCreated]?.passwordHint ?: ""
+            val textPrompt = TextInputDialog()
+            val inputView = VBox()
+            val inputField = PasswordField()
+            inputView.children.add(inputField)
+            inputView.alignment = Pos.CENTER_LEFT
+            inputView.spacing = 10.0
+            if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
+                inputView.children.add(Text("Hint: " + passwordHint))
+            }
+            textPrompt.headerText = "Please enter the password"
+            textPrompt.dialogPane.content = inputView
+            textPrompt.showAndWait()
+
+        }
+
+
+
         val contextMenu = ContextMenu(lockNoteItem)
         this.contextMenu = contextMenu
         this.setOnContextMenuRequested {
             if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
                 this.contextMenu.hide()
+            } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
+                val (isUnderNoteRoot, pos) = isUnderNoteRoot()
+                val dateCreated = dateCreatedList[pos - 1]
+                val noteIsLocked = model.noteList[dateCreated]?.isLocked ?: false
+                contextMenu.items.clear()
+                if (noteIsLocked) {
+                    contextMenu.items.add(unlockNoteItem)
+                } else {
+                    contextMenu.items.add(lockNoteItem)
+                }
             }
         }
     }
@@ -64,17 +99,24 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             val verifiedPassword = lockNoteView.getVerifiedPassword()
             val passwordHint = lockNoteView.getPasswordHint()
             if (password.isNullOrBlank() || password.isEmpty() || verifiedPassword.isNullOrBlank() || verifiedPassword.isEmpty()) {
-                showEmptyPasswordWarning()
+                showWarningForUnacceptablePassword("Blank or Empty Passwords",
+                    "You entered blank or empty string for 'Password' or 'Verify'. Please enter again")
                 lockNoteView.clearInputPassword()
                 return false
+            } else if (password != verifiedPassword) {
+                showWarningForUnacceptablePassword("Passwords Don't Match",
+                    "Your 'Password' and 'Verify' does not match. Please enter again")
+            } else {
+                model.lockNote(password, passwordHint)
+                return true
             }
         }
         return true
     }
-    private fun showEmptyPasswordWarning() {
+    private fun showWarningForUnacceptablePassword(warningTitle: String, warningContent: String) {
         val alert = Alert(Alert.AlertType.WARNING)
-        alert.title = "Blank Password"
-        alert.contentText = "You entered blank / empty string for either 'Password' or 'Verify'. Please enter again"
+        alert.title = warningTitle
+        alert.contentText = warningContent
         alert.showAndWait()
     }
 
@@ -87,6 +129,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 model.updateSelection(dateCreated)
             } else { // selection is not under "Notes"
                 // TODO
+                // Temporary; will add more in later section
+                model.updateSelection("")
             }
         }
     }
@@ -158,7 +202,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         val newNumOfNotes = noteRoot.children.size
         // A note is added or deleted in the Notes section
         if (newNumOfNotes != numOfNotes) {
-            val newIndex = dateCreatedList.indexOf(model.getCurrSelected().dateCreated)
+            val newIndex = dateCreatedList.indexOf(model.getCurrSelected()?.dateCreated)
             if (newIndex < 0) {
                 // not able to find currSelected in Model,
                 // then select nothing

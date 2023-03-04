@@ -9,7 +9,7 @@ class Model {
     private val views = ArrayList<IView>()
     val noteList = mutableMapOf<String, Note>()
     val groupList = mutableListOf<Group>()
-    private var currSelected = Note("", "")   // represent empty selection
+    private var currSelectedNote: Note? = null
 
     // note specific functions
     fun addNote() : Boolean {
@@ -24,7 +24,7 @@ class Model {
         }
         if (!containsNewNote) {
             noteList[newNote.dateCreated] = newNote
-            currSelected = newNote
+            currSelectedNote = newNote
             isAdded = true
             notifyViews()
         }
@@ -36,11 +36,11 @@ class Model {
     }
 
     fun deleteNote(dateCreatedList: MutableList<String>) {
-        val selectedNote = currSelected.dateCreated
+        val selectedNote = currSelectedNote?.dateCreated ?: null
         dateCreatedList.forEach {
             if (noteList.containsKey(it)) {
                 // make currSelected field points to an empty note if removed
-                if (it == selectedNote) currSelected = Note("", "")
+                if (it == selectedNote) currSelectedNote = null
                 noteList.remove(it)
             } else {
                 var flag = false
@@ -50,7 +50,7 @@ class Model {
                         val note = noteList[i]
                         if (note.dateCreated == it) {
                             // make currSelected field points to an empty note if removed
-                            if (it == selectedNote) currSelected = Note("", "")
+                            if (it == selectedNote) currSelectedNote = null
                             noteList.removeAt(i)
                             flag = true
                             break
@@ -63,19 +63,22 @@ class Model {
         notifyViews()
     }
 
-    fun getCurrSelected() = currSelected
+    fun getCurrSelected() = currSelectedNote
 
     fun updateSelection(dateCreated: String) {
         val newSelection = noteList[dateCreated]
         if (newSelection != null) {
-            currSelected = newSelection
+            currSelectedNote = newSelection
+            notifyViews()
+        } else {
+            currSelectedNote = null
             notifyViews()
         }
     }
 
     fun changeSelectionContent(title: String, body: String) {
-        currSelected.title = title
-        currSelected.body = body
+        currSelectedNote?.title = title
+        currSelectedNote?.body = body
         notifyViews()
     }
 
@@ -105,6 +108,16 @@ class Model {
             }
         }
         notifyViews()
+    }
+
+    fun lockNote(password: String, hint: String) {
+        if (currSelectedNote != null) {
+            val note = noteList[currSelectedNote?.dateCreated]
+            note?.password = password
+            note?.passwordHint = hint
+            note?.isLocked = true
+            notifyViews()
+        }
     }
 
     // general functions
