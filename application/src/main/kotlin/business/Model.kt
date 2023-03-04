@@ -74,8 +74,6 @@ class Model {
             currSelectedNote = null
             notifyViews()
         }
-
-        println("${currSelectedNote == null}")
     }
 
     fun changeSelectionContent(title: String, body: String) {
