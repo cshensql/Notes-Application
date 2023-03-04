@@ -29,32 +29,28 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         setupCategories()
         setupClickAction()
         setupContextMenuForTreeItem()
-
-
     }
 
     fun unlockNote() {
         val currSelectedNote = model.getCurrSelected()
-        if (currSelectedNote == null) { return }
+        if (currSelectedNote == null) return
         val passwordHint = currSelectedNote.passwordHint
         val correctPassword = currSelectedNote.getPwd()
 
-        if (correctPassword != null) {
-            var shouldStop = false
-            while (!shouldStop) {
-                val alert = Alert(Alert.AlertType.CONFIRMATION)
-                val inputView = VBox()
-                val inputField = PasswordField()
-                inputView.children.add(inputField)
-                inputView.alignment = Pos.CENTER_LEFT
-                inputView.spacing = 10.0
-                if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
-                    inputView.children.add(Text("Hint: " + passwordHint))
-                }
-                alert.headerText = "Please enter the password"
-                alert.dialogPane.content = inputView
-                shouldStop = confirmPassword(alert.showAndWait(), inputField.text, correctPassword)
+        var shouldStop = false
+        while (!shouldStop) {
+            val alert = Alert(Alert.AlertType.CONFIRMATION)
+            val inputView = VBox()
+            val inputField = PasswordField()
+            inputView.children.add(inputField)
+            inputView.alignment = Pos.CENTER_LEFT
+            inputView.spacing = 10.0
+            if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
+                inputView.children.add(Text("Hint: " + passwordHint))
             }
+            alert.headerText = "Please enter the password"
+            alert.dialogPane.content = inputView
+            shouldStop = confirmPassword(alert.showAndWait(), inputField.text, correctPassword)
         }
     }
     fun lockNote() {
@@ -89,15 +85,12 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             unlockNote()
         }
 
-
-
         val contextMenu = ContextMenu(lockNoteItem)
         this.contextMenu = contextMenu
         this.setOnContextMenuRequested {
             if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
                 this.contextMenu.hide()
             } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
-                val (isUnderNoteRoot, pos) = isUnderNoteRoot()
                 val currSelectedNote = model.getCurrSelected()
                 val noteIsLocked = currSelectedNote?.isLocked ?: false
                 contextMenu.items.clear()
@@ -113,10 +106,9 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     private fun confirmPassword(result: Optional<ButtonType>, passwordEntered: String, correctPassword: String): Boolean {
         if (result.isPresent && result.get() == ButtonType.OK) {
             if (passwordEntered != correctPassword) {
-                val alert = Alert(Alert.AlertType.WARNING)
-                alert.title = "Incorret Password"
-                alert.contentText = "The password entered does not match the one we have. Please enter again."
-                alert.showAndWait()
+                val warningAlert = WarningAlertView("Incorret Password",
+                    "The password entered does not match the one we have. Please enter again.")
+                warningAlert.present()
                 return false
             }
             model.unlockNote()
@@ -130,13 +122,16 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             val verifiedPassword = lockNoteView.getVerifiedPassword()
             val passwordHint = lockNoteView.getPasswordHint()
             if (password.isNullOrBlank() || password.isEmpty() || verifiedPassword.isNullOrBlank() || verifiedPassword.isEmpty()) {
-                showWarningForUnacceptablePassword("Blank or Empty Passwords",
+                val warningAlert = WarningAlertView("Blank or Empty Passwords",
                     "You entered blank or empty string for 'Password' or 'Verify'. Please enter again")
+                warningAlert.present()
                 lockNoteView.clearInputPassword()
                 return false
             } else if (password != verifiedPassword) {
-                showWarningForUnacceptablePassword("Passwords Don't Match",
+                val warningAlert = WarningAlertView("Passwords Don't Match",
                     "Your 'Password' and 'Verify' does not match. Please enter again")
+                warningAlert.present()
+                lockNoteView.clearInputPassword()
                 return false
             } else {
                 model.lockNote(password, passwordHint)
@@ -146,12 +141,6 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         lockNoteView.clearHint()
         lockNoteView.clearInputPassword()
         return true
-    }
-    private fun showWarningForUnacceptablePassword(warningTitle: String, warningContent: String) {
-        val alert = Alert(Alert.AlertType.WARNING)
-        alert.title = warningTitle
-        alert.contentText = warningContent
-        alert.showAndWait()
     }
 
 

@@ -224,10 +224,8 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         } else {
             lockOrUnlockNote.text = "Lock Note"
             lockOrUnlockNote.setOnAction {
-                val alert = Alert(AlertType.WARNING)
-                alert.title = "No Note Selected"
-                alert.contentText = "Please select a note first"
-                alert.showAndWait()
+                val warningAlert = WarningAlertView("No Note Selected", "\"Please select a note first\"")
+                warningAlert.present()
             }
         }
     }

@@ -144,7 +144,7 @@ class ModelTest {
     fun updateSelection() {
         model.updateSelection("not possible")
         val note = model.getCurrSelected()
-        assert(note?.title == "" && note?.body == "")
+        assert(note == null)
         val new = Note()
         val id = new.dateCreated
         model.noteList[id] = new
@@ -167,6 +167,7 @@ class ModelTest {
 
     @Test
     fun changeSelectionContent() {
+        model.addNote()
         model.changeSelectionContent("new", "something")
         assert(
             model.getCurrSelected()?.title == "new"
@@ -264,7 +265,7 @@ class ModelTest {
     }
 
     @Test
-    fun lockNoteNotFirstTime() {
+    fun lockNoteNotForTheFirstTime() {
         // Arrange
         model.addNote()
         model.lockNote("password", "hint")

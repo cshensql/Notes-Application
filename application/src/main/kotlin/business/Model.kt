@@ -114,24 +114,22 @@ class Model {
 
     // If the note has been locked before, then relock it does not require the user to enter pwd/hint again
     fun lockNote(password: String = "", hint: String = "") {
-        val note = noteList[currSelectedNote?.dateCreated]
         if (currSelectedNote != null && password.isNotEmpty()) {
             // The user sets up the password for the first time
-            note?.setPwd(password)
-            note?.passwordHint = hint
-            note?.isLocked = true
+            currSelectedNote?.setPwd(password)
+            currSelectedNote?.passwordHint = hint
+            currSelectedNote?.isLocked = true
             notifyViews()
         } else {
             // Old password exists
-            note?.isLocked = true
+            currSelectedNote?.isLocked = true
             notifyViews()
         }
     }
 
     fun unlockNote() {
         if (currSelectedNote != null) {
-            val note = noteList[currSelectedNote?.dateCreated]
-            note?.isLocked = false
+            currSelectedNote?.isLocked = false
             notifyViews()
         }
     }
