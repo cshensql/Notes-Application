@@ -1,11 +1,15 @@
 package presentation
 
 import business.Model
+import javafx.beans.binding.Bindings
+import javafx.geometry.Pos
+import javafx.scene.control.*
 
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.VBox
+import javafx.scene.text.Text
+import java.util.*
 
 class FileListView(model: Model) : IView, TreeView<String>() {
     private val model = model
@@ -22,6 +26,141 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     private val MAX_CHAR_SHOWN: Int = 15
 
     init {
+        setupCategories()
+        setupClickAction()
+        setupContextMenuForTreeItem()
+    }
+
+    fun unlockNote() {
+        val currSelectedNote = model.getCurrSelected()
+        if (currSelectedNote == null) return
+        val passwordHint = currSelectedNote.passwordHint
+        val correctPassword = currSelectedNote.getPwd()
+
+        var shouldStop = false
+        while (!shouldStop) {
+            val alert = Alert(Alert.AlertType.CONFIRMATION)
+            val inputView = VBox()
+            val inputField = PasswordField()
+            inputView.children.add(inputField)
+            inputView.alignment = Pos.CENTER_LEFT
+            inputView.spacing = 10.0
+            if (passwordHint.isNotBlank() && passwordHint.isNotEmpty()) {
+                inputView.children.add(Text("Hint: " + passwordHint))
+            }
+            alert.headerText = "Please enter the password"
+            alert.dialogPane.content = inputView
+            shouldStop = confirmPassword(alert.showAndWait(), inputField.text, correctPassword)
+        }
+    }
+    fun lockNote() {
+        val possiblePassword = model.getCurrSelected()?.getPwd() ?: ""
+        if (model.getCurrSelected() != null && possiblePassword.isNotEmpty()) {
+            model.lockNote()
+        } else {
+            val lockNoteView = LockNoteView()
+            var shouldStop = false
+
+            while (!shouldStop) {
+                val alert = Alert(Alert.AlertType.CONFIRMATION)
+                val dialogPane = alert.dialogPane
+
+                dialogPane.content = lockNoteView
+                alert.title = "Lock Note"
+                alert.isResizable = true
+                alert.width = 500.0
+                alert.height = 600.0
+                shouldStop = checkValidityofPassword(alert.showAndWait(), lockNoteView)
+            }
+        }
+    }
+    private fun setupContextMenuForTreeItem() {
+        val lockNoteItem = MenuItem("Lock Note")
+        val unlockNoteItem = MenuItem("Unlock Note")
+        lockNoteItem.setOnAction {
+            lockNote()
+        }
+
+        unlockNoteItem.setOnAction {
+            unlockNote()
+        }
+
+        val contextMenu = ContextMenu(lockNoteItem)
+        this.contextMenu = contextMenu
+        this.setOnContextMenuRequested {
+            if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
+                this.contextMenu.hide()
+            } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
+                val currSelectedNote = model.getCurrSelected()
+                val noteIsLocked = currSelectedNote?.isLocked ?: false
+                contextMenu.items.clear()
+                if (noteIsLocked) {
+                    contextMenu.items.add(unlockNoteItem)
+                } else {
+                    contextMenu.items.add(lockNoteItem)
+                }
+            }
+        }
+    }
+
+    private fun confirmPassword(result: Optional<ButtonType>, passwordEntered: String, correctPassword: String): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            if (passwordEntered != correctPassword) {
+                val warningAlert = WarningAlertView("Incorret Password",
+                    "The password entered does not match the one we have. Please enter again.")
+                warningAlert.present()
+                return false
+            }
+            model.unlockNote()
+            return true
+        }
+        return true
+    }
+    private fun checkValidityofPassword(result: Optional<ButtonType>, lockNoteView: LockNoteView): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            val password = lockNoteView.getPassword()
+            val verifiedPassword = lockNoteView.getVerifiedPassword()
+            val passwordHint = lockNoteView.getPasswordHint()
+            if (password.isNullOrBlank() || password.isEmpty() || verifiedPassword.isNullOrBlank() || verifiedPassword.isEmpty()) {
+                val warningAlert = WarningAlertView("Blank or Empty Passwords",
+                    "You entered blank or empty string for 'Password' or 'Verify'. Please enter again")
+                warningAlert.present()
+                lockNoteView.clearInputPassword()
+                return false
+            } else if (password != verifiedPassword) {
+                val warningAlert = WarningAlertView("Passwords Don't Match",
+                    "Your 'Password' and 'Verify' does not match. Please enter again")
+                warningAlert.present()
+                lockNoteView.clearInputPassword()
+                return false
+            } else {
+                model.lockNote(password, passwordHint)
+                return true
+            }
+        }
+        lockNoteView.clearHint()
+        lockNoteView.clearInputPassword()
+        return true
+    }
+
+
+    private fun setupClickAction() {
+        this.setOnMouseClicked {
+            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
+            if (isUnderNoteRoot) {
+                val dateCreated = dateCreatedList[pos - 1]
+                model.updateSelection(dateCreated)
+            } else { // selection is not under "Notes"
+                // TODO
+                // Temporary; will add more in later section
+                // TODO: Use if the note has a child and whether it is a group name to decide
+                // TODO: We can use the group name to help locate the note and get the date created
+                model.updateSelection("")
+            }
+        }
+    }
+
+    private fun setupCategories() {
         val groupIcon = ImageView(Image("groupIcon.png", 18.0, 18.0, true, true))
 
         groupRoot.graphic = groupIcon
@@ -34,17 +173,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
         root.children.addAll(groupRoot, noteRoot)
         this.setRoot(root)
+        root.isExpanded = true
         this.isFocusTraversable = false
-
-        this.setOnMouseClicked {
-            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
-            if (isUnderNoteRoot) {
-                val dateCreated = dateCreatedList[pos - 1]
-                model.updateSelection(dateCreated)
-            } else { // selection is not under "Notes"
-                // TODO
-            }
-        }
     }
 
     private fun getNoteRootIndex(): Int{
@@ -98,7 +228,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         val newNumOfNotes = noteRoot.children.size
         // A note is added or deleted in the Notes section
         if (newNumOfNotes != numOfNotes) {
-            val newIndex = dateCreatedList.indexOf(model.getCurrSelected().dateCreated)
+            val newIndex = dateCreatedList.indexOf(model.getCurrSelected()?.dateCreated)
             if (newIndex < 0) {
                 // not able to find currSelected in Model,
                 // then select nothing

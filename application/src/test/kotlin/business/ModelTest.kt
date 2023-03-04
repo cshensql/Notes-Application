@@ -64,8 +64,8 @@ class ModelTest {
         assert(model.addNote())
         // can not add multiple new note
         assert(!model.addNote())
-        assert(model.getCurrSelected().title == "New Note")
-        assert(model.getCurrSelected().body == "")
+        assert(model.getCurrSelected()?.title == "New Note")
+        assert(model.getCurrSelected()?.body == "")
     }
 
     @Test
@@ -137,15 +137,14 @@ class ModelTest {
     @Test
     fun getCurrSelected() {
         val note = model.getCurrSelected()
-        assert(note.title == "")
-        assert(note.body == "")
+        assert(note == null)
     }
 
     @Test
     fun updateSelection() {
         model.updateSelection("not possible")
         val note = model.getCurrSelected()
-        assert(note.title == "" && note.body == "")
+        assert(note == null)
         val new = Note()
         val id = new.dateCreated
         model.noteList[id] = new
@@ -155,29 +154,30 @@ class ModelTest {
 
         model.updateSelection(id)
         assert(
-            model.getCurrSelected().title == "New Note"
-                    && model.getCurrSelected().body == ""
+            model.getCurrSelected()?.title == "New Note"
+                    && model.getCurrSelected()?.body == ""
         )
 
         model.updateSelection(strange)
         assert(
-            model.getCurrSelected().title == "2"
-                    && model.getCurrSelected().body == ""
+            model.getCurrSelected()?.title == "2"
+                    && model.getCurrSelected()?.body == ""
         )
     }
 
     @Test
     fun changeSelectionContent() {
+        model.addNote()
         model.changeSelectionContent("new", "something")
         assert(
-            model.getCurrSelected().title == "new"
-                    && model.getCurrSelected().body == "something"
+            model.getCurrSelected()?.title == "new"
+                    && model.getCurrSelected()?.body == "something"
         )
 
         model.changeSelectionContent("", "")
         assert(
-            model.getCurrSelected().title == ""
-                    && model.getCurrSelected().body == ""
+            model.getCurrSelected()?.title == ""
+                    && model.getCurrSelected()?.body == ""
         )
     }
     // Group tests
@@ -245,5 +245,53 @@ class ModelTest {
         for (item in group1.noteList) {
             assert(item.groupName == renameGroupName)
         }
+    }
+
+    @Test
+    fun lockNoteFirstTime() {
+        // Arrange
+        model.addNote()
+        assert(model.getCurrSelected() != null)
+        assert(model.getCurrSelected()?.getPwd() == "")
+        assert(model.getCurrSelected()?.passwordHint == "")
+
+        // Act
+        model.lockNote("password", "hint")
+
+        // Assert
+        assert(model.getCurrSelected()?.getPwd() == "password")
+        assert(model.getCurrSelected()?.passwordHint == "hint")
+        assert(model.getCurrSelected()?.isLocked == true)
+    }
+
+    @Test
+    fun lockNoteNotForTheFirstTime() {
+        // Arrange
+        model.addNote()
+        model.lockNote("password", "hint")
+
+        // Act
+        model.getCurrSelected()?.isLocked = false
+        model.lockNote()
+
+        // Assert
+        assert(model.getCurrSelected()?.getPwd() == "password")
+        assert(model.getCurrSelected()?.passwordHint == "hint")
+        assert(model.getCurrSelected()?.isLocked == true)
+    }
+    @Test
+    fun unlockNote() {
+        // Arrange
+        model.addNote()
+        model.lockNote("password", "hint")
+        assert(model.getCurrSelected()?.isLocked == true)
+
+        // Act
+        model.unlockNote()
+
+        // Assert
+        assert(model.getCurrSelected()?.getPwd() == "password")
+        assert(model.getCurrSelected()?.passwordHint == "hint")
+        assert(model.getCurrSelected()?.isLocked == false)
     }
 }

@@ -8,8 +8,8 @@ class Note(
     var body: String = "",
     // flag
     var isRecentlyDeleted: Boolean = false,
-    var requiresPwd: Boolean = false,
     var isLocked: Boolean = false,
+    var passwordHint: String = "",
     var groupName: String = ""
 ) {
     private var pwd = ""
@@ -28,26 +28,7 @@ class Note(
 
     fun getPwd(): String = this.pwd
 
-    // return true when pwd successfully changed
-    fun changePwd(newPwd: String, verify: String = ""): Boolean{
-        if (!requiresPwd) {
-            pwd = newPwd
-            requiresPwd = true
-            return true
-        } else if (verify == pwd) {
-            pwd = newPwd
-            return true
-        }
-        return false
-    }
-
-    // return true when pwd is successfully removed
-    fun removePwd(verify: String): Boolean {
-        if (verify == pwd) {
-            pwd = ""
-            requiresPwd = false
-            return true
-        }
-        return false
+    fun setPwd(password: String) {
+        pwd = password
     }
 }

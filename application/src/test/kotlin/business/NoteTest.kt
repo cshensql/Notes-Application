@@ -54,30 +54,6 @@ class NoteTest {
         assert(note.getPwd() == "")
     }
 
-    @Test
-    fun changePwd() {
-        assert(!note.requiresPwd)
-        assert(note.changePwd("new password", ""))
-        assert(note.requiresPwd)
-        assert(note.changePwd("", "new password"))
-        assert(note.requiresPwd)
-        assert(!note.changePwd("this cannot the new password",
-            "verification fails!"))
-        assert(note.requiresPwd)
-        assert(note.changePwd("new", ""))
-        assert(note.requiresPwd)
-    }
-
-    @Test
-    fun removePwd() {
-        assert(note.removePwd(""))
-        assert(note.getPwd() == "")
-        assert(!note.requiresPwd)
-        assert(note.changePwd("new password", ""))
-        assert(note.removePwd("new password"))
-        assert(note.getPwd() == "")
-        assert(!note.requiresPwd)
-    }
 
     @Test
     fun getTitle() {
@@ -114,17 +90,6 @@ class NoteTest {
     fun setRecentlyDeleted() {
         note.isRecentlyDeleted = true
         assert(note.isRecentlyDeleted)
-    }
-
-    @Test
-    fun getRequiresPwd() {
-        assert(!note.requiresPwd)
-    }
-
-    @Test
-    fun setRequiresPwd() {
-        note.requiresPwd = true
-        assert(note.requiresPwd)
     }
 
     @Test
