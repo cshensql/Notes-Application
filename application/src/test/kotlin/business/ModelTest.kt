@@ -164,50 +164,67 @@ class ModelTest {
     }
 
     @Test
-    fun updateSelection() {
-        model.updateSelection("not possible")
-        val note = model.getCurrSelectedNote()
-        assert(note == null)
-        val new = Note()
-        val id = new.dateCreated
-        model.noteList[id] = new
-        val strange = "strange key value"
-        val new1 = Note("2")
-        model.noteList[strange] = new1
-
+    fun updateSelectionForInvalidInputs() {
+        model.addNote()
         model.addGroup("Group 1")
 
         // try invalid inputs
-        model.updateSelection(id, 1)
+        model.updateSelection(selectedGroupIndex = 1)
         model.updateSelection("Not possible")
         model.updateSelection(indices = Pair(1,1))
-        // selection is at the newly added group
-        assert(model.getCurrSelectedGroupIndex() == 0)
-        assert(model.getCurrSelectedNote() == null)
-        // select a note
-        model.updateSelection(id)
-        assert(
-            model.getCurrSelectedGroupIndex() == -1
-                    && model.getCurrSelectedNote() == new
-        )
-        // modify the note so it is not a new note
-        model.getCurrSelectedNote()?.title = "Note 1"
 
-        // select a group
+        assert(model.getCurrSelectedGroupIndex() == 0)
+    }
+    @Test
+    fun updateSelectionWhenSelectingNote() {
+        // manually add a note
+        val note = Note("Note")
+        model.noteList["note1"] = note
+        // add a new note
+        model.addNote()
+        assert(model.getCurrSelectedNote()?.title == "New Note"
+                && model.getCurrSelectedNote()?.body == "")
+
+        model.updateSelection("note1")
+
+        assert(model.getCurrSelectedNote()?.title == "Note"
+                && model.getCurrSelectedNote()?.body == "")
+    }
+
+    @Test
+    fun updateSelectionWhenSelectingGroup() {
+        model.addGroup("Group1")
+        model.addGroup("Group2")
+
         model.updateSelection("", 0)
         assert(
             model.getCurrSelectedGroupIndex() == 0
                     && model.getCurrSelectedNote() == null
         )
+        model.updateSelection("", 1)
+        assert(
+            model.getCurrSelectedGroupIndex() == 1
+                    && model.getCurrSelectedNote() == null
+        )
+    }
 
-        // select a note under a group
+    @Test
+    fun updateSelectionWhenSelectingNoteUnderGroup() {
+        model.addGroup("Group1")
         assert(model.addNoteUnderGroup())
+        // manually add a second note
+        model.groupList[0].noteList.add(Note("note"))
+
         model.updateSelection("", -1, Pair(0,0))
         assert(model.getCurrSelectedNote()?.title == "New Note"
                 && model.getCurrSelectedNote()?.body == ""
                 && model.getCurrSelectedGroupIndex() == 0)
-    }
 
+        model.updateSelection(indices = Pair(0,1))
+        assert(model.getCurrSelectedNote()?.title == "note"
+                && model.getCurrSelectedNote()?.body == ""
+                && model.getCurrSelectedGroupIndex() == 0)
+    }
     @Test
     fun changeSelectionContent() {
         model.addNote()

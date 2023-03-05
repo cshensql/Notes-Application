@@ -108,14 +108,18 @@ class Model {
     fun getCurrSelectedGroupIndex() = currSelectedGroupIndex
 
     // The user needs to input only one of the following:
-    // dateCreated: to select a note under Notes
-    // selectedGroupIndex: to select a group
-    // indices: to select a note under Groups
+    // dateCreated (String): to select a note under Notes
+    // selectedGroupIndex (Int): to select a group
+    // indices (Pair<Int, Int>): to select a note under Groups
+    //  indices.first: index of the group inside groupList
+    //  indices.second: index of the note in the group
+    //      (i.e., index in groupList[indices.first].noteList)
     // If no arguments given, select nothing
     // If inputs are invalid, keep the current selection
     fun updateSelection(
         dateCreated: String = "",
         selectedGroupIndex: Int = -1,
+        // default values set to Pair(-1,-1) meaning empty selection
         indices: Pair<Int, Int> = Pair(-1, -1)
     ) {
         if (dateCreated == "" && selectedGroupIndex == -1 && indices == Pair(-1,-1)){
