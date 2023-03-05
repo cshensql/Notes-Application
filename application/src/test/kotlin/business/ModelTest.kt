@@ -64,8 +64,28 @@ class ModelTest {
         assert(model.addNote())
         // can not add multiple new note
         assert(!model.addNote())
-        assert(model.getCurrSelected()?.title == "New Note")
-        assert(model.getCurrSelected()?.body == "")
+        assert(model.getCurrSelectedNote()?.title == "New Note")
+        assert(model.getCurrSelectedNote()?.body == "")
+        assert(model.getCurrSelectedGroupIndex() == -1)
+    }
+
+    @Test
+    fun addNoteUnderGroup() {
+        assert(!model.addNoteUnderGroup())
+        // Add two groups
+        model.addGroup("Group 1")
+        model.addGroup("Group 2")
+        // Add a new note under Group 2
+        assert(model.addNoteUnderGroup())
+        // Cannot add another new note
+        assert(!model.addNoteUnderGroup())
+        assert(model.groupList[1].noteList[0].title == "New Note")
+        // Modify the note just added
+        model.getCurrSelectedNote()?.title = "new title"
+        // Select Group 1
+        model.updateSelection(selectedGroupIndex = 0)
+        // Add a new note under Group 1
+        assert(model.addNoteUnderGroup())
     }
 
     @Test
@@ -136,50 +156,91 @@ class ModelTest {
 
     @Test
     fun getCurrSelected() {
-        val note = model.getCurrSelected()
+        val note = model.getCurrSelectedNote()
         assert(note == null)
+
+        val groupIndex = model.getCurrSelectedGroupIndex()
+        assert(groupIndex == -1)
     }
 
     @Test
-    fun updateSelection() {
-        model.updateSelection("not possible")
-        val note = model.getCurrSelected()
-        assert(note == null)
-        val new = Note()
-        val id = new.dateCreated
-        model.noteList[id] = new
-        val strange = "strange key value"
-        val new1 = Note("2")
-        model.noteList[strange] = new1
+    fun updateSelectionForInvalidInputs() {
+        model.addNote()
+        model.addGroup("Group 1")
 
-        model.updateSelection(id)
+        // try invalid inputs
+        model.updateSelection(selectedGroupIndex = 1)
+        model.updateSelection("Not possible")
+        model.updateSelection(indices = Pair(1,1))
+
+        assert(model.getCurrSelectedGroupIndex() == 0)
+    }
+    @Test
+    fun updateSelectionWhenSelectingNote() {
+        // manually add a note
+        val note = Note("Note")
+        model.noteList["note1"] = note
+        // add a new note
+        model.addNote()
+        assert(model.getCurrSelectedNote()?.title == "New Note"
+                && model.getCurrSelectedNote()?.body == "")
+
+        model.updateSelection("note1")
+
+        assert(model.getCurrSelectedNote()?.title == "Note"
+                && model.getCurrSelectedNote()?.body == "")
+    }
+
+    @Test
+    fun updateSelectionWhenSelectingGroup() {
+        model.addGroup("Group1")
+        model.addGroup("Group2")
+
+        model.updateSelection("", 0)
         assert(
-            model.getCurrSelected()?.title == "New Note"
-                    && model.getCurrSelected()?.body == ""
+            model.getCurrSelectedGroupIndex() == 0
+                    && model.getCurrSelectedNote() == null
         )
-
-        model.updateSelection(strange)
+        model.updateSelection("", 1)
         assert(
-            model.getCurrSelected()?.title == "2"
-                    && model.getCurrSelected()?.body == ""
+            model.getCurrSelectedGroupIndex() == 1
+                    && model.getCurrSelectedNote() == null
         )
     }
 
+    @Test
+    fun updateSelectionWhenSelectingNoteUnderGroup() {
+        model.addGroup("Group1")
+        assert(model.addNoteUnderGroup())
+        // manually add a second note
+        model.groupList[0].noteList.add(Note("note"))
+
+        model.updateSelection("", -1, Pair(0,0))
+        assert(model.getCurrSelectedNote()?.title == "New Note"
+                && model.getCurrSelectedNote()?.body == ""
+                && model.getCurrSelectedGroupIndex() == 0)
+
+        model.updateSelection(indices = Pair(0,1))
+        assert(model.getCurrSelectedNote()?.title == "note"
+                && model.getCurrSelectedNote()?.body == ""
+                && model.getCurrSelectedGroupIndex() == 0)
+    }
     @Test
     fun changeSelectionContent() {
         model.addNote()
         model.changeSelectionContent("new", "something")
         assert(
-            model.getCurrSelected()?.title == "new"
-                    && model.getCurrSelected()?.body == "something"
+            model.getCurrSelectedNote()?.title == "new"
+                    && model.getCurrSelectedNote()?.body == "something"
         )
 
         model.changeSelectionContent("", "")
         assert(
-            model.getCurrSelected()?.title == ""
-                    && model.getCurrSelected()?.body == ""
+            model.getCurrSelectedNote()?.title == ""
+                    && model.getCurrSelectedNote()?.body == ""
         )
     }
+
     // Group tests
     @Test
     fun addGroup() {
@@ -187,6 +248,7 @@ class ModelTest {
         val expectedGroup = Group(newGroupName)
         model.addGroup(newGroupName)
         assert(model.groupList.contains(expectedGroup))
+        assert(model.getCurrSelectedNote() == null && model.getCurrSelectedGroupIndex() == 0)
     }
 
     @Test
@@ -209,6 +271,7 @@ class ModelTest {
         groupListToDelete.add(expectedGroup3)
         model.deleteGroup(groupListToDelete)
         assert(model.groupList.isEmpty())
+        assert(model.getCurrSelectedGroupIndex() == -1 && model.getCurrSelectedNote() == null)
     }
 
     @Test
@@ -235,12 +298,12 @@ class ModelTest {
         note2.groupName = newGroupName1
         val group1 = Group()
         group1.name = newGroupName1
-        group1.noteList = mutableListOf<Note>(note1,note2)
+        group1.noteList = mutableListOf<Note>(note1, note2)
         val group2 = Group()
         group2.name = newGroupName2
         model.groupList.add(group1)
         model.groupList.add(group2)
-        model.renameGroup(renameGroupName,group1)
+        model.renameGroup(renameGroupName, group1)
         assert(group1.name == renameGroupName)
         for (item in group1.noteList) {
             assert(item.groupName == renameGroupName)
@@ -251,17 +314,17 @@ class ModelTest {
     fun lockNoteFirstTime() {
         // Arrange
         model.addNote()
-        assert(model.getCurrSelected() != null)
-        assert(model.getCurrSelected()?.getPwd() == "")
-        assert(model.getCurrSelected()?.passwordHint == "")
+        assert(model.getCurrSelectedNote() != null)
+        assert(model.getCurrSelectedNote()?.getPwd() == "")
+        assert(model.getCurrSelectedNote()?.passwordHint == "")
 
         // Act
         model.lockNote("password", "hint")
 
         // Assert
-        assert(model.getCurrSelected()?.getPwd() == "password")
-        assert(model.getCurrSelected()?.passwordHint == "hint")
-        assert(model.getCurrSelected()?.isLocked == true)
+        assert(model.getCurrSelectedNote()?.getPwd() == "password")
+        assert(model.getCurrSelectedNote()?.passwordHint == "hint")
+        assert(model.getCurrSelectedNote()?.isLocked == true)
     }
 
     @Test
@@ -271,27 +334,28 @@ class ModelTest {
         model.lockNote("password", "hint")
 
         // Act
-        model.getCurrSelected()?.isLocked = false
+        model.getCurrSelectedNote()?.isLocked = false
         model.lockNote()
 
         // Assert
-        assert(model.getCurrSelected()?.getPwd() == "password")
-        assert(model.getCurrSelected()?.passwordHint == "hint")
-        assert(model.getCurrSelected()?.isLocked == true)
+        assert(model.getCurrSelectedNote()?.getPwd() == "password")
+        assert(model.getCurrSelectedNote()?.passwordHint == "hint")
+        assert(model.getCurrSelectedNote()?.isLocked == true)
     }
+
     @Test
     fun unlockNote() {
         // Arrange
         model.addNote()
         model.lockNote("password", "hint")
-        assert(model.getCurrSelected()?.isLocked == true)
+        assert(model.getCurrSelectedNote()?.isLocked == true)
 
         // Act
         model.unlockNote()
 
         // Assert
-        assert(model.getCurrSelected()?.getPwd() == "password")
-        assert(model.getCurrSelected()?.passwordHint == "hint")
-        assert(model.getCurrSelected()?.isLocked == false)
+        assert(model.getCurrSelectedNote()?.getPwd() == "password")
+        assert(model.getCurrSelectedNote()?.passwordHint == "hint")
+        assert(model.getCurrSelectedNote()?.isLocked == false)
     }
 }
