@@ -79,6 +79,7 @@ class ModelTest {
         assert(model.addNoteUnderGroup())
         // Cannot add another new note
         assert(!model.addNoteUnderGroup())
+        assert(model.groupList[1].noteList[0].title == "New Note")
         // Modify the note just added
         model.getCurrSelectedNote()?.title = "new title"
         // Select Group 1

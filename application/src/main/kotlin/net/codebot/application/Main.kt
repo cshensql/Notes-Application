@@ -22,7 +22,7 @@ class Main : Application() {
 
         // create model
         val model = Model()
-
+val something = "something"
 
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen

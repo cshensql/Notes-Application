@@ -70,6 +70,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
             if (!isAdded) {
                 val alert = WarningAlertView("Duplicate New Note",
                     "There is an empty note already, new note not created")
+                alert.present()
             }
         }
 

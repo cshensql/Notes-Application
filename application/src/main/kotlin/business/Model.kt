@@ -78,7 +78,7 @@ class Model {
     }
 
     fun deleteNote(dateCreatedList: MutableList<String>) {
-        val selectedNote = currSelectedNote?.dateCreated ?: null
+        val selectedNote = currSelectedNote?.dateCreated
         dateCreatedList.forEach {
             if (noteList.containsKey(it)) {
                 // make currSelected field points to an empty note if removed
@@ -108,41 +108,41 @@ class Model {
     fun getCurrSelectedNote() = currSelectedNote
     fun getCurrSelectedGroupIndex() = currSelectedGroupIndex
 
-    // The user needs to input either dateCreated to select a note,
-    // or selectedGroupIndex to select a group.
+    // The user needs to input only one of the following:
+    // dateCreated: to select a note under Notes
+    // selectedGroupIndex: to select a group
+    // indices: to select a note under Groups
     // If inputs are invalid, do nothing
-    fun updateSelection(dateCreated: String = "", selectedGroupIndex: Int = -1) {
+    fun updateSelection(
+        dateCreated: String = "",
+        selectedGroupIndex: Int = -1,
+        indices: Pair<Int, Int> = Pair(-1, -1)
+    ) {
         // Check if a user tries to select a group
         if (selectedGroupIndex >= 0) {
             // change selection only if the inputs are valid
-            if (selectedGroupIndex < groupList.size && dateCreated == "") {
+            if (selectedGroupIndex < groupList.size && dateCreated == "" && indices == Pair(-1, -1)) {
                 currSelectedNote = null
                 currSelectedGroupIndex = selectedGroupIndex
                 notifyViews()
             }
+        } else if (indices != Pair(-1, -1)) {
+            // if indices are given, the note is under groups
+            val (groupIndex, noteIndex) = indices
+            // make sure the inputs are valid
+            if (dateCreated == "" && groupIndex < groupList.size
+                && noteIndex < groupList[groupIndex].noteList.size) {
+                currSelectedNote = groupList[groupIndex].noteList[noteIndex]
+                currSelectedGroupIndex = -1
+            }
         } else {
-            // selectedGroupIndex < 0: The user tries to select a note
+            // groupIndex and indices are not given, then note is under Notes
             val newSelection = noteList[dateCreated]
             if (newSelection != null) {
                 // newSelection is inside noteList
                 currSelectedNote = newSelection
                 currSelectedGroupIndex = -1
                 notifyViews()
-            } else {
-                // newSelection is inside groupList or not valid
-                var found = false
-                for (group in groupList) {
-                    for (note in group.noteList) {
-                        if (note.dateCreated == dateCreated) {
-                            currSelectedNote = note
-                            currSelectedGroupIndex = -1
-                            found = true
-                            break
-                        }
-                        if (found) break
-                    }
-                }
-                if (found) notifyViews()
             }
         }
     }
