@@ -69,7 +69,6 @@ class Model {
 
             // update currSelectedNote
             currSelectedNote = newNote
-            currSelectedGroupIndex = -1
 
             isAdded = true
             notifyViews()
@@ -140,7 +139,8 @@ class Model {
             if (dateCreated == "" && groupIndex < groupList.size
                 && noteIndex < groupList[groupIndex].noteList.size) {
                 currSelectedNote = groupList[groupIndex].noteList[noteIndex]
-                currSelectedGroupIndex = -1
+                currSelectedGroupIndex = groupIndex
+                notifyViews()
             }
         } else {
             // groupIndex and indices are not given, then note is under Notes
