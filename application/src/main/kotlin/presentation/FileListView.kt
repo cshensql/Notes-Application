@@ -163,23 +163,22 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 val dateCreated = dateCreatedList[pos - 1]
                 model.updateSelection(dateCreated)
             } else { // selection is not under "Notes"
-                // TODO
-                // Temporary; will add more in later section
-                // TODO: Use if the note has a child and whether it is a group name to decide
-                // TODO: We can use the group name to help locate the note and get the date created
                 val selectedItem = this.selectionModel.selectedItem
-                val parentItem = selectedItem.parent
+                val parentItem = selectedItem?.parent
                 // The selectedItem is a group
                 if (parentItem == groupRoot) {
                     val groupIndex = parentItem.children.indexOf(selectedItem)
                     model.updateSelection(selectedGroupIndex = groupIndex)
-                } else if (parentItem.parent == groupRoot) {
+                } else if (parentItem?.parent == groupRoot) {
                     // The selectedItem is a note under a group
                     val groupIndex = parentItem.parent.children.indexOf(parentItem)
                     val noteIndex = parentItem.children.indexOf(selectedItem)
                     model.updateSelection(indices = Pair(groupIndex, noteIndex))
+                } else {
+                    // The selectedItem is null or one of "Categories", "Groups" and "Notes"
+                    // Select nothing by giving no arguments to updateSelection
+                    model.updateSelection()
                 }
-                model.updateSelection("")
             }
         }
     }

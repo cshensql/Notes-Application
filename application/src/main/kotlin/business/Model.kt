@@ -112,14 +112,21 @@ class Model {
     // dateCreated: to select a note under Notes
     // selectedGroupIndex: to select a group
     // indices: to select a note under Groups
-    // If inputs are invalid, do nothing
+    // If no arguments given, select nothing
+    // If inputs are invalid, keep the current selection
     fun updateSelection(
         dateCreated: String = "",
         selectedGroupIndex: Int = -1,
         indices: Pair<Int, Int> = Pair(-1, -1)
     ) {
+        if (dateCreated == "" && selectedGroupIndex == -1 && indices == Pair(-1,-1)){
+            // no arguments given, select nothing
+            currSelectedNote = null
+            currSelectedGroupIndex = -1
+            notifyViews()
+        }
         // Check if a user tries to select a group
-        if (selectedGroupIndex >= 0) {
+        else if (selectedGroupIndex >= 0) {
             // change selection only if the inputs are valid
             if (selectedGroupIndex < groupList.size && dateCreated == "" && indices == Pair(-1, -1)) {
                 currSelectedNote = null
