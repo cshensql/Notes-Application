@@ -1,7 +1,5 @@
 package business
 
-import javafx.scene.control.Alert
-import javafx.scene.control.TextInputDialog
 import presentation.IView
 
 class Model {
@@ -10,29 +8,73 @@ class Model {
     val noteList = mutableMapOf<String, Note>()
     val groupList = mutableListOf<Group>()
     private var currSelectedNote: Note? = null
+    private var currSelectedGroupIndex: Int = -1
 
     // note specific functions
-    fun addNote() : Boolean {
-        val newNote = Note()
+
+    // Check if a new note is already created
+    private fun containsNewNote(): Boolean {
         var containsNewNote = false
-        var isAdded = false
-        noteList.forEach {
-            if (it.value.title == "New Note" && it.value.body == "") {
-                // a new note has already been created
-                containsNewNote = true
+
+        // check if there is a new note under groups
+        for (group in groupList) {
+            for (note in group.noteList) {
+                if (note.title == "New Note" && note.body == "") {
+                    containsNewNote = true
+                    break
+                }
+            }
+            if (containsNewNote) break
+        }
+        if (containsNewNote) return true
+        else {
+            // check if there is a new note in noteList
+            for (entry in noteList) {
+                val note = entry.value
+                if (note.title == "New Note" && note.body == "") {
+                    containsNewNote = true
+                    break
+                }
             }
         }
-        if (!containsNewNote) {
+        return containsNewNote
+    }
+
+    // Add a new note inside noteList
+    fun addNote(): Boolean {
+        var isAdded = false
+        if (!containsNewNote()) {
+            val newNote = Note()
             noteList[newNote.dateCreated] = newNote
+
+            // update selection to newNote
             currSelectedNote = newNote
+            currSelectedGroupIndex = -1
+
             isAdded = true
             notifyViews()
         }
         return isAdded
     }
 
-    fun addNoteUnderGroup() {
-        // TODO
+    // Add a new note under currently selected group
+    fun addNoteUnderGroup(): Boolean {
+        var isAdded = false
+        if (!containsNewNote() && currSelectedGroupIndex != -1) {
+            val newNote = Note()
+            val group = groupList[currSelectedGroupIndex]
+            // modify groupName field of the new note and add it to the group
+            newNote.groupName = group.name
+            group.noteList.add(newNote)
+
+            // update currSelectedNote
+            currSelectedNote = newNote
+            currSelectedGroupIndex = -1
+
+            isAdded = true
+            notifyViews()
+        }
+        return isAdded
     }
 
     fun deleteNote(dateCreatedList: MutableList<String>) {
@@ -63,16 +105,45 @@ class Model {
         notifyViews()
     }
 
-    fun getCurrSelected() = currSelectedNote
+    fun getCurrSelectedNote() = currSelectedNote
+    fun getCurrSelectedGroupIndex() = currSelectedGroupIndex
 
-    fun updateSelection(dateCreated: String) {
-        val newSelection = noteList[dateCreated]
-        if (newSelection != null) {
-            currSelectedNote = newSelection
-            notifyViews()
+    // The user needs to input either dateCreated to select a note,
+    // or selectedGroupIndex to select a group.
+    // If inputs are invalid, do nothing
+    fun updateSelection(dateCreated: String = "", selectedGroupIndex: Int = -1) {
+        // Check if a user tries to select a group
+        if (selectedGroupIndex >= 0) {
+            // change selection only if the inputs are valid
+            if (selectedGroupIndex < groupList.size && dateCreated == "") {
+                currSelectedNote = null
+                currSelectedGroupIndex = selectedGroupIndex
+                notifyViews()
+            }
         } else {
-            currSelectedNote = null
-            notifyViews()
+            // selectedGroupIndex < 0: The user tries to select a note
+            val newSelection = noteList[dateCreated]
+            if (newSelection != null) {
+                // newSelection is inside noteList
+                currSelectedNote = newSelection
+                currSelectedGroupIndex = -1
+                notifyViews()
+            } else {
+                // newSelection is inside groupList or not valid
+                var found = false
+                for (group in groupList) {
+                    for (note in group.noteList) {
+                        if (note.dateCreated == dateCreated) {
+                            currSelectedNote = note
+                            currSelectedGroupIndex = -1
+                            found = true
+                            break
+                        }
+                        if (found) break
+                    }
+                }
+                if (found) notifyViews()
+            }
         }
     }
 
@@ -83,16 +154,34 @@ class Model {
     }
 
     // group specific functions
-    fun addGroup(groupName:String) {
+    fun addGroup(groupName: String) {
         val newGroup = Group()
         newGroup.name = groupName
         groupList.add(newGroup)
+
+        // update selection to the newGroup
+        currSelectedNote = null
+        currSelectedGroupIndex = groupList.size - 1
+
         notifyViews()
     }
 
-    fun deleteGroup(groupSelectedList: MutableList<Group>){
+    fun deleteGroup(groupSelectedList: MutableList<Group>) {
+        // Need to check if currently selected group is removed
+        val currSelectedGroup =
+            if (currSelectedGroupIndex >= 0) groupList[currSelectedGroupIndex]
+            else null
         for (entry in groupSelectedList) {
             groupList.remove(entry)
+        }
+
+        // check if initially a group is selected
+        if (currSelectedGroupIndex >= 0) {
+            // If the selected group is removed, index changes to -1
+            // otherwise, get the new index
+            currSelectedGroupIndex =
+                if (currSelectedGroup == null) -1
+                else groupList.indexOf(currSelectedGroup)
         }
         notifyViews()
     }

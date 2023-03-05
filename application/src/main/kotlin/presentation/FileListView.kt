@@ -1,7 +1,6 @@
 package presentation
 
 import business.Model
-import javafx.beans.binding.Bindings
 import javafx.geometry.Pos
 import javafx.scene.control.*
 
@@ -32,7 +31,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     }
 
     fun unlockNote() {
-        val currSelectedNote = model.getCurrSelected()
+        val currSelectedNote = model.getCurrSelectedNote()
         if (currSelectedNote == null) return
         val passwordHint = currSelectedNote.passwordHint
         val correctPassword = currSelectedNote.getPwd()
@@ -54,8 +53,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
     }
     fun lockNote() {
-        val possiblePassword = model.getCurrSelected()?.getPwd() ?: ""
-        if (model.getCurrSelected() != null && possiblePassword.isNotEmpty()) {
+        val possiblePassword = model.getCurrSelectedNote()?.getPwd() ?: ""
+        if (model.getCurrSelectedNote() != null && possiblePassword.isNotEmpty()) {
             model.lockNote()
         } else {
             val lockNoteView = LockNoteView()
@@ -91,7 +90,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
                 this.contextMenu.hide()
             } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
-                val currSelectedNote = model.getCurrSelected()
+                val currSelectedNote = model.getCurrSelectedNote()
                 val noteIsLocked = currSelectedNote?.isLocked ?: false
                 contextMenu.items.clear()
                 if (noteIsLocked) {
@@ -228,7 +227,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         val newNumOfNotes = noteRoot.children.size
         // A note is added or deleted in the Notes section
         if (newNumOfNotes != numOfNotes) {
-            val newIndex = dateCreatedList.indexOf(model.getCurrSelected()?.dateCreated)
+            val newIndex = dateCreatedList.indexOf(model.getCurrSelectedNote()?.dateCreated)
             if (newIndex < 0) {
                 // not able to find currSelected in Model,
                 // then select nothing

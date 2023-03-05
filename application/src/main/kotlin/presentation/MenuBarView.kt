@@ -1,6 +1,5 @@
 package presentation
 
-import business.Group
 import business.Model
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
@@ -65,7 +64,9 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         // Set actions for each submenu item
 
         addNote.setOnAction {
-            val isAdded =  model.addNote()
+            val isAdded  =
+                if (model.getCurrSelectedGroupIndex() >= 0) model.addNoteUnderGroup()
+                else model.addNote()
             if (!isAdded) {
                 val alert = Alert(AlertType.WARNING,
                     "There is an empty note already, new note not created")
@@ -207,7 +208,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     }
 
     override fun updateView() {
-        val currSelectedNote = model.getCurrSelected()
+        val currSelectedNote = model.getCurrSelectedNote()
         if (currSelectedNote != null) {
             val isLocked = currSelectedNote?.isLocked ?: false
             if (isLocked) {

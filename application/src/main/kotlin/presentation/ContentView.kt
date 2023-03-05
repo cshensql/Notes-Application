@@ -33,9 +33,9 @@ class ContentView(private val model: Model) : IView, VBox() {
             val doc = Jsoup.parse(body)
             val title = doc.body().firstElementChild()?.text()
             // update the lastModified field of the selected note
-            model.getCurrSelected()?.updateModified()
+            model.getCurrSelectedNote()?.updateModified()
             model.changeSelectionContent(
-                title ?: model.getCurrSelected()?.title ?: "",
+                title ?: model.getCurrSelectedNote()?.title ?: "",
                 body
             )
         }
@@ -47,12 +47,12 @@ class ContentView(private val model: Model) : IView, VBox() {
     }
 
     override fun updateView() {
-        val currSelectedNote = model.getCurrSelected()
+        val currSelectedNote = model.getCurrSelectedNote()
         if (currSelectedNote != null) {
             if (currSelectedNote.isLocked) {
                 htmlEditor.htmlText = "This note is locked. Please unlock it first by right-clicking this note in the file list"
             } else  {
-                htmlEditor.htmlText = model.getCurrSelected()?.body ?: ""
+                htmlEditor.htmlText = model.getCurrSelectedNote()?.body ?: ""
             }
         } else {
             htmlEditor.htmlText = ""
