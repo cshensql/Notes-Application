@@ -68,9 +68,8 @@ class MenuBarView(model: Model) : IView, MenuBar() {
                 if (model.getCurrSelectedGroupIndex() >= 0) model.addNoteUnderGroup()
                 else model.addNote()
             if (!isAdded) {
-                val alert = Alert(AlertType.WARNING,
+                val alert = WarningAlertView("Duplicate New Note",
                     "There is an empty note already, new note not created")
-                alert.show()
             }
         }
 
