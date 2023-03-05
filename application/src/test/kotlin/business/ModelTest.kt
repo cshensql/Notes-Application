@@ -175,36 +175,37 @@ class ModelTest {
         val new1 = Note("2")
         model.noteList[strange] = new1
 
-        model.updateSelection(id)
-        assert(
-            model.getCurrSelectedNote()?.title == "New Note"
-                    && model.getCurrSelectedNote()?.body == ""
-        )
-
-        model.updateSelection(strange)
-        assert(
-            model.getCurrSelectedNote()?.title == "2"
-                    && model.getCurrSelectedNote()?.body == ""
-        )
-
         model.addGroup("Group 1")
+
         // try invalid inputs
         model.updateSelection(id, 1)
-        model.updateSelection(strange, 0)
+        model.updateSelection("Not possible")
+        model.updateSelection(indices = Pair(1,1))
         // selection is at the newly added group
         assert(model.getCurrSelectedGroupIndex() == 0)
         assert(model.getCurrSelectedNote() == null)
-
-        model.updateSelection(id, -1)
+        // select a note
+        model.updateSelection(id)
         assert(
             model.getCurrSelectedGroupIndex() == -1
                     && model.getCurrSelectedNote() == new
         )
+        // modify the note so it is not a new note
+        model.getCurrSelectedNote()?.title = "Note 1"
+
+        // select a group
         model.updateSelection("", 0)
         assert(
             model.getCurrSelectedGroupIndex() == 0
                     && model.getCurrSelectedNote() == null
         )
+
+        // select a note under a group
+        assert(model.addNoteUnderGroup())
+        model.updateSelection("", -1, Pair(0,0))
+        assert(model.getCurrSelectedNote()?.title == "New Note"
+                && model.getCurrSelectedNote()?.body == ""
+                && model.getCurrSelectedGroupIndex() == 0)
     }
 
     @Test
