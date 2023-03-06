@@ -1,5 +1,7 @@
 package business
+import kotlinx.serialization.*
 
+@Serializable
 data class WindowConfig (
     var positionX: Double,
     var positionY: Double,

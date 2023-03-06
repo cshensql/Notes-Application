@@ -1,8 +1,10 @@
 package business
 
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@Serializable
 class Note(
     var title: String = "New Note",
     var body: String = "",

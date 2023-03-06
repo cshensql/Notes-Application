@@ -6,5 +6,8 @@ module application {
     requires kotlinx.coroutines.core.jvm;
     requires shared;
     requires org.jsoup;
+    requires kotlinx.serialization.core;
+    requires kotlinx.serialization.json;
+    exports business;
     exports net.codebot.application;
 }
