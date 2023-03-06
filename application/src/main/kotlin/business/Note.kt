@@ -1,9 +1,8 @@
 package business
 
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 
 @Serializable
 class Note(

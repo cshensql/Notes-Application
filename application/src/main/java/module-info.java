@@ -8,5 +8,6 @@ module application {
     requires org.jsoup;
     requires kotlinx.serialization.core;
     requires kotlinx.serialization.json;
+    exports business;
     exports net.codebot.application;
 }
