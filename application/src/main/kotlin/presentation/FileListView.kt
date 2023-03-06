@@ -302,9 +302,9 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                 this.selectionModel.select(selectedIndex)
             } else if (selectedItem.parent == root) {
                 // selection is "Notes"
-                this.selectionModel.select(getNoteRootIndex())
+                this.selectionModel.select(noteRoot)
             } else {
-                this.selectionModel.select(-1)
+                this.selectionModel.select(index)
             }
         } else {
             this.selectionModel.select(index)
