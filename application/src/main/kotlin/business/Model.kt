@@ -179,21 +179,29 @@ class Model {
 
     fun deleteGroup(groupSelectedList: MutableList<Group>) {
         // Need to check if currently selected group is removed
-        val currSelectedGroup =
-            if (currSelectedGroupIndex >= 0) groupList[currSelectedGroupIndex]
-            else null
+        val currGroupName =
+            if (currSelectedGroupIndex >= 0) groupList[currSelectedGroupIndex].name
+            else ""
+        var removed = false
         for (entry in groupSelectedList) {
             groupList.remove(entry)
+
+            if (entry.name == currGroupName) {
+                currSelectedGroupIndex = -1
+                if (currSelectedNote != null) currSelectedNote = null
+                removed = true
+            }
         }
 
-        // check if initially a group is selected
-        if (currSelectedGroupIndex >= 0) {
-            // If the selected group is removed, index changes to -1
-            // otherwise, get the new index
-            currSelectedGroupIndex =
-                if (currSelectedGroup == null) -1
-                else groupList.indexOf(currSelectedGroup)
+        if (!removed) {
+            for (i in 0 until groupList.size) {
+                if (groupList[i].name == currGroupName) {
+                    currSelectedGroupIndex = i
+                    break
+                }
+            }
         }
+
         notifyViews()
     }
 

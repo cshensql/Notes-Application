@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import java.util.*
+import kotlin.collections.HashMap
 
 class FileListView(model: Model) : IView, TreeView<String>() {
     private val model = model
@@ -21,6 +22,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
+    // list of group names to track the groups inside groupList in model
+    private val groupNameList = mutableListOf<String>()
 
     private val MAX_CHAR_SHOWN: Int = 15
 
@@ -223,15 +226,53 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         else name
     }
 
+    private fun getCurrSelectedIndex():Int {
+        val groupIndex = model.getCurrSelectedGroupIndex()
+        val dateCreated = model.getCurrSelectedNote()?.dateCreated
+        var index = 1 // start counting from "Groups"
+        if (groupIndex >= 0) {
+            // adding all the previous groups and notes
+            // until reached the selected group
+            for (i in 0 until groupIndex) {
+                index += 1
+                if (groupRoot.children[i].isExpanded){
+                    index += groupRoot.children[i].children.size
+                }
+            }
+            index += 1 // select the group at groupIndex
+            if (dateCreated != null) {
+                // current selection is a note under a group
+                groupRoot.children[groupIndex].isExpanded = true
+                for (note in model.groupList[groupIndex].noteList){
+                    index += 1
+                    if (note.dateCreated == dateCreated) break
+                }
+            }
+        } else {
+            // groupIndex < 0 meaning no group is selected
+            index =
+                // set index = -1 meaning in model, nothing is selected
+                if (dateCreated == null) -1
+                // current selection is a note under Notes
+                else getNoteRootIndex() + dateCreatedList.indexOf(dateCreated) + 1
+        }
+        return index
+    }
     override fun updateView() {
+        // store the selectedIndex and selectedItem before removing treeItems
         val selectedIndex = this.selectionModel.selectedIndex
-        val numOfNotes = noteRoot.children.size
-        // position of the current selection relative to noteRoot
-        val posToNoteRoot = selectedIndex - getNoteRootIndex()
+        val selectedItem = this.selectionModel.selectedItem
+
+        // store isExpanded field for each groupItem in a hashmap
+        val isExpandedMap = HashMap<String, Boolean>()
+        for(i in 0 until groupRoot.children.size){
+            isExpandedMap[groupNameList[i]]= groupRoot.children[i].isExpanded
+        }
         // remove all current content
         groupRoot.children.clear()
         noteRoot.children.clear()
         dateCreatedList.clear()
+        groupNameList.clear()
 
         for (note in model.noteList) {
             val titleShown = getValidName(note.value.title)
@@ -241,9 +282,10 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
 
         for (group in model.groupList) {
+            groupNameList.add(group.name)
             val nameShown = getValidName(group.name)
             val groupItem = TreeItem(nameShown)
-            groupItem.isExpanded = true
+            groupItem.isExpanded = isExpandedMap[group.name] ?: false
             for (note in group.noteList) {
                 val titleShown = getValidName(note.title)
                 groupItem.children.add(TreeItem(titleShown))
@@ -251,23 +293,22 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             groupRoot.children.add(groupItem)
         }
 
-        val newNumOfNotes = noteRoot.children.size
-        // A note is added or deleted in the Notes section
-        if (newNumOfNotes != numOfNotes) {
-            val newIndex = dateCreatedList.indexOf(model.getCurrSelectedNote()?.dateCreated)
-            if (newIndex < 0) {
-                // not able to find currSelected in Model,
-                // then select nothing
-                this.selectionModel.select(-1)
+        val index = getCurrSelectedIndex()
+        if (index == -1) {
+            // nothing is selected in model,
+            // selection is one of "Categories", "Groups", and "Notes", or nothing
+            if (selectedIndex == 0 || selectedIndex == 1){
+                // selection is "Categories" or "Groups"
+                this.selectionModel.select(selectedIndex)
+            } else if (selectedItem.parent == root) {
+                // selection is "Notes"
+                this.selectionModel.select(noteRoot)
             } else {
-                this.selectionModel.select(newIndex + 1 + getNoteRootIndex())
+                this.selectionModel.select(index)
             }
         } else {
-            // Groups/Notes are added under the Groups section
-            // fix the selection problem temporarily, need to update this later
-            this.selectionModel.select(getNoteRootIndex() + posToNoteRoot)
+            this.selectionModel.select(index)
         }
-
         this.refresh()
     }
 }
