@@ -40,11 +40,11 @@ class FileListView(model: Model) : IView, HBox() {
     //  otherwise represents the indices of the note inside groupList
     private val searchByTitleResults = mutableListOf<Pair<String, Pair<Int, Int>>>()
     private val searchByContentResults = mutableListOf<Pair<String, Pair<Int, Int>>>()
-
     private val MAX_CHAR_SHOWN: Int = 15
 
     init {
         setupCategories()
+        setupSearchView()
         setupClickAction()
         setupContextMenuForTreeItem()
     }
@@ -292,6 +292,7 @@ class FileListView(model: Model) : IView, HBox() {
                     model.updateSelection()
                 }
             }
+
         }
         searchView.setOnMouseClicked {
             val selectedIndex = searchView.selectionModel.selectedIndex
@@ -349,7 +350,6 @@ class FileListView(model: Model) : IView, HBox() {
         // this.isShowRoot = false
         // But need to update all related selections
         this.isFocusTraversable = false
-
         this.children.add(fileListView)
     }
 

@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.BorderPane
-
 import org.controlsfx.control.textfield.CustomTextField
 
 class MenuBarView(model: Model) : IView, BorderPane() {
@@ -20,6 +19,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val menu = MenuBar()
     val searchBar = CustomTextField()
     val cancelButton = Button()
+
     // searchFlag indicates whether in search mode (FileListView contains searchView) or not
     private var searchFlag = false
     // mutableListOf<Boolean>(searchByTitle, searchByContent): list of search options
