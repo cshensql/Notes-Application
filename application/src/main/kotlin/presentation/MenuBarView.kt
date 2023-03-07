@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.BorderPane
+
 import org.controlsfx.control.textfield.CustomTextField
 
 class MenuBarView(model: Model) : IView, BorderPane() {
@@ -46,6 +47,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val searchAll = MenuItem("Search All")
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
+
 
     init {
         // Set hotkeys for each feature
