@@ -5,8 +5,13 @@ import presentation.IView
 class Model {
 
     private val views = ArrayList<IView>()
-    val noteList = mutableMapOf<String, Note>()
+    // LinkedHashMap: Hash table based implementation of the MutableMap interface,
+    // which additionally preserves the insertion order of entries during the iteration.
+    val noteList = LinkedHashMap<String, Note>()
     val groupList = mutableListOf<Group>()
+
+    // currSelectedGroupIndex represents the index of the current group in groupList
+    // if selected note is not null and index >= 0, a note under a group is selected
     private var currSelectedNote: Note? = null
     private var currSelectedGroupIndex: Int = -1
 
