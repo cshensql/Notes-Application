@@ -9,11 +9,17 @@ import java.io.File
 
 class LocalSaving() {
 
+    var testFlag = false
+
     // stores local config data
     fun saveConfig(config: WindowConfig) {
 
-        val fileName = "config.json"
-        val file = File("src/main/kotlin/persistence/saves/$fileName")
+        var fileName = "src/main/kotlin/persistence/saves/config.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/config.json"
+        }
+        val file = File(fileName)
 
         val format = Json { encodeDefaults = true }
         val configString = format.encodeToString(config)
@@ -25,28 +31,41 @@ class LocalSaving() {
     // loads local config data
     fun loadConfig(): WindowConfig {
 
-        val configString: String = File("src/main/kotlin/persistence/saves/config.json").readText()
+        var fileName = "src/main/kotlin/persistence/saves/config.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/config.json"
+        }
+        val configString: String = File(fileName).readText()
 
         return Json.decodeFromString<WindowConfig>(configString)
     }
 
     // stores local notes data
     fun saveNotes(notes: MutableList<Note>) {
-        val fileName = "notes.json"
-        val file = File("src/main/kotlin/persistence/saves/$fileName")
+        var fileName = "src/main/kotlin/persistence/saves/notes.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/notes.json"
+        }
+        val file = File(fileName)
 
         val format = Json { encodeDefaults = true }
         val notesString = format.encodeToString(notes)
 
         // always overwrite, for updates or initial saving
         file.writeText(notesString)
-        println(notesString)
     }
 
     // loads local notes data
     fun loadNotes(): MutableList<Note> {
 
-        val notesString: String = File("src/main/kotlin/persistence/saves/notes.json").readText()
+        var fileName = "src/main/kotlin/persistence/saves/notes.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/notes.json"
+        }
+        val notesString: String = File(fileName).readText()
         return Json.decodeFromString<MutableList<Note>>(notesString)
     }
 }
