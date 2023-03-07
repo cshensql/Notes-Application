@@ -5,6 +5,7 @@ import business.WindowConfig
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
@@ -57,7 +58,19 @@ class Main : Application() {
         stage.scene = scene
         stage.title = "Notes"
 
-
+        // set up event handler for searchBar in menuBar
+        menuBar.searchBar.setOnKeyPressed {
+            if (it.code == KeyCode.ENTER) {
+                val text = menuBar.searchBar.text
+                fileList.search(text)
+                println("searchBar enters: $text")
+            }
+        }
+        menuBar.cancelButton.setOnMouseClicked {
+            menuBar.searchBar.text = ""
+            fileList.exitSearch()
+            println("cancel button clicked!")
+        }
 
         // Bind the width and height properties for each view
         layout.prefWidthProperty().bind(scene.widthProperty())
