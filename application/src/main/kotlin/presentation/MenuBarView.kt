@@ -48,7 +48,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
 
-
     init {
         // Set hotkeys for each feature
         addNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)

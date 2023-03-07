@@ -17,6 +17,3 @@
 .menu-item .active {
     -fx-underline: true;
 }
-.menu-item .inactive {
-    -fx-underline: false;
-}
