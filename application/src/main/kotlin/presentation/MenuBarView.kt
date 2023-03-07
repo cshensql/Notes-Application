@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
 import org.controlsfx.control.textfield.CustomTextField
 
 class MenuBarView(model: Model) : IView, BorderPane() {
@@ -18,7 +17,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
     // menu and searchBar
     private val menu = MenuBar()
-    private val searchBar = CustomTextField()
+    val searchBar = CustomTextField()
+    val cancelButton = Button()
 
     // top: menubar
     private val noteMenu = Menu("Note")
@@ -207,22 +207,20 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
 
+        // add css stylesheet
+        this.stylesheets.add("MenuBarView.css")
+
         // modify and add items to searchBar
         val magnifyingGlass = Label()
         magnifyingGlass.graphic = ImageView(Image("magnifying-glass-64.png", 18.0, 18.0, true, true))
         searchBar.left = magnifyingGlass
 
-        val cancelButton = Button()
-        cancelButton.graphic = ImageView(Image("cross.png", 12.0, 12.0, true,true))
-        this.stylesheets.add("MenuBarView.css")
+        cancelButton.graphic = ImageView(Image("cross.png", 10.0, 10.0, true,true))
+
         cancelButton.styleClass.add("button")
         searchBar.right = cancelButton
 
         searchBar.isFocusTraversable = false
-
-        cancelButton.setOnMouseClicked {
-            println("cancel button clicked!")
-        }
 
         // set positions in BorderPane
         this.padding = Insets(0.0,10.0,0.0,0.0)

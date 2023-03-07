@@ -25,12 +25,35 @@ class FileListView(model: Model) : IView, TreeView<String>() {
     // list of group names to track the groups inside groupList in model
     private val groupNameList = mutableListOf<String>()
 
+    // search related
+    private var searchFlag = false
+    private val search = TreeItem("Results")
+    private val searchByTitle = TreeItem("By Title")
+    private val searchByContent = TreeItem("By Content")
+
+    //TODO: better structure to store search results
+    private val searchResults = mutableListOf<TreeItem<String>>()
     private val MAX_CHAR_SHOWN: Int = 15
 
     init {
         setupCategories()
+        setupSearchView()
         setupClickAction()
         setupContextMenuForTreeItem()
+    }
+
+    fun search(input:String){
+        searchFlag = true
+        val mock1 = TreeItem("mock1")
+        val mock2 = TreeItem("mock2")
+        searchResults.add(mock1)
+        searchResults.add(mock2)
+        this.updateView()
+    }
+
+    fun exitSearch() {
+        searchFlag = false
+        this.updateView()
     }
 
     fun unlockNote() {
@@ -161,28 +184,33 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     private fun setupClickAction() {
         this.setOnMouseClicked {
-            val (isUnderNoteRoot, pos) = isUnderNoteRoot()
-            if (isUnderNoteRoot) {
-                val dateCreated = dateCreatedList[pos - 1]
-                model.updateSelection(dateCreated)
-            } else { // selection is not under "Notes"
-                val selectedItem = this.selectionModel.selectedItem
-                val parentItem = selectedItem?.parent
-                // The selectedItem is a group
-                if (parentItem == groupRoot) {
-                    val groupIndex = parentItem.children.indexOf(selectedItem)
-                    model.updateSelection(selectedGroupIndex = groupIndex)
-                } else if (parentItem?.parent == groupRoot) {
-                    // The selectedItem is a note under a group
-                    val groupIndex = parentItem.parent.children.indexOf(parentItem)
-                    val noteIndex = parentItem.children.indexOf(selectedItem)
-                    model.updateSelection(indices = Pair(groupIndex, noteIndex))
-                } else {
-                    // The selectedItem is null or one of "Categories", "Groups" and "Notes"
-                    // Select nothing by giving no arguments to updateSelection
-                    model.updateSelection()
+            if (searchFlag) {
+                //TODO
+            } else {
+                val (isUnderNoteRoot, pos) = isUnderNoteRoot()
+                if (isUnderNoteRoot) {
+                    val dateCreated = dateCreatedList[pos - 1]
+                    model.updateSelection(dateCreated)
+                } else { // selection is not under "Notes"
+                    val selectedItem = this.selectionModel.selectedItem
+                    val parentItem = selectedItem?.parent
+                    // The selectedItem is a group
+                    if (parentItem == groupRoot) {
+                        val groupIndex = parentItem.children.indexOf(selectedItem)
+                        model.updateSelection(selectedGroupIndex = groupIndex)
+                    } else if (parentItem?.parent == groupRoot) {
+                        // The selectedItem is a note under a group
+                        val groupIndex = parentItem.parent.children.indexOf(parentItem)
+                        val noteIndex = parentItem.children.indexOf(selectedItem)
+                        model.updateSelection(indices = Pair(groupIndex, noteIndex))
+                    } else {
+                        // The selectedItem is null or one of "Categories", "Groups" and "Notes"
+                        // Select nothing by giving no arguments to updateSelection
+                        model.updateSelection()
+                    }
                 }
             }
+
         }
     }
 
@@ -200,6 +228,18 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         root.children.addAll(groupRoot, noteRoot)
         this.setRoot(root)
         root.isExpanded = true
+        this.isFocusTraversable = false
+        // Can actually hide the tree root by using:
+        // this.isShowRoot = false
+        // But need to update all related selections
+    }
+
+    private fun setupSearchView() {
+        searchByTitle.isExpanded = true
+        searchByContent.isExpanded = true
+        search.isExpanded = true
+
+        search.children.addAll(searchByTitle, searchByContent)
         this.isFocusTraversable = false
     }
 
@@ -259,6 +299,19 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         return index
     }
     override fun updateView() {
+        if (searchFlag) {
+            this.setRoot(search)
+            searchByTitle.children.clear()
+            searchByContent.children.clear()
+            //TODO: construct the search view
+            searchByTitle.children.add(searchResults[0])
+            searchByContent.children.add(searchResults[1])
+
+            this.refresh()
+            return
+        }
+
+        this.setRoot(root)
         // store the selectedIndex and selectedItem before removing treeItems
         val selectedIndex = this.selectionModel.selectedIndex
         val selectedItem = this.selectionModel.selectedItem
