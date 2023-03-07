@@ -29,9 +29,11 @@ class FileListView(model: Model) : IView, HBox() {
     // searchView
     private val searchView = TreeView<String>()
     private var searchFlag = false
+    // mutableListOf<Boolean>(searchByTitle, searchByContent)
+    private val searchOptions = mutableListOf<Boolean>()
     private val results = TreeItem("Results")
-    private val byTitle = TreeItem("By Title")
-    private val byContent = TreeItem("By Content")
+    private val searchByTitle = TreeItem("Results By Title")
+    private val searchByContent = TreeItem("Results By Content")
     // mutableListOf "(dateCreated, (groupIndex, noteIndex))" pairs to store the search results
     // dateCreated: note.dateCreated, is an empty string when the note is inside groupList
     // (groupIndex, noteIndex): type is Pair<Int, Int>, is (-1,-1) when the note is inside noteList
@@ -47,20 +49,23 @@ class FileListView(model: Model) : IView, HBox() {
         setupContextMenuForTreeItem()
     }
 
-    fun search(input:String, byTitle:Boolean = true, byContent:Boolean = true){
+    fun search(input:String, isByTitle:Boolean = true, isByContent:Boolean = true){
         searchFlag = true
 
         // clear previous search results
         searchByTitleResults.clear()
         searchByContentResults.clear()
+        searchOptions.clear()
+
+        searchOptions.addAll(listOf(isByTitle, isByContent))
 
         // search under groupList
         for (i in 0 until model.groupList.size){
             val group = model.groupList[i]
             for (j in 0 until group.noteList.size){
-                if (byTitle && group.noteList[j].title.indexOf(input) >= 0)
+                if (isByTitle && group.noteList[j].title.indexOf(input) >= 0)
                     searchByTitleResults.add(Pair("", Pair(i, j)))
-                if (byContent){
+                if (isByContent){
                     // get the plain text (removes all html tags) of the note body
                     val body = Jsoup.parse(group.noteList[j].body).wholeText()
                     val index = body.indexOf(input)
@@ -72,10 +77,10 @@ class FileListView(model: Model) : IView, HBox() {
         }
         // search under noteList
         for (entry in model.noteList) {
-            if (byTitle && entry.value.title.indexOf(input) >= 0){
+            if (isByTitle && entry.value.title.indexOf(input) >= 0){
                 searchByTitleResults.add(Pair(entry.key, Pair(-1,-1)))
             }
-            if (byContent){
+            if (isByContent){
                 // get the plain text (removes all html tags) of the note body
                 val body = Jsoup.parse(entry.value.body).wholeText()
                 val index = body.indexOf(input)
@@ -85,7 +90,7 @@ class FileListView(model: Model) : IView, HBox() {
             }
         }
         // construct the searchView
-        setupSearchView()
+        //setupSearchView()
         // ask model to notify views with empty selection to start with
         model.updateSelection()
     }
@@ -98,9 +103,9 @@ class FileListView(model: Model) : IView, HBox() {
     // helper function to construct searchView
     // add searchResults under parent
     private fun addTreeItemsForSearchView(parent: TreeItem<String>,
-                                          searchResults: MutableList<Pair<String,Pair<Int,Int>>>){
-        if (searchResults.isNotEmpty()) {
-            // add byContent treeItem under results (root of the searchView)
+                                          searchResults: MutableList<Pair<String,Pair<Int,Int>>>,
+                                          flag:Boolean){
+        if (flag) {
             results.children.add(parent)
             parent.isExpanded = true
             for (note in searchResults){
@@ -121,22 +126,19 @@ class FileListView(model: Model) : IView, HBox() {
             }
         }
     }
-
-    fun getSearchFlag() = searchFlag
-
     private fun setupSearchView() {
         // clear all previous items
         results.children.clear()
-        byTitle.children.clear()
-        byContent.children.clear()
+        searchByTitle.children.clear()
+        searchByContent.children.clear()
 
         results.isExpanded = true
         searchView.root = results
         searchView.isShowRoot = false
         searchView.isFocusTraversable = false
 
-        addTreeItemsForSearchView(byTitle, searchByTitleResults)
-        addTreeItemsForSearchView(byContent, searchByContentResults)
+        addTreeItemsForSearchView(searchByTitle, searchByTitleResults, searchOptions[0])
+        addTreeItemsForSearchView(searchByContent, searchByContentResults, searchOptions[1])
     }
 
     fun unlockNote() {
@@ -293,14 +295,14 @@ class FileListView(model: Model) : IView, HBox() {
         searchView.setOnMouseClicked {
             val selectedItem = searchView.selectionModel.selectedItem
 
-            if (selectedItem?.parent == byTitle){
+            if (selectedItem?.parent == searchByTitle){
                 // the selected note is under "By Title"
-                val index = byTitle.children.indexOf(selectedItem)
+                val index = searchByTitle.children.indexOf(selectedItem)
                 val result = searchByTitleResults[index]
                 model.updateSelection(dateCreated = result.first, indices = result.second)
-            } else if (selectedItem?.parent == byContent){
+            } else if (selectedItem?.parent == searchByContent){
                 // the selected note is under "By Content"
-                val index = byContent.children.indexOf(selectedItem)
+                val index = searchByContent.children.indexOf(selectedItem)
                 val result = searchByContentResults[index]
                 model.updateSelection(dateCreated = result.first, indices = result.second)
             } else {
@@ -390,11 +392,73 @@ class FileListView(model: Model) : IView, HBox() {
         return index
     }
 
+    private fun currSelectedIndexForSearchView():Pair<Int, Int> {
+        val dateCreated = model.getCurrSelectedNote()?.dateCreated
+        if (dateCreated == null) return Pair(-1,-1)
+        else {
+            var byTitleIndex = -1
+            var byContentIndex = -1
+            val byTitleSize = searchByTitleResults.size
+            val byContentSize = searchByContentResults.size
+            if (searchOptions[0]) {
+                for (i in 0 until byTitleSize) {
+                    if (searchByTitleResults[i].first == dateCreated) {
+                        byTitleIndex = i + 1
+                        break
+                    }
+                }
+            }
+            if (searchOptions[1]) {
+                for (j in 0 until byContentSize){
+                    if (searchByContentResults[j].first == dateCreated) {
+                        byContentIndex = if (!searchOptions[0]) j + 1
+                        else j + byTitleSize + 2
+                        break
+                    }
+                }
+            }
+
+
+            return Pair(byTitleIndex, byContentIndex)
+        }
+    }
+
     override fun updateView() {
         this.children.clear()
 
         if (searchFlag) {
+            val selectedIndex = searchView.selectionModel.selectedIndex
+            val selectedItem = searchView.selectionModel.selectedItem
+            println(selectedIndex)
+            println(selectedItem)
+            setupSearchView()
             this.children.add(searchView)
+            val (byTitleIndex, byContentIndex) = currSelectedIndexForSearchView()
+            println("$byTitleIndex,   $byContentIndex")
+
+            if (byTitleIndex >= 0 && byContentIndex >= 0) {
+                println("inside the first if!")
+                val currByContentIndex = searchByTitleResults.size + 1
+                // the model selects a note that is under both By Title and By Content
+                if (selectedIndex > currByContentIndex)
+                    searchView.selectionModel.select(byContentIndex)
+                else
+                    searchView.selectionModel.select(byTitleIndex)
+            } else if (byTitleIndex >= 0 && byContentIndex == -1) {
+                searchView.selectionModel.select(byTitleIndex)
+            } else if (byTitleIndex == -1 && byContentIndex >= 0) {
+                searchView.selectionModel.select(byContentIndex)
+            } else {
+                // the model selects nothing or the selected note is not in search results
+                if (selectedItem == searchByTitle && searchByTitleResults.size > 0)
+                    searchView.selectionModel.select(0)
+                else if (selectedItem == searchByContent && searchByContentResults.size > 0){
+                    val index = if (!searchOptions[0]) 0 else 1 + searchByTitleResults.size
+                    searchView.selectionModel.select(index)
+                } else {
+                    searchView.selectionModel.select(-1)
+                }
+            }
             return
         }
 
