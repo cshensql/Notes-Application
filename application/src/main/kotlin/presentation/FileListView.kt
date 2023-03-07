@@ -29,32 +29,38 @@ class FileListView(model: Model) : IView, HBox() {
     // searchView
     private val searchView = TreeView<String>()
     private var searchFlag = false
+
     // mutableListOf<Boolean>(searchByTitle, searchByContent)
     private val searchOptions = mutableListOf<Boolean>()
+
     private val results = TreeItem("Results")
     private val searchByTitle = TreeItem("Results By Title")
     private val searchByContent = TreeItem("Results By Content")
+
     // mutableListOf "(dateCreated, (groupIndex, noteIndex))" pairs to store the search results
     // dateCreated: note.dateCreated, is an empty string when the note is inside groupList
     // (groupIndex, noteIndex): type is Pair<Int, Int>, is (-1,-1) when the note is inside noteList
     //  otherwise represents the indices of the note inside groupList
     private val searchByTitleResults = mutableListOf<Pair<String, Pair<Int, Int>>>()
     private val searchByContentResults = mutableListOf<Pair<String, Pair<Int, Int>>>()
+
     private val MAX_CHAR_SHOWN: Int = 15
 
     init {
         setupCategories()
-        setupSearchView()
         setupClickAction()
         setupContextMenuForTreeItem()
     }
 
+
     fun search(input:String, isByTitle:Boolean = true, isByContent:Boolean = true){
+
         searchFlag = true
 
         // clear previous search results
         searchByTitleResults.clear()
         searchByContentResults.clear()
+
         searchOptions.clear()
 
         // set initial expanded state of the treeItems
@@ -62,6 +68,7 @@ class FileListView(model: Model) : IView, HBox() {
         searchByContent.isExpanded = true
         // enter new search options
         searchOptions.addAll(listOf(isByTitle, isByContent))
+
 
         // search under groupList
         for (i in 0 until model.groupList.size){
@@ -127,6 +134,7 @@ class FileListView(model: Model) : IView, HBox() {
             }
         }
     }
+
     private fun setupSearchView() {
         // clear all previous items
         results.children.clear()
@@ -292,7 +300,6 @@ class FileListView(model: Model) : IView, HBox() {
                     model.updateSelection()
                 }
             }
-
         }
         searchView.setOnMouseClicked {
             val selectedIndex = searchView.selectionModel.selectedIndex
