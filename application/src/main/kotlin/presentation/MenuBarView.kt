@@ -19,6 +19,10 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val menu = MenuBar()
     val searchBar = CustomTextField()
     val cancelButton = Button()
+    // searchFlag indicates whether in search mode (FileListView contains searchView) or not
+    var searchFlag = false
+    // mutableListOf<Boolean>(searchByTitle, searchByContent): list of search options
+    val searchOptions = mutableListOf<Boolean>(true, true)
 
     // top: menubar
     private val noteMenu = Menu("Note")
@@ -39,6 +43,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val renameGroup = MenuItem("Rename Group")
 
     // Search Menu Sub options
+    private val searchAll = MenuItem("Search All")
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
 
@@ -52,8 +57,49 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         addGroup.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.ALT_DOWN)
         deleteGroup.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.ALT_DOWN)
         renameGroup.accelerator = KeyCodeCombination(KeyCode.R, KeyCodeCombination.ALT_DOWN)
+        searchAll.accelerator = KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)
         searchByContent.accelerator = KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN)
         searchByTitle.accelerator = KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)
+
+        // add css stylesheet
+        this.stylesheets.add("MenuBarView.css")
+
+        // modify and add items to searchBar
+        val magnifyingGlass = Label()
+        magnifyingGlass.graphic = ImageView(Image("magnifying-glass-64.png", 18.0, 18.0, true, true))
+        searchBar.left = magnifyingGlass
+
+        cancelButton.graphic = ImageView(Image("cross.png", 10.0, 10.0, true,true))
+
+        cancelButton.styleClass.add("button")
+        searchBar.right = cancelButton
+
+        searchBar.promptText = "Search"
+
+        searchBar.isFocusTraversable = false
+
+        // set positions in BorderPane
+        this.padding = Insets(0.0,10.0,0.0,0.0)
+        this.center = menu
+        this.right = searchBar
+
+        // Add menu options to menubar
+        menu.menus.add(noteMenu)
+        menu.menus.add(groupMenu)
+        menu.menus.add(searchMenu)
+
+        // Add submenu to their corresponding menu
+        noteMenu.items.add(addNote)
+        noteMenu.items.add(deleteNote)
+        noteMenu.items.add(lockOrUnlockNote)
+        noteMenu.items.add(groupNotes)
+        noteMenu.items.add(moveNotes)
+        groupMenu.items.add(addGroup)
+        groupMenu.items.add(deleteGroup)
+        groupMenu.items.add(renameGroup)
+        searchMenu.items.add(searchAll)
+        searchMenu.items.add(searchByTitle)
+        searchMenu.items.add(searchByContent)
 
         // check for duplicate group name
 
@@ -181,51 +227,40 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 }
             }
         }
+        searchAll.setOnAction {
+            searchMenu.items.forEach {
+                it.styleClass.clear()
+            }
+            searchAll.styleClass.add("active")
+            searchBar.text = ""
+            searchBar.promptText = "Search"
+            searchOptions[0] = true
+            searchOptions[1] = true
+        }
 
         searchByContent.setOnAction {
+            searchMenu.items.forEach {
+                it.styleClass.clear()
+            }
+            searchByContent.styleClass.add("active")
+            searchBar.text = ""
+            searchBar.promptText = "Search By Content"
+            searchOptions[0] = false
+            searchOptions[1] = true
             println("Search by content pressed")
         }
 
         searchByTitle.setOnAction {
+            searchMenu.items.forEach {
+                it.styleClass.clear()
+            }
+            searchByTitle.styleClass.add("active")
+            searchBar.text = ""
+            searchBar.promptText = "Search By Title"
+            searchOptions[0] = true
+            searchOptions[1] = false
             println("Search by title pressed")
         }
-
-        // Add menu options to menubar
-        menu.menus.add(noteMenu)
-        menu.menus.add(groupMenu)
-        menu.menus.add(searchMenu)
-
-        // Add submenu to their corresponding menu
-        noteMenu.items.add(addNote)
-        noteMenu.items.add(deleteNote)
-        noteMenu.items.add(lockOrUnlockNote)
-        noteMenu.items.add(groupNotes)
-        noteMenu.items.add(moveNotes)
-        groupMenu.items.add(addGroup)
-        groupMenu.items.add(deleteGroup)
-        groupMenu.items.add(renameGroup)
-        searchMenu.items.add(searchByTitle)
-        searchMenu.items.add(searchByContent)
-
-        // add css stylesheet
-        this.stylesheets.add("MenuBarView.css")
-
-        // modify and add items to searchBar
-        val magnifyingGlass = Label()
-        magnifyingGlass.graphic = ImageView(Image("magnifying-glass-64.png", 18.0, 18.0, true, true))
-        searchBar.left = magnifyingGlass
-
-        cancelButton.graphic = ImageView(Image("cross.png", 10.0, 10.0, true,true))
-
-        cancelButton.styleClass.add("button")
-        searchBar.right = cancelButton
-
-        searchBar.isFocusTraversable = false
-
-        // set positions in BorderPane
-        this.padding = Insets(0.0,10.0,0.0,0.0)
-        this.center = menu
-        this.right = searchBar
     }
 
     // display error message function

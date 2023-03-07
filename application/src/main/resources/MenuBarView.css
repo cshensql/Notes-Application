@@ -13,3 +13,10 @@
     -fx-content-display: LEFT;
     -fx-cursor: hand;
 }
+
+.menu-item .active {
+    -fx-underline: true;
+}
+.menu-item .inactive {
+    -fx-underline: false;
+}
