@@ -244,6 +244,7 @@ class FileListView(model: Model) : IView, HBox() {
 
         search.children.addAll(searchByTitle, searchByContent)
         searchView.root = search
+        searchView.isShowRoot = false
         searchView.isFocusTraversable = false
     }
 
