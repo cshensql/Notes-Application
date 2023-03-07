@@ -21,6 +21,7 @@ class LocalSavingTest {
 
     @BeforeEach
     fun setUp() {
+        l.testFlag = true
     }
 
     @Test

@@ -300,7 +300,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             if (selectedIndex == 0 || selectedIndex == 1){
                 // selection is "Categories" or "Groups"
                 this.selectionModel.select(selectedIndex)
-            } else if (selectedItem.parent == root) {
+            } else if (selectedItem?.parent == root) {
                 // selection is "Notes"
                 this.selectionModel.select(noteRoot)
             } else {
