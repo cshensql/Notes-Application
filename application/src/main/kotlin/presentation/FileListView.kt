@@ -408,6 +408,7 @@ class FileListView(model: Model) : IView, HBox() {
         }
         return index
     }
+<<<<<<< HEAD
 
     // based on the currSelectedNote in model, return two possible indices in search view
     // the first index is under "Results By Title", the second is under "Results By Content"
