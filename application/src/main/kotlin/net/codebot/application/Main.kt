@@ -67,12 +67,18 @@ class Main : Application() {
             if (it.code == KeyCode.ENTER) {
                 val text = menuBar.searchBar.text
                 val (byTitle, byContent) = menuBar.searchOptions
+                // update UI for menuBar
+                menuBar.changeSearchFlag()
+                // search
                 fileList.search(text, byTitle, byContent)
                 println("searchBar enters: $text")
             }
         }
         menuBar.cancelButton.setOnMouseClicked {
             menuBar.searchBar.text = ""
+            // update UI for menuBar
+            menuBar.changeSearchFlag()
+            // exit search
             fileList.exitSearch()
             println("cancel button clicked!")
         }
