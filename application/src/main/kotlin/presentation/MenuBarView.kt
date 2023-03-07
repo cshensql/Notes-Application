@@ -1,6 +1,7 @@
 package presentation
 
 import business.Model
+import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.image.Image
@@ -17,7 +18,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
     // menu and searchBar
     private val menu = MenuBar()
-    private val searchBar = HBox()
+    private val searchBar = CustomTextField()
 
     // top: menubar
     private val noteMenu = Menu("Note")
@@ -40,10 +41,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     // Search Menu Sub options
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
-
-    // searchBar items
-    private val searchText = CustomTextField()
-    private val cancelButton = Button("cancel")
 
     init {
         // Set hotkeys for each feature
@@ -193,7 +190,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             println("Search by title pressed")
         }
 
-
         // Add menu options to menubar
         menu.menus.add(noteMenu)
         menu.menus.add(groupMenu)
@@ -214,11 +210,22 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         // modify and add items to searchBar
         val magnifyingGlass = Label()
         magnifyingGlass.graphic = ImageView(Image("magnifying-glass-64.png", 18.0, 18.0, true, true))
-        searchText.left = magnifyingGlass
-        searchBar.children.addAll(searchText, cancelButton)
+        searchBar.left = magnifyingGlass
+
+        val cancelButton = Button()
+        cancelButton.graphic = ImageView(Image("cross.png", 12.0, 12.0, true,true))
+        this.stylesheets.add("MenuBarView.css")
+        cancelButton.styleClass.add("button")
+        searchBar.right = cancelButton
+
+        searchBar.isFocusTraversable = false
+
+        cancelButton.setOnMouseClicked {
+            println("cancel button clicked!")
+        }
 
         // set positions in BorderPane
-        this.style = "--fx-background-color: #8fbc8f"
+        this.padding = Insets(0.0,10.0,0.0,0.0)
         this.center = menu
         this.right = searchBar
     }
