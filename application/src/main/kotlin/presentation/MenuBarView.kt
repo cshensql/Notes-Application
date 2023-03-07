@@ -71,6 +71,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         searchBar.left = magnifyingGlass
 
         cancelButton.graphic = ImageView(Image("cross.png", 10.0, 10.0, true,true))
+        //cancelButton.text = "cancel"
 
         cancelButton.styleClass.add("button")
         searchBar.right = cancelButton

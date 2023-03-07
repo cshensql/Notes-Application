@@ -52,14 +52,15 @@ class FileListView(model: Model) : IView, HBox() {
         setupContextMenuForTreeItem()
     }
 
-
     fun search(input:String, isByTitle:Boolean = true, isByContent:Boolean = true){
-
         searchFlag = true
 
         // clear previous search results
         searchByTitleResults.clear()
         searchByContentResults.clear()
+        searchOptions.clear()
+
+        searchOptions.addAll(listOf(isByTitle, isByContent))
 
         searchOptions.clear()
 
@@ -134,7 +135,6 @@ class FileListView(model: Model) : IView, HBox() {
             }
         }
     }
-
     private fun setupSearchView() {
         // clear all previous items
         results.children.clear()
@@ -303,7 +303,6 @@ class FileListView(model: Model) : IView, HBox() {
         }
         searchView.setOnMouseClicked {
             val selectedIndex = searchView.selectionModel.selectedIndex
-
             if (searchOptions[0] && searchOptions[1]) {
                 // search by title and by content
                 val searchByContentIndex = searchByTitleResults.size + 1
