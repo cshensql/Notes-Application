@@ -3,12 +3,21 @@ package presentation
 import business.Model
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
+import org.controlsfx.control.textfield.CustomTextField
 
-class MenuBarView(model: Model) : IView, MenuBar() {
+class MenuBarView(model: Model) : IView, BorderPane() {
     // Model
     private val model = model
+
+    // menu and searchBar
+    private val menu = MenuBar()
+    private val searchBar = HBox()
 
     // top: menubar
     private val noteMenu = Menu("Note")
@@ -31,6 +40,10 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     // Search Menu Sub options
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
+
+    // searchBar items
+    private val searchText = CustomTextField()
+    private val cancelButton = Button("cancel")
 
     init {
         // Set hotkeys for each feature
@@ -182,9 +195,9 @@ class MenuBarView(model: Model) : IView, MenuBar() {
 
 
         // Add menu options to menubar
-        this.menus.add(noteMenu)
-        this.menus.add(groupMenu)
-        this.menus.add(searchMenu)
+        menu.menus.add(noteMenu)
+        menu.menus.add(groupMenu)
+        menu.menus.add(searchMenu)
 
         // Add submenu to their corresponding menu
         noteMenu.items.add(addNote)
@@ -197,6 +210,17 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         groupMenu.items.add(renameGroup)
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
+
+        // modify and add items to searchBar
+        val magnifyingGlass = Label()
+        magnifyingGlass.graphic = ImageView(Image("magnifying-glass-64.png", 18.0, 18.0, true, true))
+        searchText.left = magnifyingGlass
+        searchBar.children.addAll(searchText, cancelButton)
+
+        // set positions in BorderPane
+        this.style = "--fx-background-color: #8fbc8f"
+        this.center = menu
+        this.right = searchBar
     }
 
     // display error message function
