@@ -62,7 +62,8 @@ class Main : Application() {
         menuBar.searchBar.setOnKeyPressed {
             if (it.code == KeyCode.ENTER) {
                 val text = menuBar.searchBar.text
-                fileList.search(text)
+                val (byTitle, byContent) = menuBar.searchOptions
+                fileList.search(text, byTitle, byContent)
                 println("searchBar enters: $text")
             }
         }
