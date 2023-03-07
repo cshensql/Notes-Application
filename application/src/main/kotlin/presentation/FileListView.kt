@@ -6,31 +6,31 @@ import javafx.scene.control.*
 
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import java.util.*
 import kotlin.collections.HashMap
 
-class FileListView(model: Model) : IView, TreeView<String>() {
+class FileListView(model: Model) : IView, HBox() {
     private val model = model
 
+    // fileListView
+    private val fileListView = TreeView<String>()
     private val groupRoot = TreeItem("Groups")
-
     private val noteRoot = TreeItem("Notes")
-
     private val root = TreeItem("Categories")
-
     // list of dateCreated to help locate the correct note in noteList in model
     private val dateCreatedList = mutableListOf<String>()
     // list of group names to track the groups inside groupList in model
     private val groupNameList = mutableListOf<String>()
 
-    // search related
+    // searchView
+    private val searchView = TreeView<String>()
     private var searchFlag = false
     private val search = TreeItem("Results")
     private val searchByTitle = TreeItem("By Title")
     private val searchByContent = TreeItem("By Content")
-
     //TODO: better structure to store search results
     private val searchResults = mutableListOf<TreeItem<String>>()
     private val MAX_CHAR_SHOWN: Int = 15
@@ -113,11 +113,11 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         }
 
         val contextMenu = ContextMenu(lockNoteItem)
-        this.contextMenu = contextMenu
-        this.setOnContextMenuRequested {
-            if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == groupRoot) {
-                this.contextMenu.hide()
-            } else if (this.selectionModel.selectedIndex >= 0 && this.selectionModel.selectedItem.parent == noteRoot) {
+        fileListView.contextMenu = contextMenu
+        fileListView.setOnContextMenuRequested {
+            if (fileListView.selectionModel.selectedIndex >= 0 && fileListView.selectionModel.selectedItem.parent == groupRoot) {
+                fileListView.contextMenu.hide()
+            } else if (fileListView.selectionModel.selectedIndex >= 0 && fileListView.selectionModel.selectedItem.parent == noteRoot) {
                 val currSelectedNote = model.getCurrSelectedNote()
                 val noteIsLocked = currSelectedNote?.isLocked ?: false
                 contextMenu.items.clear()
@@ -183,7 +183,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
 
     private fun setupClickAction() {
-        this.setOnMouseClicked {
+        fileListView.setOnMouseClicked {
             if (searchFlag) {
                 //TODO
             } else {
@@ -192,7 +192,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
                     val dateCreated = dateCreatedList[pos - 1]
                     model.updateSelection(dateCreated)
                 } else { // selection is not under "Notes"
-                    val selectedItem = this.selectionModel.selectedItem
+                    val selectedItem = fileListView.selectionModel.selectedItem
                     val parentItem = selectedItem?.parent
                     // The selectedItem is a group
                     if (parentItem == groupRoot) {
@@ -226,12 +226,15 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         noteRoot.isExpanded = true
 
         root.children.addAll(groupRoot, noteRoot)
-        this.setRoot(root)
+        fileListView.root = root
         root.isExpanded = true
-        this.isFocusTraversable = false
+        fileListView.isFocusTraversable = false
         // Can actually hide the tree root by using:
         // this.isShowRoot = false
         // But need to update all related selections
+        this.isFocusTraversable = false
+
+        this.children.add(fileListView)
     }
 
     private fun setupSearchView() {
@@ -240,7 +243,8 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         search.isExpanded = true
 
         search.children.addAll(searchByTitle, searchByContent)
-        this.isFocusTraversable = false
+        searchView.root = search
+        searchView.isFocusTraversable = false
     }
 
     private fun getNoteRootIndex(): Int {
@@ -256,7 +260,7 @@ class FileListView(model: Model) : IView, TreeView<String>() {
 
     private fun isUnderNoteRoot(): Pair<Boolean, Int> {
         val noteRootIndex = getNoteRootIndex()
-        val selectedIndex = this.selectionModel.selectedIndex
+        val selectedIndex = fileListView.selectionModel.selectedIndex
         return Pair(selectedIndex > noteRootIndex, selectedIndex - noteRootIndex)
     }
 
@@ -299,22 +303,24 @@ class FileListView(model: Model) : IView, TreeView<String>() {
         return index
     }
     override fun updateView() {
+        this.children.clear()
+
         if (searchFlag) {
-            this.setRoot(search)
+            this.children.add(searchView)
             searchByTitle.children.clear()
             searchByContent.children.clear()
             //TODO: construct the search view
             searchByTitle.children.add(searchResults[0])
             searchByContent.children.add(searchResults[1])
 
-            this.refresh()
+            searchView.refresh()
             return
         }
 
-        this.setRoot(root)
+        this.children.add(fileListView)
         // store the selectedIndex and selectedItem before removing treeItems
-        val selectedIndex = this.selectionModel.selectedIndex
-        val selectedItem = this.selectionModel.selectedItem
+        val selectedIndex = fileListView.selectionModel.selectedIndex
+        val selectedItem = fileListView.selectionModel.selectedItem
 
         // store isExpanded field for each groupItem in a hashmap
         val isExpandedMap = HashMap<String, Boolean>()
@@ -352,16 +358,16 @@ class FileListView(model: Model) : IView, TreeView<String>() {
             // selection is one of "Categories", "Groups", and "Notes", or nothing
             if (selectedIndex == 0 || selectedIndex == 1){
                 // selection is "Categories" or "Groups"
-                this.selectionModel.select(selectedIndex)
+                fileListView.selectionModel.select(selectedIndex)
             } else if (selectedItem?.parent == root) {
                 // selection is "Notes"
-                this.selectionModel.select(noteRoot)
+                fileListView.selectionModel.select(noteRoot)
             } else {
-                this.selectionModel.select(index)
+                fileListView.selectionModel.select(index)
             }
         } else {
-            this.selectionModel.select(index)
+            fileListView.selectionModel.select(index)
         }
-        this.refresh()
+        fileListView.refresh()
     }
 }
