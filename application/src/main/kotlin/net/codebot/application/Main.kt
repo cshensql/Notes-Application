@@ -22,6 +22,7 @@ import presentation.MenuBarView
 
 class Main : Application() {
     override fun start(stage: Stage) {
+
         // create persistence class
         val localSaving = LocalSaving()
 
