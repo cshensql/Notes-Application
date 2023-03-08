@@ -57,6 +57,10 @@ class FileListView(model: Model) : IView, HBox() {
         searchByContentResults.clear()
         searchOptions.clear()
 
+        // set initial expanded state of the treeItems
+        searchByTitle.isExpanded = true
+        searchByContent.isExpanded = true
+        // enter new search options
         searchOptions.addAll(listOf(isByTitle, isByContent))
 
         // search under groupList
@@ -107,7 +111,6 @@ class FileListView(model: Model) : IView, HBox() {
                                           flag:Boolean){
         if (flag) {
             results.children.add(parent)
-            parent.isExpanded = true
             for (note in searchResults){
                 if (note.second == Pair(-1,-1)) {
                     // the note is in noteList
@@ -293,23 +296,69 @@ class FileListView(model: Model) : IView, HBox() {
             }
         }
         searchView.setOnMouseClicked {
-            val selectedItem = searchView.selectionModel.selectedItem
+            val selectedIndex = searchView.selectionModel.selectedIndex
 
-            if (selectedItem?.parent == searchByTitle){
-                // the selected note is under "By Title"
-                val index = searchByTitle.children.indexOf(selectedItem)
-                val result = searchByTitleResults[index]
-                model.updateSelection(dateCreated = result.first, indices = result.second)
-            } else if (selectedItem?.parent == searchByContent){
-                // the selected note is under "By Content"
-                val index = searchByContent.children.indexOf(selectedItem)
-                val result = searchByContentResults[index]
-                model.updateSelection(dateCreated = result.first, indices = result.second)
-            } else {
-                // the selected item is not a note,
-                // should select nothing in model to display blank
-                model.updateSelection()
+            if (searchOptions[0] && searchOptions[1]) {
+                // search by title and by content
+                val searchByContentIndex = searchByTitleResults.size + 1
+                if (selectedIndex > searchByContentIndex) {
+                    // the selected note is under "Search By Content"
+                    val result = searchByContentResults[selectedIndex - 1 - searchByContentIndex]
+                    model.updateSelection(dateCreated = result.first, indices = result.second)
+                } else if (selectedIndex in 1 until searchByContentIndex){
+                    // the selected note is under "Search By Title"
+                    val result = searchByTitleResults[selectedIndex - 1]
+                    model.updateSelection(dateCreated = result.first, indices = result.second)
+                } else {
+                    model.updateSelection()
+                }
+            } else if (searchOptions[0]) {
+                // results by title
+                if (selectedIndex > 0){
+                    val result = searchByTitleResults[selectedIndex - 1]
+                    model.updateSelection(dateCreated = result.first, indices = result.second)
+                } else {
+                    model.updateSelection()
+                }
+            } else if (searchOptions[1]) {
+                // results by content
+                if (selectedIndex > 0){
+                    val result = searchByContentResults[selectedIndex - 1]
+                    model.updateSelection(dateCreated = result.first, indices = result.second)
+                } else {
+                    model.updateSelection()
+                }
             }
+
+//            if (selectedItem?.parent == searchByTitle){
+//                // the selected note is under "By Title"
+//                val index = searchByTitle.children.indexOf(selectedItem)
+//                val result = searchByTitleResults[index]
+//                model.updateSelection(dateCreated = result.first, indices = result.second)
+//            } else if (selectedItem?.parent == searchByContent){
+//                // the selected note is under "By Content"
+//                val index = searchByContent.children.indexOf(selectedItem)
+//                val result = searchByContentResults[index]
+//                model.updateSelection(dateCreated = result.first, indices = result.second)
+//            } else {
+//                // the selected item is not a note,
+//                // should select nothing in model to display blank
+//                model.updateSelection()
+//            }if (selectedItem?.parent == searchByTitle){
+                // the selected note is under "By Title"
+//                val index = searchByTitle.children.indexOf(selectedItem)
+//                val result = searchByTitleResults[index]
+//                model.updateSelection(dateCreated = result.first, indices = result.second)
+//            } else if (selectedItem?.parent == searchByContent){
+//                // the selected note is under "By Content"
+//                val index = searchByContent.children.indexOf(selectedItem)
+//                val result = searchByContentResults[index]
+//                model.updateSelection(dateCreated = result.first, indices = result.second)
+//            } else {
+//                // the selected item is not a note,
+//                // should select nothing in model to display blank
+//                model.updateSelection()
+//            }
         }
     }
 
@@ -337,7 +386,7 @@ class FileListView(model: Model) : IView, HBox() {
     }
 
     private fun getNoteRootIndex(): Int {
-        var retval = noteRoot.parent.children.indexOf(noteRoot) + 1
+        var retval = root.children.indexOf(noteRoot) + 1
         if (groupRoot.isExpanded) {
             retval += groupRoot.children.size
             for (group in groupRoot.children) {
@@ -392,6 +441,9 @@ class FileListView(model: Model) : IView, HBox() {
         return index
     }
 
+    // based on the currSelectedNote in model, return two possible indices in search view
+    // the first index is under "Results By Title", the second is under "Results By Content"
+    // -1 means can not find the index
     private fun currSelectedIndexForSearchView():Pair<Int, Int> {
         val dateCreated = model.getCurrSelectedNote()?.dateCreated
         if (dateCreated == null) return Pair(-1,-1)
@@ -402,7 +454,11 @@ class FileListView(model: Model) : IView, HBox() {
             val byContentSize = searchByContentResults.size
             if (searchOptions[0]) {
                 for (i in 0 until byTitleSize) {
-                    if (searchByTitleResults[i].first == dateCreated) {
+                    val indices = searchByTitleResults[i].second
+                    val key = if (indices == Pair(-1,-1)) searchByTitleResults[i].first
+                    else model.groupList[indices.first].noteList[indices.second].dateCreated
+
+                    if (key == dateCreated) {
                         byTitleIndex = i + 1
                         break
                     }
@@ -410,15 +466,16 @@ class FileListView(model: Model) : IView, HBox() {
             }
             if (searchOptions[1]) {
                 for (j in 0 until byContentSize){
-                    if (searchByContentResults[j].first == dateCreated) {
-                        byContentIndex = if (!searchOptions[0]) j + 1
-                        else j + byTitleSize + 2
+                    val indices = searchByContentResults[j].second
+                    val key = if (indices == Pair(-1,-1)) searchByContentResults[j].first
+                    else model.groupList[indices.first].noteList[indices.second].dateCreated
+
+                    if (key == dateCreated) {
+                        byContentIndex = if (!searchOptions[0]) j + 1 else j + byTitleSize + 2
                         break
                     }
                 }
             }
-
-
             return Pair(byTitleIndex, byContentIndex)
         }
     }
@@ -427,20 +484,20 @@ class FileListView(model: Model) : IView, HBox() {
         this.children.clear()
 
         if (searchFlag) {
+            // store the selectedIndex before removing it
             val selectedIndex = searchView.selectionModel.selectedIndex
-            val selectedItem = searchView.selectionModel.selectedItem
-            println(selectedIndex)
-            println(selectedItem)
+            // clear all the searchView items and construct a new one
+            // based on search options
             setupSearchView()
             this.children.add(searchView)
-            val (byTitleIndex, byContentIndex) = currSelectedIndexForSearchView()
-            println("$byTitleIndex,   $byContentIndex")
 
+            // re-select the treeItem previous selected
+            val (byTitleIndex, byContentIndex) = currSelectedIndexForSearchView()
             if (byTitleIndex >= 0 && byContentIndex >= 0) {
-                println("inside the first if!")
-                val currByContentIndex = searchByTitleResults.size + 1
-                // the model selects a note that is under both By Title and By Content
-                if (selectedIndex > currByContentIndex)
+                // the selected note in model is under both
+                // "results by title" and "results by content"
+                val resultsByContentIndex = searchByTitleResults.size + 1
+                if (selectedIndex > resultsByContentIndex)
                     searchView.selectionModel.select(byContentIndex)
                 else
                     searchView.selectionModel.select(byTitleIndex)
@@ -449,13 +506,13 @@ class FileListView(model: Model) : IView, HBox() {
             } else if (byTitleIndex == -1 && byContentIndex >= 0) {
                 searchView.selectionModel.select(byContentIndex)
             } else {
-                // the model selects nothing or the selected note is not in search results
-                if (selectedItem == searchByTitle && searchByTitleResults.size > 0)
-                    searchView.selectionModel.select(0)
-                else if (selectedItem == searchByContent && searchByContentResults.size > 0){
-                    val index = if (!searchOptions[0]) 0 else 1 + searchByTitleResults.size
-                    searchView.selectionModel.select(index)
-                } else {
+                // the model selects nothing
+                val resultsByContentIndex = searchByTitleResults.size + 1
+                if (selectedIndex == 0 || selectedIndex == resultsByContentIndex) {
+                    // the selection is at the first group or at the second group
+                    searchView.selectionModel.select(selectedIndex)
+                }
+                else {
                     searchView.selectionModel.select(-1)
                 }
             }
@@ -465,7 +522,6 @@ class FileListView(model: Model) : IView, HBox() {
         this.children.add(fileListView)
         // store the selectedIndex and selectedItem before removing treeItems
         val selectedIndex = fileListView.selectionModel.selectedIndex
-        val selectedItem = fileListView.selectionModel.selectedItem
 
         // store isExpanded field for each groupItem in a hashmap
         val isExpandedMap = HashMap<String, Boolean>()
@@ -504,7 +560,7 @@ class FileListView(model: Model) : IView, HBox() {
             if (selectedIndex == 0 || selectedIndex == 1){
                 // selection is "Categories" or "Groups"
                 fileListView.selectionModel.select(selectedIndex)
-            } else if (selectedItem?.parent == root) {
+            } else if (selectedIndex == getNoteRootIndex()) {
                 // selection is "Notes"
                 fileListView.selectionModel.select(noteRoot)
             } else {

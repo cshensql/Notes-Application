@@ -71,7 +71,6 @@ class Main : Application() {
                 menuBar.changeSearchFlag()
                 // search
                 fileList.search(text, byTitle, byContent)
-                println("searchBar enters: $text")
             }
         }
         menuBar.cancelButton.setOnMouseClicked {
@@ -80,7 +79,6 @@ class Main : Application() {
             menuBar.changeSearchFlag()
             // exit search
             fileList.exitSearch()
-            println("cancel button clicked!")
         }
 
         // Bind the width and height properties for each view
