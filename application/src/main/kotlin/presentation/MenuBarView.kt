@@ -23,6 +23,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
     // searchFlag indicates whether in search mode (FileListView contains searchView) or not
     private var searchFlag = false
+
     // mutableListOf<Boolean>(searchByTitle, searchByContent): list of search options
     val searchOptions = mutableListOf<Boolean>(true, true)
 
