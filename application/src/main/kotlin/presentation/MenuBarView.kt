@@ -248,7 +248,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchBar.promptText = "Search By Content"
             searchOptions[0] = false
             searchOptions[1] = true
-            println("Search by content pressed")
         }
 
         searchByTitle.setOnAction {
@@ -260,7 +259,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchBar.promptText = "Search By Title"
             searchOptions[0] = true
             searchOptions[1] = false
-            println("Search by title pressed")
         }
     }
 
