@@ -1,12 +1,13 @@
 package business
 
 import presentation.IView
+import persistence.LocalSaving
 
 class Model {
 
     private val views = ArrayList<IView>()
-    val noteList = mutableMapOf<String, Note>()
-    val groupList = mutableListOf<Group>()
+    var noteList = mutableMapOf<String, Note>()
+    var groupList = mutableListOf<Group>()
     private var currSelectedNote: Note? = null
     private var currSelectedGroupIndex: Int = -1
 
@@ -52,6 +53,7 @@ class Model {
             currSelectedGroupIndex = -1
 
             isAdded = true
+            saveData()
             notifyViews()
         }
         return isAdded
@@ -71,6 +73,7 @@ class Model {
             currSelectedNote = newNote
 
             isAdded = true
+            saveData()
             notifyViews()
         }
         return isAdded
@@ -101,6 +104,7 @@ class Model {
                 }
             }
         }
+        saveData()
         notifyViews()
     }
 
@@ -161,6 +165,7 @@ class Model {
     fun changeSelectionContent(title: String, body: String) {
         currSelectedNote?.title = title
         currSelectedNote?.body = body
+        saveData()
         notifyViews()
     }
 
@@ -173,7 +178,7 @@ class Model {
         // update selection to the newGroup
         currSelectedNote = null
         currSelectedGroupIndex = groupList.size - 1
-
+        saveData()
         notifyViews()
     }
 
@@ -201,7 +206,7 @@ class Model {
                 }
             }
         }
-
+        saveData()
         notifyViews()
     }
 
@@ -215,6 +220,7 @@ class Model {
                 break
             }
         }
+        saveData()
         notifyViews()
     }
 
@@ -225,17 +231,18 @@ class Model {
             currSelectedNote?.setPwd(password)
             currSelectedNote?.passwordHint = hint
             currSelectedNote?.isLocked = true
-            notifyViews()
         } else {
             // Old password exists
             currSelectedNote?.isLocked = true
-            notifyViews()
         }
+        saveData()
+        notifyViews()
     }
 
     fun unlockNote() {
         if (currSelectedNote != null) {
             currSelectedNote?.isLocked = false
+            saveData()
             notifyViews()
         }
     }
@@ -249,10 +256,19 @@ class Model {
         views.remove(view)
     }
 
-    private fun notifyViews() {
+    fun notifyViews() {
         for (view in views) {
             view.updateView()
         }
     }
 
+    private fun saveData() {
+        val localSaving = LocalSaving()
+        val notesToBeSaved = mutableListOf<Note>()
+        notesToBeSaved.addAll(noteList.values)
+        for (group in groupList) {
+            notesToBeSaved.addAll(group.noteList)
+        }
+        localSaving.saveNotes(notesToBeSaved)
+    }
 }

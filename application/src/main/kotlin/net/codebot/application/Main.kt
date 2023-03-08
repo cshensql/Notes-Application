@@ -1,6 +1,9 @@
 package net.codebot.application
 
 import business.Model
+import persistence.LocalSaving
+import business.Note
+import business.Group
 import business.WindowConfig
 import javafx.application.Application
 import javafx.geometry.Insets
@@ -15,10 +18,12 @@ import javafx.stage.Stage
 import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
-import java.util.prefs.Preferences
 
 class Main : Application() {
     override fun start(stage: Stage) {
+
+        // create persistence class
+        val localSaving = LocalSaving()
 
         // create model
         val model = Model()
@@ -92,35 +97,58 @@ class Main : Application() {
             height = ConfigData.DEFAULT_HEIGHT
         )
 
-        // Get window location from user preferences
-        // TODO: If the WindowConfig JSON file does not exist, then we get the data from userPrefs.
-        //  If the WindowConfig JSON file exists, then we get the data from JSON file
-        val userPrefs = Preferences.userRoot().node(ConfigData.NODE_NAME)
-        val windowPositionX = userPrefs.getDouble(ConfigData.WINDOW_POSITION_X, defaultXPosition)
-        val windowPositionY = userPrefs.getDouble(ConfigData.WINDOW_POSITION_Y, defaultYPosition)
-        val windowWidth = userPrefs.getDouble(ConfigData.WINDOW_WIDTH, ConfigData.DEFAULT_WIDTH)
-        val windowHeight = userPrefs.getDouble(ConfigData.WINDOW_HEIGHT, ConfigData.DEFAULT_HEIGHT)
-        stage.x = windowPositionX
-        stage.y = windowPositionY
-        stage.width = windowWidth
-        stage.height = windowHeight
+        val savedWindowConfig = localSaving.loadConfig()
+        // Since we need some initial values in the local saved file
+        // we put 1.0 as the height to indicate that no user data has been saved yet
+        // since we have minimum height to be 720.0, so it is impossible for user to
+        // set the height to 1.0. Hence, we use this value here as an indicator
+        if (savedWindowConfig.height != 1.0) {
+            // we have previously saved window config
+            windowConfig = savedWindowConfig
+        } else {
+            // we save the data locally
+            localSaving.saveConfig(windowConfig)
+        }
+
+        // the file is fresh new, we need to use default value and save to file
+        stage.x = windowConfig.positionX
+        stage.y = windowConfig.positionY
+        stage.width = windowConfig.width
+        stage.height = windowConfig.height
 
 
         // Store the window size and location when the stage closes
         stage.setOnCloseRequest {
-            val userPref = Preferences.userRoot().node(ConfigData.NODE_NAME)
-            userPref.putDouble(ConfigData.WINDOW_POSITION_X, stage.x)
-            userPref.putDouble(ConfigData.WINDOW_POSITION_Y, stage.y)
-            userPref.putDouble(ConfigData.WINDOW_WIDTH, stage.width)
-            userPref.putDouble(ConfigData.WINDOW_HEIGHT, stage.height)
 
             windowConfig.positionX = stage.x
             windowConfig.positionY = stage.y
             windowConfig.width = stage.width
             windowConfig.height = stage.height
 
-            // TODO: Update the corresponding JSON file
+            localSaving.saveConfig(windowConfig)
         }
+
+        // load the data from local saved file to Model
+        val savedNoteList = localSaving.loadNotes()
+        var noteList = LinkedHashMap<String, Note>()
+        var groupList = LinkedHashMap<String, Group>()
+        for (note in savedNoteList) {
+            val groupName = note.groupName
+            if (groupName.isNotEmpty()) {
+                if (groupList.contains(groupName)) {
+                    groupList[groupName]!!.noteList.add(note)
+                } else {
+                    val newGroup = Group(groupName, mutableListOf(note))
+                    groupList[note.groupName] = newGroup
+                }
+            } else {
+                noteList[note.dateCreated] = note
+            }
+        }
+        model.noteList = noteList
+        model.groupList = groupList.values.toMutableList()
+        model.notifyViews()
+
 
         stage.show()
     }
