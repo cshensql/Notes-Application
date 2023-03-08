@@ -76,17 +76,17 @@ class FileListView(model: Model) : IView, HBox() {
 
 
         // search under groupList
-        for (i in 0 until model.groupList.size){
-            val group = model.groupList[i]
-            for (j in 0 until group.noteList.size){
-                if (isByTitle && group.noteList[j].title.indexOf(input) >= 0)
-                    searchByTitleResults.add(Pair("", Pair(i, j)))
+        for (groupIndex in 0 until model.groupList.size){
+            val group = model.groupList[groupIndex]
+            for (noteIndex in 0 until group.noteList.size){
+                if (isByTitle && group.noteList[noteIndex].title.indexOf(input) >= 0)
+                    searchByTitleResults.add(Pair("", Pair(groupIndex, noteIndex)))
                 if (isByContent){
                     // get the plain text (removes all html tags) of the note body
-                    val body = Jsoup.parse(group.noteList[j].body).wholeText()
+                    val body = Jsoup.parse(group.noteList[noteIndex].body).wholeText()
                     val index = body.indexOf(input)
-                    if (index >= 0) {
-                        searchByContentResults.add(Pair("", Pair(i,j)))
+                    if (index > 0) {
+                        searchByContentResults.add(Pair("", Pair(groupIndex,noteIndex)))
                     }
                 }
             }
@@ -131,8 +131,8 @@ class FileListView(model: Model) : IView, HBox() {
                     }
                 } else {
                     // the note is in groupList
-                    val (i,j) = note.second
-                    val title = model.groupList[i].noteList[j].title
+                    val (groupIndex,noteIndex) = note.second
+                    val title = model.groupList[groupIndex].noteList[noteIndex].title
                     val treeItem = TreeItem(getValidName(title))
                     parent.children.add(treeItem)
                 }
@@ -431,13 +431,13 @@ class FileListView(model: Model) : IView, HBox() {
             val byTitleSize = searchByTitleResults.size
             val byContentSize = searchByContentResults.size
             if (searchOptions[0]) {
-                for (i in 0 until byTitleSize) {
-                    val indices = searchByTitleResults[i].second
-                    val key = if (indices == Pair(-1,-1)) searchByTitleResults[i].first
+                for (resultIndex in 0 until byTitleSize) {
+                    val indices = searchByTitleResults[resultIndex].second
+                    val key = if (indices == Pair(-1,-1)) searchByTitleResults[resultIndex].first
                     else model.groupList[indices.first].noteList[indices.second].dateCreated
 
                     if (key == dateCreated) {
-                        byTitleIndex = i + 1
+                        byTitleIndex = resultIndex + 1
                         break
                     }
                 }

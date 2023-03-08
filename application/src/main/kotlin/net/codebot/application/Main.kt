@@ -28,7 +28,7 @@ class Main : Application() {
 
         // create model
         val model = Model()
-
+val dummy = 123
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val layout = BorderPane()
@@ -67,11 +67,13 @@ class Main : Application() {
         menuBar.searchBar.setOnKeyPressed {
             if (it.code == KeyCode.ENTER) {
                 val text = menuBar.searchBar.text
-                val (byTitle, byContent) = menuBar.searchOptions
-                // update UI for menuBar
-                menuBar.changeSearchFlag()
-                // search
-                fileList.search(text, byTitle, byContent)
+                if (text != "") {
+                    val (byTitle, byContent) = menuBar.searchOptions
+                    // update UI for menuBar
+                    menuBar.changeSearchFlag()
+                    // search
+                    fileList.search(text, byTitle, byContent)
+                }
             }
         }
         menuBar.cancelButton.setOnMouseClicked {
