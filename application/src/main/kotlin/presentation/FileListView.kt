@@ -28,7 +28,6 @@ class FileListView(model: Model) : IView, HBox() {
 
     // searchView
     private val searchView = TreeView<String>()
-    private var searchFlag = false
     // mutableListOf<Boolean>(searchByTitle, searchByContent)
     private val searchOptions = mutableListOf<Boolean>()
     private val results = TreeItem("Results")
@@ -50,7 +49,6 @@ class FileListView(model: Model) : IView, HBox() {
     }
 
     fun search(input:String, isByTitle:Boolean = true, isByContent:Boolean = true){
-        searchFlag = true
 
         // clear previous search results
         searchByTitleResults.clear()
@@ -93,13 +91,13 @@ class FileListView(model: Model) : IView, HBox() {
                 }
             }
         }
+        model.changeSearchFlag(true)
         // ask model to notify views with empty selection to start with
         model.updateSelection()
     }
 
     fun exitSearch() {
-        searchFlag = false
-        this.updateView()
+        model.changeSearchFlag(false)
     }
 
     // helper function to construct searchView
@@ -451,7 +449,7 @@ class FileListView(model: Model) : IView, HBox() {
     override fun updateView() {
         this.children.clear()
 
-        if (searchFlag) {
+        if (model.getSearchFlag()) {
             // store the selectedIndex before removing it
             val selectedIndex = searchView.selectionModel.selectedIndex
             // clear all the searchView items and construct a new one

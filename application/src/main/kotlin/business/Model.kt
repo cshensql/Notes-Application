@@ -15,6 +15,9 @@ class Model {
     private var currSelectedNote: Note? = null
     private var currSelectedGroupIndex: Int = -1
 
+    // searchFlag to toggle search view
+    private var searchFlag: Boolean = false
+
     // note specific functions
 
     // Check if a new note is already created
@@ -243,6 +246,13 @@ class Model {
             currSelectedNote?.isLocked = false
             notifyViews()
         }
+    }
+
+    fun getSearchFlag() = searchFlag
+
+    fun changeSearchFlag(input:Boolean) {
+        searchFlag = input
+        notifyViews()
     }
 
     // general functions

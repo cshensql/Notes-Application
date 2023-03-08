@@ -20,8 +20,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val menu = MenuBar()
     val searchBar = CustomTextField()
     val cancelButton = Button()
-    // searchFlag indicates whether in search mode (FileListView contains searchView) or not
-    private var searchFlag = false
+
     // mutableListOf<Boolean>(searchByTitle, searchByContent): list of search options
     val searchOptions = mutableListOf<Boolean>(true, true)
 
@@ -272,15 +271,10 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         alert.showAndWait()
     }
 
-    fun changeSearchFlag(input:Boolean? = null) {
-        searchFlag = input ?: !searchFlag
-        updateView()
-    }
-
     override fun updateView() {
         // disable note and group functions while searching
-        noteMenu.isDisable = searchFlag
-        groupMenu.isDisable = searchFlag
+        noteMenu.isDisable = model.getSearchFlag()
+        groupMenu.isDisable = model.getSearchFlag()
 
         val currSelectedNote = model.getCurrSelectedNote()
         if (currSelectedNote != null) {
