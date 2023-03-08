@@ -21,9 +21,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     val searchBar = CustomTextField()
     val cancelButton = Button()
 
-    // searchFlag indicates whether in search mode (FileListView contains searchView) or not
-    private var searchFlag = false
-
     // mutableListOf<Boolean>(searchByTitle, searchByContent): list of search options
     val searchOptions = mutableListOf<Boolean>(true, true)
 

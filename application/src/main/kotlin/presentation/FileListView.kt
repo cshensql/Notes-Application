@@ -28,7 +28,6 @@ class FileListView(model: Model) : IView, HBox() {
 
     // searchView
     private val searchView = TreeView<String>()
-    private var searchFlag = false
 
     // mutableListOf<Boolean>(searchByTitle, searchByContent)
     private val searchOptions = mutableListOf<Boolean>()
