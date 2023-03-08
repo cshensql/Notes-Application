@@ -6,8 +6,14 @@ import persistence.LocalSaving
 class Model {
 
     private val views = ArrayList<IView>()
-    var noteList = mutableMapOf<String, Note>()
+
+    // LinkedHashMap: Hash table based implementation of the MutableMap interface,
+    // which additionally preserves the insertion order of entries during the iteration.
+    var noteList = LinkedHashMap<String, Note>()
     var groupList = mutableListOf<Group>()
+
+    // currSelectedGroupIndex represents the index of the current group in groupList
+    // if selected note is not null and index >= 0, a note under a group is selected
     private var currSelectedNote: Note? = null
     private var currSelectedGroupIndex: Int = -1
 
