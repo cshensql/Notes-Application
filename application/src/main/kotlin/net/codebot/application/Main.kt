@@ -20,7 +20,6 @@ import java.util.prefs.Preferences
 
 class Main : Application() {
     override fun start(stage: Stage) {
-        val stupid = 123
         // create model
         val model = Model()
 
