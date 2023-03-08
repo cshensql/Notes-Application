@@ -8,7 +8,8 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import org.controlsfx.control.textfield.CustomTextField
 
 class MenuBarView(model: Model) : IView, BorderPane() {
@@ -258,6 +259,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchBar.promptText = "Search By Title"
             searchOptions[0] = true
             searchOptions[1] = false
+//            searchBar.border = Border(BorderStroke(Color.BLUE,
+//                BorderStrokeStyle.SOLID, EMPTY, BorderWidths.DEFAULT))
         }
     }
 
