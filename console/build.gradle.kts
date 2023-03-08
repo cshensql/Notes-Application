@@ -33,3 +33,9 @@ application {
     mainModule.set("console")
     mainClass.set("net.codebot.console.MainKt")
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
