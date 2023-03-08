@@ -93,8 +93,6 @@ class FileListView(model: Model) : IView, HBox() {
                 }
             }
         }
-        // construct the searchView
-        //setupSearchView()
         // ask model to notify views with empty selection to start with
         model.updateSelection()
     }
@@ -329,36 +327,6 @@ class FileListView(model: Model) : IView, HBox() {
                     model.updateSelection()
                 }
             }
-
-//            if (selectedItem?.parent == searchByTitle){
-//                // the selected note is under "By Title"
-//                val index = searchByTitle.children.indexOf(selectedItem)
-//                val result = searchByTitleResults[index]
-//                model.updateSelection(dateCreated = result.first, indices = result.second)
-//            } else if (selectedItem?.parent == searchByContent){
-//                // the selected note is under "By Content"
-//                val index = searchByContent.children.indexOf(selectedItem)
-//                val result = searchByContentResults[index]
-//                model.updateSelection(dateCreated = result.first, indices = result.second)
-//            } else {
-//                // the selected item is not a note,
-//                // should select nothing in model to display blank
-//                model.updateSelection()
-//            }if (selectedItem?.parent == searchByTitle){
-                // the selected note is under "By Title"
-//                val index = searchByTitle.children.indexOf(selectedItem)
-//                val result = searchByTitleResults[index]
-//                model.updateSelection(dateCreated = result.first, indices = result.second)
-//            } else if (selectedItem?.parent == searchByContent){
-//                // the selected note is under "By Content"
-//                val index = searchByContent.children.indexOf(selectedItem)
-//                val result = searchByContentResults[index]
-//                model.updateSelection(dateCreated = result.first, indices = result.second)
-//            } else {
-//                // the selected item is not a note,
-//                // should select nothing in model to display blank
-//                model.updateSelection()
-//            }
         }
     }
 
