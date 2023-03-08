@@ -273,15 +273,10 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         alert.showAndWait()
     }
 
-    fun changeSearchFlag(input:Boolean? = null) {
-        searchFlag = input ?: !searchFlag
-        updateView()
-    }
-
     override fun updateView() {
         // disable note and group functions while searching
-        noteMenu.isDisable = searchFlag
-        groupMenu.isDisable = searchFlag
+        noteMenu.isDisable = model.getSearchFlag()
+        groupMenu.isDisable = model.getSearchFlag()
 
         val currSelectedNote = model.getCurrSelectedNote()
         if (currSelectedNote != null) {

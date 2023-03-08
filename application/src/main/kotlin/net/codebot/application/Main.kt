@@ -69,8 +69,6 @@ val dummy = 123
                 val text = menuBar.searchBar.text
                 if (text != "") {
                     val (byTitle, byContent) = menuBar.searchOptions
-                    // update UI for menuBar
-                    menuBar.changeSearchFlag()
                     // search
                     fileList.search(text, byTitle, byContent)
                 }
@@ -78,8 +76,6 @@ val dummy = 123
         }
         menuBar.cancelButton.setOnMouseClicked {
             menuBar.searchBar.text = ""
-            // update UI for menuBar
-            menuBar.changeSearchFlag()
             // exit search
             fileList.exitSearch()
         }
