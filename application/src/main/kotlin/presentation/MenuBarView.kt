@@ -21,7 +21,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
     private val lockOrUnlockNote = MenuItem("Lock Note")
     private val groupNotes = MenuItem("Group Notes")
     private val moveNotes = MenuItem("Move Notes")
-
+    private val recoverNote = MenuItem("Recover Notes")
 
     // Group Menu Sub options
     private val addGroup = MenuItem("Add Group")
@@ -39,6 +39,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         lockOrUnlockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
         groupNotes.accelerator = KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN)
         moveNotes.accelerator = KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN)
+        recoverNote.accelerator = KeyCodeCombination(KeyCode.R, KeyCodeCombination.CONTROL_DOWN)
         addGroup.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.ALT_DOWN)
         deleteGroup.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.ALT_DOWN)
         renameGroup.accelerator = KeyCodeCombination(KeyCode.R, KeyCodeCombination.ALT_DOWN)
@@ -103,6 +104,29 @@ class MenuBarView(model: Model) : IView, MenuBar() {
 
         moveNotes.setOnAction {
             println("Move notes pressed")
+        }
+
+        recoverNote.setOnAction {
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val recoverNoteView = RecoverNoteView(model)
+
+            dialogPane.content = recoverNoteView
+            alert.title = "Recover"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+
+            val result = alert.showAndWait()
+
+            if (!result.isPresent) {
+                // alert is exited, no button has been pressed.
+            } else if (result.get() == ButtonType.OK) {
+                val selectedItems = recoverNoteView.getRecentlyDeletedNotesSelected()
+                model.recoverNote(selectedItems)
+            } else if (result.get() == ButtonType.CANCEL){
+                // cancel button is pressed
+            }
         }
 
         addGroup.setOnAction {
@@ -192,6 +216,7 @@ class MenuBarView(model: Model) : IView, MenuBar() {
         noteMenu.items.add(lockOrUnlockNote)
         noteMenu.items.add(groupNotes)
         noteMenu.items.add(moveNotes)
+        noteMenu.items.add(recoverNote)
         groupMenu.items.add(addGroup)
         groupMenu.items.add(deleteGroup)
         groupMenu.items.add(renameGroup)
