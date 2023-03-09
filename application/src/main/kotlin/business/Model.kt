@@ -263,6 +263,14 @@ class Model {
         notifyViews()
     }
 
+    // inputs are indices of the following three lists:
+    // sortOptions: by title, by date modified, by date created
+    // sortOrders: ascending, descending
+    // sortRanges: Categories(All notes), Groups, Notes, ...
+    fun sort(sortOption:Int, sortOrder:Int, sortRange:Int){
+        //TODO
+    }
+
     // general functions
     fun addView(view: IView) {
         views.add(view)
