@@ -1,4 +1,5 @@
 build/
+cs346Data/
 out/
 *.class
 .gradle

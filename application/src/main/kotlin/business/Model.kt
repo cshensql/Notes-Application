@@ -11,6 +11,7 @@ class Model {
     // which additionally preserves the insertion order of entries during the iteration.
     var noteList = LinkedHashMap<String, Note>()
     var groupList = mutableListOf<Group>()
+    var testFlag: Boolean = false
 
     // currSelectedGroupIndex represents the index of the current group in groupList
     // if selected note is not null and index >= 0, a note under a group is selected
@@ -360,11 +361,21 @@ class Model {
 
     private fun saveData() {
         val localSaving = LocalSaving()
+        localSaving.testFlag = testFlag
         val notesToBeSaved = mutableListOf<Note>()
+        val groupNamesToBeSaved = mutableListOf<String>()
+
+        // Get notes to be saved
         notesToBeSaved.addAll(noteList.values)
         for (group in groupList) {
             notesToBeSaved.addAll(group.noteList)
         }
+
+        // Get group names to be saved
+        for (group in groupList) {
+            groupNamesToBeSaved.add(group.name)
+        }
         localSaving.saveNotes(notesToBeSaved)
+        localSaving.saveGroupNames(groupNamesToBeSaved)
     }
 }

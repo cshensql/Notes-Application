@@ -22,7 +22,7 @@ class Main : Application() {
 
         // create persistence class
         val localSaving = LocalSaving()
-
+        
         // create model
         val model = Model()
 
@@ -159,6 +159,14 @@ class Main : Application() {
                 }
             } else {
                 noteList[note.dateCreated] = note
+            }
+        }
+
+        val savedGroupNamesList = localSaving.loadGroupNames()
+        for (groupName in savedGroupNamesList) {
+            if (!groupList.containsKey(groupName)) {
+                val newGroup = Group(groupName, mutableListOf<Note>())
+                groupList[groupName] = newGroup
             }
         }
         model.noteList = noteList
