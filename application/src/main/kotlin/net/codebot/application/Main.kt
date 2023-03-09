@@ -68,6 +68,8 @@ val dummy = 123
                     val (byTitle, byContent) = menuBar.searchOptions
                     // search
                     fileList.search(text, byTitle, byContent)
+                } else {
+                    fileList.exitSearch()
                 }
             }
         }
