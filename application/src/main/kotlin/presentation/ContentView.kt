@@ -32,12 +32,17 @@ class ContentView(private val model: Model) : IView, VBox() {
             // use the Jsoup to parse the HTML string into a Document
             val doc = Jsoup.parse(body)
             val title = doc.body().firstElementChild()?.text()
-            // update the lastModified field of the selected note
-            model.getCurrSelectedNote()?.updateModified()
-            model.changeSelectionContent(
-                title ?: model.getCurrSelectedNote()?.title ?: "",
-                body
-            )
+            if (title?.isBlank() == true) {
+                WarningAlertView("Empty Title", "The first line can not be blank!")
+                    .showAndWait()
+            } else {
+                // update the lastModified field of the selected note
+                model.getCurrSelectedNote()?.updateModified()
+                model.changeSelectionContent(
+                    title ?: model.getCurrSelectedNote()?.title ?: "",
+                    body
+                )
+            }
         }
 
 

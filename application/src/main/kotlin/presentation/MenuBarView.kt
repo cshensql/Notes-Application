@@ -38,6 +38,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val lockOrUnlockNote = MenuItem("Lock Note")
     private val groupNotes = MenuItem("Group Notes")
     private val moveNotes = MenuItem("Move Notes")
+    private val sortNotes = MenuItem("Sort Notes")
 
 
     // Group Menu Sub options
@@ -57,12 +58,15 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         lockOrUnlockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
         groupNotes.accelerator = KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN)
         moveNotes.accelerator = KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN)
+        sortNotes.accelerator = KeyCodeCombination(KeyCode.S, KeyCodeCombination.ALT_DOWN)
+
         addGroup.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.ALT_DOWN)
         deleteGroup.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.ALT_DOWN)
         renameGroup.accelerator = KeyCodeCombination(KeyCode.R, KeyCodeCombination.ALT_DOWN)
         searchAll.accelerator = KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)
         searchByContent.accelerator = KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN)
         searchByTitle.accelerator = KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)
+
 
         // add css stylesheet
         this.stylesheets.add("MenuBarView.css")
@@ -97,12 +101,32 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         noteMenu.items.add(lockOrUnlockNote)
         noteMenu.items.add(groupNotes)
         noteMenu.items.add(moveNotes)
+        noteMenu.items.add(sortNotes)
         groupMenu.items.add(addGroup)
         groupMenu.items.add(deleteGroup)
         groupMenu.items.add(renameGroup)
         searchMenu.items.add(searchAll)
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
+
+
+        sortNotes.setOnAction {
+            val alert = Alert(AlertType.CONFIRMATION)
+            val dialogPane = alert.dialogPane
+            val sortSettingsView = SortSettingsView(model)
+
+            dialogPane.content = sortSettingsView
+            alert.title = "Sort Settings"
+            alert.isResizable = true
+            alert.width = 300.0
+            alert.height = 400.0
+            val result = alert.showAndWait()
+
+            if (result.isPresent && result.get() == ButtonType.OK){
+                val (sortOption, sortOrder, sortRange) = sortSettingsView.getSelections()
+                model.sort(sortOption, sortOrder, sortRange)
+            }
+        }
 
         // check for duplicate group name
 
@@ -119,8 +143,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             }
             return true
         }
-
-        // Set actions for each submenu item
 
         addNote.setOnAction {
             val isAdded  =

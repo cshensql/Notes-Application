@@ -20,6 +20,13 @@ class Model {
     // searchFlag to toggle search view
     private var searchFlag: Boolean = false
 
+    // sort settings
+    // mutableListOf indices in the following three lists:
+    // sortOptions: by title, by date modified, by date created
+    // sortOrders: ascending, descending
+    // sortRanges: Categories(All notes), Groups, Notes, ...
+    val sortSettings = mutableListOf<Int> (0, 0, 0)
+
     // note specific functions
 
     // Check if a new note is already created
@@ -289,6 +296,51 @@ class Model {
     fun changeSearchFlag(input:Boolean) {
         searchFlag = input
         notifyViews()
+    }
+
+    // inputs are indices of the following three lists:
+    // sortOptions: by title, by date modified, by date created
+    // sortOrders: ascending, descending
+    // sortRanges: Categories(All notes), Groups, Notes, ...
+    fun sort(sortOption:Int, sortOrder:Int, sortRange:Int){
+        sortSettings.clear()
+        sortSettings.addAll(listOf(sortOption, sortOrder, sortRange))
+
+        if (sortRange == 0 || sortRange == 1) {
+            for (groupIndex in 0 until groupList.size){
+                sortListOfNotes(groupList[groupIndex].noteList, sortOption, sortOrder)
+            }
+        }
+        if (sortRange == 0 || sortRange == 2) {
+            sortNoteListInModel(sortOption, sortOrder)
+        }
+        if (sortRange > 2) {
+            sortListOfNotes(groupList[sortRange - 3].noteList, sortOption, sortOrder)
+        }
+        saveData()
+        notifyViews()
+    }
+
+    private fun getNoteFieldBySortOption(note:Note, sortOption: Int): String {
+        return when (sortOption) {
+            0 -> note.title
+            1 -> note.lastModified
+            else -> note.dateCreated
+        }
+    }
+    private fun sortListOfNotes(listOfNote: MutableList<Note>, sortOption: Int, sortOrder: Int){
+        if (sortOrder == 0)
+            listOfNote.sortBy { getNoteFieldBySortOption(it, sortOption) }
+        else
+            listOfNote.sortByDescending { getNoteFieldBySortOption(it, sortOption) }
+    }
+
+    private fun sortNoteListInModel(sortOption: Int, sortOrder: Int){
+        val sortedList =
+            if (sortOrder == 0) noteList.values.sortedBy { getNoteFieldBySortOption(it, sortOption) }
+            else noteList.values.sortedByDescending { getNoteFieldBySortOption(it, sortOption) }
+        noteList.clear()
+        sortedList.forEach { noteList[it.dateCreated] = it }
     }
 
     // general functions
