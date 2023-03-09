@@ -234,6 +234,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchAll.styleClass.add("active")
             searchBar.text = ""
             searchBar.promptText = "Search"
+            searchBar.border = Border(BorderStroke(Color.BLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
             searchOptions[0] = true
             searchOptions[1] = true
         }
@@ -245,6 +247,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchByContent.styleClass.add("active")
             searchBar.text = ""
             searchBar.promptText = "Search By Content"
+            searchBar.border = Border(BorderStroke(Color.BLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
             searchOptions[0] = false
             searchOptions[1] = true
         }
@@ -256,10 +260,14 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             searchByTitle.styleClass.add("active")
             searchBar.text = ""
             searchBar.promptText = "Search By Title"
+            searchBar.border = Border(BorderStroke(Color.BLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
             searchOptions[0] = true
             searchOptions[1] = false
-//            searchBar.border = Border(BorderStroke(Color.BLUE,
-//                BorderStrokeStyle.SOLID, EMPTY, BorderWidths.DEFAULT))
+        }
+
+        searchBar.setOnMouseClicked {
+            searchBar.border = null
         }
     }
 

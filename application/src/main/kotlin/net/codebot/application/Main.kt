@@ -9,10 +9,7 @@ import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -76,6 +73,7 @@ val dummy = 123
         }
         menuBar.cancelButton.setOnMouseClicked {
             menuBar.searchBar.text = ""
+            menuBar.searchBar.border = null
             // exit search
             fileList.exitSearch()
         }
