@@ -269,6 +269,40 @@ class Model {
     // sortRanges: Categories(All notes), Groups, Notes, ...
     fun sort(sortOption:Int, sortOrder:Int, sortRange:Int){
         //TODO
+        if (sortRange == 0 || sortRange == 1) {
+            for (groupIndex in 0 until groupList.size){
+                sortListOfNotes(groupList[groupIndex].noteList, sortOption, sortOrder)
+            }
+        }
+        if (sortRange == 0 || sortRange == 2) {
+            sortNoteListInModel(sortOption, sortOrder)
+        }
+        if (sortRange > 2) {
+            sortListOfNotes(groupList[sortRange - 3].noteList, sortOption, sortOrder)
+        }
+        notifyViews()
+    }
+
+    private fun getNoteFieldBySortOption(note:Note, sortOption: Int): String {
+        return when (sortOption) {
+            0 -> note.title
+            1 -> note.lastModified
+            else -> note.dateCreated
+        }
+    }
+    private fun sortListOfNotes(listOfNote: MutableList<Note>, sortOption: Int, sortOrder: Int){
+        if (sortOrder == 0)
+            listOfNote.sortBy { getNoteFieldBySortOption(it, sortOption) }
+        else
+            listOfNote.sortByDescending { getNoteFieldBySortOption(it, sortOption) }
+    }
+
+    private fun sortNoteListInModel(sortOption: Int, sortOrder: Int){
+        val sortedList =
+            if (sortOrder == 0) noteList.toList().sortedBy { getNoteFieldBySortOption(it.second, sortOption) }
+            else noteList.toList().sortedByDescending { getNoteFieldBySortOption(it.second, sortOption) }
+        noteList.clear()
+        sortedList.forEach { noteList[it.first] = it.second }
     }
 
     // general functions
