@@ -20,6 +20,13 @@ class Model {
     // searchFlag to toggle search view
     private var searchFlag: Boolean = false
 
+    // sort settings
+    // mutableListOf indices in the following three lists:
+    // sortOptions: by title, by date modified, by date created
+    // sortOrders: ascending, descending
+    // sortRanges: Categories(All notes), Groups, Notes, ...
+    val sortSettings = mutableListOf<Int> (0, 0, 0)
+
     // note specific functions
 
     // Check if a new note is already created
@@ -268,7 +275,9 @@ class Model {
     // sortOrders: ascending, descending
     // sortRanges: Categories(All notes), Groups, Notes, ...
     fun sort(sortOption:Int, sortOrder:Int, sortRange:Int){
-        //TODO
+        sortSettings.clear()
+        sortSettings.addAll(listOf(sortOption, sortOrder, sortRange))
+
         if (sortRange == 0 || sortRange == 1) {
             for (groupIndex in 0 until groupList.size){
                 sortListOfNotes(groupList[groupIndex].noteList, sortOption, sortOrder)
@@ -280,6 +289,7 @@ class Model {
         if (sortRange > 2) {
             sortListOfNotes(groupList[sortRange - 3].noteList, sortOption, sortOrder)
         }
+        saveData()
         notifyViews()
     }
 
@@ -299,10 +309,10 @@ class Model {
 
     private fun sortNoteListInModel(sortOption: Int, sortOrder: Int){
         val sortedList =
-            if (sortOrder == 0) noteList.toList().sortedBy { getNoteFieldBySortOption(it.second, sortOption) }
-            else noteList.toList().sortedByDescending { getNoteFieldBySortOption(it.second, sortOption) }
+            if (sortOrder == 0) noteList.values.sortedBy { getNoteFieldBySortOption(it, sortOption) }
+            else noteList.values.sortedByDescending { getNoteFieldBySortOption(it, sortOption) }
         noteList.clear()
-        sortedList.forEach { noteList[it.first] = it.second }
+        sortedList.forEach { noteList[it.dateCreated] = it }
     }
 
     // general functions

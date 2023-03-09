@@ -5,6 +5,7 @@ import javafx.geometry.Insets
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
+import net.codebot.application.ConfigData
 
 class SortSettingsView(val model: Model): GridPane() {
     // labels
@@ -20,14 +21,14 @@ class SortSettingsView(val model: Model): GridPane() {
         this.vgap = 15.0
         this.hgap = 5.0
 
-        sortOptions.items.addAll("Title", "Date Modified", "Date Created")
-        sortOrders.items.addAll("Ascending", "Descending")
-        sortRanges.items.addAll("All Notes", "Groups", "Notes")
+        sortOptions.items.addAll(ConfigData.SORT_OPTIONS)
+        sortOrders.items.addAll(ConfigData.SORT_ORDERS)
+        sortRanges.items.addAll(ConfigData.SORT_RANGES_DEFAULT)
         addGroupsForSortRanges()
 
-        sortOptions.value = "Title"
-        sortOrders.value = "Ascending"
-        sortRanges.value = "All Notes"
+        sortOptions.selectionModel.select(model.sortSettings[0])
+        sortOrders.selectionModel.select(model.sortSettings[1])
+        sortRanges.selectionModel.select(model.sortSettings[2])
 
         sortOptions.prefWidthProperty().bind(this.widthProperty())
         sortOrders.prefWidthProperty().bind(this.widthProperty())
