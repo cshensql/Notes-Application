@@ -68,4 +68,61 @@ class LocalSaving() {
         val notesString: String = File(fileName).readText()
         return Json.decodeFromString<MutableList<Note>>(notesString)
     }
+
+    // saves group names data locally
+    fun saveGroupNames(group: MutableList<String>) {
+        var fileName = "src/main/kotlin/persistence/saves/groupNames.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/groupNames.json"
+        }
+        val file = File(fileName)
+
+        val format = Json { encodeDefaults = true }
+        val groupString = format.encodeToString(group)
+
+        // always overwrite, for updates or initial saving
+        file.writeText(groupString)
+    }
+
+    // loads local group names data
+    fun loadGroupNames(): MutableList<String> {
+        var fileName = "src/main/kotlin/persistence/saves/groupNames.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/groupNames.json"
+        }
+        val groupString: String = File(fileName).readText()
+
+        return Json.decodeFromString<MutableList<String>>(groupString)
+    }
+
+    // saves recently deleted notes data locally
+    fun saveRecentlyDeletedNotes(notes: MutableList<Note>) {
+        var fileName = "src/main/kotlin/persistence/saves/recentlyDeleted.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
+        }
+        val file = File(fileName)
+
+        val format = Json { encodeDefaults = true }
+        val notesString = format.encodeToString(notes)
+
+        // always overwrite, for updates or initial saving
+        file.writeText(notesString)
+    }
+
+    // loads recently deleted notes data
+    fun loadRecentlyDeletedNotes(): MutableList<Note> {
+        var fileName = "src/main/kotlin/persistence/saves/recentlyDeleted.json"
+
+        if (testFlag) {
+            fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
+        }
+        val noteString: String = File(fileName).readText()
+
+        return Json.decodeFromString<MutableList<Note>>(noteString)
+    }
+
 }
