@@ -17,6 +17,10 @@ class LocalSavingTest {
 
     var config = WindowConfig(1.0, 1.0, 1.0, 1.0)
 
+    var groupNames = mutableListOf<String>("group1", "group2")
+
+    var recentlyDeletedNotes = mutableListOf<Note>(note1, note2)
+
     private val l = LocalSaving()
 
     @BeforeEach
@@ -27,7 +31,7 @@ class LocalSavingTest {
     @Test
     fun saveAndLoadConfig() {
         l.saveConfig(config)
-        val path = Path("src/main/kotlin/persistence/saves/config.json")
+        val path = Path("src/test/kotlin/persistence/saves/config.json")
         assert(Files.exists(path))
 
         val ret = l.loadConfig()
@@ -37,7 +41,7 @@ class LocalSavingTest {
     @Test
     fun saveAndLoadNotes() {
         l.saveNotes(notesList)
-        val path = Path("src/main/kotlin/persistence/saves/notes.json")
+        val path = Path("src/test/kotlin/persistence/saves/notes.json")
         assert(Files.exists(path))
 
         val ret = l.loadNotes()
@@ -46,4 +50,27 @@ class LocalSavingTest {
         }
     }
 
+    @Test
+    fun saveAndLoadGroupNames() {
+        l.saveGroupNames(groupNames)
+        val path = Path("src/test/kotlin/persistence/saves/groupNames.json")
+        assert(Files.exists(path))
+
+        val ret = l.loadGroupNames()
+        for (i in 0 until ret.size) {
+            assert(ret[i] == groupNames[i])
+        }
+    }
+
+    @Test
+    fun saveAndLoadRecentlyDeletedNotes() {
+        l.saveRecentlyDeletedNotes(recentlyDeletedNotes)
+        val path = Path("src/test/kotlin/persistence/saves/recentlyDeleted.json")
+        assert(Files.exists(path))
+
+        val ret = l.loadRecentlyDeletedNotes()
+        for (i in 0 until ret.size) {
+            assert(ret[i].dateCreated == recentlyDeletedNotes[i].dateCreated)
+        }
+    }
 }
