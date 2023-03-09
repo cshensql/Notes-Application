@@ -256,6 +256,34 @@ class Model {
         }
     }
 
+    // notesToBeMoved will be a list of dateCreated of notes
+    // toGroup will be the group name that we want to move the notes into
+    fun moveNotes(notesToBeMoved: MutableList<String>, toGroup: String) {
+        val notesGrouped = mutableListOf<Note>()
+        for (date in notesToBeMoved) {
+            val note  = noteList[date]
+            if (note != null) {
+                note.groupName = toGroup
+                notesGrouped.add(note)
+            }
+        }
+
+        for (date in notesToBeMoved) {
+            noteList.remove(date)
+        }
+
+        // the given toGroup is guaranteed to be a valid group name
+        // by how the UI is set up
+        for (group in groupList) {
+            if (group.name == toGroup) {
+                group.noteList.addAll(notesGrouped)
+                break
+            }
+        }
+        saveData()
+        notifyViews()
+    }
+
     fun getSearchFlag() = searchFlag
 
     fun changeSearchFlag(input:Boolean) {

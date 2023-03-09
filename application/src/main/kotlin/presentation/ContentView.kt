@@ -51,7 +51,7 @@ class ContentView(private val model: Model) : IView, VBox() {
         if (currSelectedNote != null) {
             if (currSelectedNote.isLocked) {
                 htmlEditor.isDisable = true
-                htmlEditor.htmlText = "This note is locked. Please unlock it first by right-clicking this note in the file list"
+                htmlEditor.htmlText = "This note is locked. Please unlock it first by right-clicking this note in the file list or unlocking the note from the menubar."
             } else  {
                 htmlEditor.isDisable = false
                 htmlEditor.htmlText = model.getCurrSelectedNote()?.body ?: ""

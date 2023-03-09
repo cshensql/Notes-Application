@@ -358,4 +358,46 @@ class ModelTest {
         assert(model.getCurrSelectedNote()?.passwordHint == "hint")
         assert(model.getCurrSelectedNote()?.isLocked == false)
     }
+
+    @Test
+    fun moveNotesToGroupWithNotes() {
+        // Arrange
+        val note1 = Note("notes1")
+        val note2 = Note("notes2", groupName = "group")
+        val group = Group("group", mutableListOf<Note>(note2))
+        model.groupList.add(group)
+        model.noteList = LinkedHashMap<String, Note>()
+        model.noteList.put("date", note1)
+
+        // Act
+        model.moveNotes(mutableListOf<String>("date"), "group")
+
+        // Assert
+        assert(model.noteList.count() == 0)
+        assert(model.groupList.count() == 1)
+        assert(model.groupList[0].name == "group")
+        assert(model.groupList[0].noteList.count() == 2)
+        assert(model.groupList[0].noteList.contains(note1))
+        assert(model.groupList[0].noteList.contains(note2))
+    }
+
+    @Test
+    fun moveNotesToGroupWithoutNotes() {
+        // Arrange
+        val note1 = Note("notes1")
+        val group = Group("group", mutableListOf<Note>())
+        model.groupList.add(group)
+        model.noteList = LinkedHashMap<String, Note>()
+        model.noteList.put("date", note1)
+
+        // Act
+        model.moveNotes(mutableListOf<String>("date"), "group")
+
+        // Assert
+        assert(model.noteList.count() == 0)
+        assert(model.groupList.count() == 1)
+        assert(model.groupList[0].name == "group")
+        assert(model.groupList[0].noteList.count() == 1)
+        assert(model.groupList[0].noteList.contains(note1))
+    }
 }

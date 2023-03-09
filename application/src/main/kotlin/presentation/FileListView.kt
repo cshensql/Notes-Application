@@ -529,7 +529,7 @@ class FileListView(model: Model) : IView, HBox() {
             groupNameList.add(group.name)
             val nameShown = getValidName(group.name)
             val groupItem = TreeItem(nameShown)
-            groupItem.isExpanded = isExpandedMap[group.name] ?: false
+            groupItem.isExpanded = isExpandedMap[group.name] ?: true
             for (note in group.noteList) {
                 val titleShown = getValidName(note.title)
                 groupItem.children.add(TreeItem(titleShown))

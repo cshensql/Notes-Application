@@ -1,7 +1,9 @@
 package presentation
 
+import business.Group
 import business.Model
 import javafx.geometry.Insets
+import business.Note
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.image.Image
@@ -11,6 +13,7 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import org.controlsfx.control.textfield.CustomTextField
+import java.util.*
 
 class MenuBarView(model: Model) : IView, BorderPane() {
     // Model
@@ -154,7 +157,20 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         }
 
         groupNotes.setOnAction {
-            println("Group notes pressed")
+            var shouldStop = false
+            while (!shouldStop) {
+                val alert = Alert(AlertType.CONFIRMATION)
+                val dialogPane = alert.dialogPane
+                val groupNotesView = GroupNotesView(model)
+
+                dialogPane.content = groupNotesView
+                alert.title = "Group Notes"
+                alert.isResizable = true
+                alert.width = 300.0
+                alert.height = 400.0
+                shouldStop = successfullyGroupedNotes(alert.showAndWait(), groupNotesView)
+            }
+
         }
 
         moveNotes.setOnAction {
@@ -277,6 +293,43 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         alert.title = "Warning"
         alert.headerText = message
         alert.showAndWait()
+    }
+
+    // check for duplicate group name
+
+    private fun isAllowedGroupName(inputGroupName: String): Boolean {
+        if (inputGroupName == "") {
+            showErrorMessage("Empty Group names are not allowed")
+            return false
+        }
+        for (group in this.model.groupList) {
+            if (group.name == inputGroupName) {
+                showErrorMessage("Duplicate Group names are not allowed")
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun successfullyGroupedNotes(result: Optional<ButtonType>, groupNotesView: GroupNotesView): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            val selectedNotesDates = groupNotesView.getDateCreatedList()
+
+            val selectedGroupName = groupNotesView.getSelectedGroupName()
+            if (selectedGroupName.isEmpty()) {
+                val warningAlertView = WarningAlertView("No Group Selected", "You haven't selected a group yet. Please select one and try again")
+                warningAlertView.present()
+                return false
+            } else if (selectedNotesDates.isEmpty()){
+                val warningAlertView = WarningAlertView("No Note Selected", "You haven't selected any note yet. Please select some notes and try again")
+                warningAlertView.present()
+                return false
+            } else {
+                model.moveNotes(selectedNotesDates, selectedGroupName)
+                return true
+            }
+        }
+        return true
     }
 
     override fun updateView() {
