@@ -8,10 +8,8 @@ import business.WindowConfig
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.CornerRadii
+import javafx.scene.input.KeyCode
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -27,7 +25,7 @@ class Main : Application() {
 
         // create model
         val model = Model()
-
+val dummy = 123
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val layout = BorderPane()
@@ -62,7 +60,25 @@ class Main : Application() {
         stage.scene = scene
         stage.title = "Notes"
 
-
+        // set up event handler for searchBar in menuBar
+        menuBar.searchBar.setOnKeyPressed {
+            if (it.code == KeyCode.ENTER) {
+                val text = menuBar.searchBar.text
+                if (text != "") {
+                    val (byTitle, byContent) = menuBar.searchOptions
+                    // search
+                    fileList.search(text, byTitle, byContent)
+                } else {
+                    fileList.exitSearch()
+                }
+            }
+        }
+        menuBar.cancelButton.setOnMouseClicked {
+            menuBar.searchBar.text = ""
+            menuBar.searchBar.border = null
+            // exit search
+            fileList.exitSearch()
+        }
 
         // Bind the width and height properties for each view
         layout.prefWidthProperty().bind(scene.widthProperty())
