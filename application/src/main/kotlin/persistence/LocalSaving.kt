@@ -6,6 +6,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class LocalSaving() {
 
@@ -14,7 +16,7 @@ class LocalSaving() {
     // stores local config data
     fun saveConfig(config: WindowConfig) {
 
-        var fileName = "src/main/kotlin/persistence/saves/config.json"
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/config.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/config.json"
@@ -30,20 +32,26 @@ class LocalSaving() {
 
     // loads local config data
     fun loadConfig(): WindowConfig {
-
-        var fileName = "src/main/kotlin/persistence/saves/config.json"
+        checkDir()
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/config.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/config.json"
         }
-        val configString: String = File(fileName).readText()
+
+        val file = File(fileName)
+        if (!file.exists()) {
+            file.writeText("{\"positionX\":1.0,\"positionY\":1.0,\"width\":1.0,\"height\":1.0}")
+        }
+
+        val configString: String = file.readText()
 
         return Json.decodeFromString<WindowConfig>(configString)
     }
 
     // stores local notes data
     fun saveNotes(notes: MutableList<Note>) {
-        var fileName = "src/main/kotlin/persistence/saves/notes.json"
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/notes.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/notes.json"
@@ -59,19 +67,27 @@ class LocalSaving() {
 
     // loads local notes data
     fun loadNotes(): MutableList<Note> {
+        checkDir()
 
-        var fileName = "src/main/kotlin/persistence/saves/notes.json"
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/notes.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/notes.json"
         }
-        val notesString: String = File(fileName).readText()
+
+        val file = File(fileName)
+
+        if (!file.exists()) {
+            file.writeText("[]")
+        }
+
+        val notesString: String = file.readText()
         return Json.decodeFromString<MutableList<Note>>(notesString)
     }
 
     // saves group names data locally
     fun saveGroupNames(group: MutableList<String>) {
-        var fileName = "src/main/kotlin/persistence/saves/groupNames.json"
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/groupNames.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/groupNames.json"
@@ -87,19 +103,25 @@ class LocalSaving() {
 
     // loads local group names data
     fun loadGroupNames(): MutableList<String> {
-        var fileName = "src/main/kotlin/persistence/saves/groupNames.json"
+        checkDir()
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/groupNames.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/groupNames.json"
         }
-        val groupString: String = File(fileName).readText()
+
+        val file = File(fileName)
+        if (!file.exists()) {
+            file.writeText("[]")
+        }
+        val groupString: String = file.readText()
 
         return Json.decodeFromString<MutableList<String>>(groupString)
     }
 
     // saves recently deleted notes data locally
     fun saveRecentlyDeletedNotes(notes: MutableList<Note>) {
-        var fileName = "src/main/kotlin/persistence/saves/recentlyDeleted.json"
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/recentlyDeleted.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
@@ -107,22 +129,39 @@ class LocalSaving() {
         val file = File(fileName)
 
         val format = Json { encodeDefaults = true }
-        val notesString = format.encodeToString(notes)
+        val recentlyDeletedNotesString = format.encodeToString(notes)
 
         // always overwrite, for updates or initial saving
-        file.writeText(notesString)
+        file.writeText(recentlyDeletedNotesString)
     }
 
     // loads recently deleted notes data
     fun loadRecentlyDeletedNotes(): MutableList<Note> {
-        var fileName = "src/main/kotlin/persistence/saves/recentlyDeleted.json"
+        checkDir()
+        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/recentlyDeleted.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
         }
-        val noteString: String = File(fileName).readText()
 
-        return Json.decodeFromString<MutableList<Note>>(noteString)
+        val file = File(fileName)
+        if (!file.exists()) {
+            file.writeText("[]")
+        }
+
+
+        val recentlyDeletedNotesString: String = file.readText()
+
+        return Json.decodeFromString<MutableList<Note>>(recentlyDeletedNotesString)
+    }
+
+    private fun checkDir() {
+        if (!testFlag) {
+            val dir = File( "${System.getProperty("user.dir")}/cs346Data/persistence/saves")
+            if (!dir.exists()) {
+                Files.createDirectories(Paths.get("${System.getProperty("user.dir")}/cs346Data/persistence/saves"))
+            }
+        }
     }
 
 }
