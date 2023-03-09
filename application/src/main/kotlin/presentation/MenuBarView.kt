@@ -120,7 +120,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             val result = alert.showAndWait()
 
             if (result.isPresent && result.get() == ButtonType.OK){
-                model.sort(sortSettingsView.getSelections())
+                val (sortOption, sortOrder, sortRange) = sortSettingsView.getSelections()
+                model.sort(sortOption, sortOrder, sortRange)
             }
         }
 
