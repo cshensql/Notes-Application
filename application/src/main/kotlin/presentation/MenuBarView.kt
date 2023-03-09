@@ -35,7 +35,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val lockOrUnlockNote = MenuItem("Lock Note")
     private val groupNotes = MenuItem("Group Notes")
     private val moveNotes = MenuItem("Move Notes")
-    private val sortNotes = MenuItem("Sort Notes...")
+    private val sortNotes = MenuItem("Sort Notes")
 
 
     // Group Menu Sub options
