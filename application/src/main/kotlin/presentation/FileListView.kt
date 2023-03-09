@@ -80,9 +80,13 @@ class FileListView(model: Model) : IView, HBox() {
                 if (isByTitle && group.noteList[noteIndex].title.indexOf(input) >= 0)
                     searchByTitleResults.add(Pair("", Pair(groupIndex, noteIndex)))
                 if (isByContent){
-                    // get the plain text (removes all html tags) of the note body
+                    // get the content of the note, not including its title
+                    val title = group.noteList[noteIndex].title
                     val body = Jsoup.parse(group.noteList[noteIndex].body).wholeText()
-                    val index = body.indexOf(input)
+                    val titleIndex = body.indexOf(title)
+                    val content = body.substring(0, titleIndex) + body.substring(title.length)
+
+                    val index = content.indexOf(input)
                     if (index > 0) {
                         searchByContentResults.add(Pair("", Pair(groupIndex,noteIndex)))
                     }
@@ -95,9 +99,13 @@ class FileListView(model: Model) : IView, HBox() {
                 searchByTitleResults.add(Pair(entry.key, Pair(-1,-1)))
             }
             if (isByContent){
-                // get the plain text (removes all html tags) of the note body
+                // get the content of the note, not including its title
+                val title = entry.value.title
                 val body = Jsoup.parse(entry.value.body).wholeText()
-                val index = body.indexOf(input)
+                val titleIndex = body.indexOf(title)
+                val content = body.substring(0, titleIndex) + body.substring(title.length)
+
+                val index = content.indexOf(input)
                 if (index >= 0) {
                     searchByContentResults.add(Pair(entry.key, Pair(-1,-1)))
                 }
@@ -498,7 +506,7 @@ class FileListView(model: Model) : IView, HBox() {
         this.children.add(fileListView)
         // store the selectedIndex and selectedItem before removing treeItems
         val selectedIndex = fileListView.selectionModel.selectedIndex
-
+        val selectedItem = fileListView.selectionModel.selectedItem
         // store isExpanded field for each groupItem in a hashmap
         val isExpandedMap = HashMap<String, Boolean>()
         for(i in 0 until groupRoot.children.size){
@@ -536,7 +544,7 @@ class FileListView(model: Model) : IView, HBox() {
             if (selectedIndex == 0 || selectedIndex == 1){
                 // selection is "Categories" or "Groups"
                 fileListView.selectionModel.select(selectedIndex)
-            } else if (selectedIndex == getNoteRootIndex()) {
+            } else if (selectedItem?.parent == root) {
                 // selection is "Notes"
                 fileListView.selectionModel.select(noteRoot)
             } else {
