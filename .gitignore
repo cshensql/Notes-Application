@@ -7,6 +7,3 @@ www/public
 .idea
 # Ignore Gradle build output directory
 build
-
-application/src/main/kotlin/persistence/saves/
-application/src/test/kotlin/persistence/saves/
