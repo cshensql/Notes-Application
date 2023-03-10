@@ -22,7 +22,8 @@ Optional, but often helpful to have a screenshot or demo-video for new users.
 ## Releases
 Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
 * see ![release page](assets/release-page.png) <br />
-1. Sprint 1 Release Note: https://docs.google.com/document/d/1hh97z5v7OMlaif3IH1kHK93rcIUQVf9ReFG0zE3yVtE/edit?usp=sharing
+1. Sprint 1 Release Note: https://docs.google.com/document/d/1hh97z5v7OMlaif3IH1kHK93rcIUQVf9ReFG0zE3yVtE/edit?usp=sharing <br />
+2. Sprint 2 Release Note: https://docs.google.com/document/d/1ZWt9AT4D2OfroXCth0i8RAkhIaQuSvvKBgioV4Jpz24/edit?usp=sharing
 
 
 ## EVERYTHING BELOW THIS IS DEFAULTED (REMOVE IF WE DONT SEE USE FOR THE TIPS)
