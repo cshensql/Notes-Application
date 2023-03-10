@@ -5,7 +5,7 @@ This is a notes application designed for students who want a versatile app for t
 
 ## Team members
 Andy Yang - yz8yang@uwaterloo.ca <br />
-Charles Shen - c2999shen@uwaterloo.ca <br />
+Charles Shen - c2999she@uwaterloo.ca <br />
 Benjamin Du - h39du@uwaterloo.ca <br />
 Yuying Li - y2786li@uwaterloo.ca
 
@@ -17,9 +17,12 @@ How to install and launch your application. If there is a dependency (e.g. "requ
 
 ## Screenshots/videos
 Optional, but often helpful to have a screenshot or demo-video for new users.
-1. Sprint 1 Demo Video: https://drive.google.com/file/d/1LsTiXdP9FUuRdxhWlns2XkmkJr_Fmo6o/view?usp=sharing <br />
-2. Sprint 2 Demo Video: https://drive.google.com/file/d/1knlenc1R8X-3gHzdX8KCX7pFt9WtSuRO/view?usp=share_link <br />
-   (Demo video for grouping related notes: https://drive.google.com/file/d/1ZJAxs7OveGtnbKNIvc2V1TAkOOU1zsnL/view?usp=share_link) <br />
+1. Sprint 1 Demo Video: https://drive.google.com/file/d/1LsTiXdP9FUuRdxhWlns2XkmkJr_Fmo6o/view?usp=sharing 
+2. Sprint 2 Demo Video: https://drive.google.com/file/d/1knlenc1R8X-3gHzdX8KCX7pFt9WtSuRO/view?usp=share_link 
+   - Group related notes: https://drive.google.com/file/d/1ZJAxs7OveGtnbKNIvc2V1TAkOOU1zsnL/view?usp=share_link
+   - Add notes under a group: https://drive.google.com/file/d/1euT0NHgOt3mLLzN4b9huFprZcCC8ka_j/view?usp=sharing 
+   - Search notes: https://drive.google.com/file/d/16qvf1SFVvK0bErisBdXSLV3vKZu1XHwE/view?usp=sharing
+   - Sort notes: https://drive.google.com/file/d/1sp9FvwWAOXMq3xWID2MR3t0awy9EXSok/view?usp=share_link
 
 ## Releases
 Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
