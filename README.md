@@ -17,7 +17,8 @@ How to install and launch your application. If there is a dependency (e.g. "requ
 
 ## Screenshots/videos
 Optional, but often helpful to have a screenshot or demo-video for new users.
-1. Sprint 1 Demo Video: https://drive.google.com/file/d/1LsTiXdP9FUuRdxhWlns2XkmkJr_Fmo6o/view?usp=sharing
+1. Sprint 1 Demo Video: https://drive.google.com/file/d/1LsTiXdP9FUuRdxhWlns2XkmkJr_Fmo6o/view?usp=sharing <br />
+2. Sprint 2 Demo Video: https://drive.google.com/file/d/1knlenc1R8X-3gHzdX8KCX7pFt9WtSuRO/view?usp=share_link <br />
 
 ## Releases
 Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
