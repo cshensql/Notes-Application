@@ -402,4 +402,22 @@ class ModelTest {
         assert(model.groupList[0].noteList.count() == 1)
         assert(model.groupList[0].noteList.contains(note1))
     }
+        @Test
+    fun testRecoverNote() {
+        val newGroupName1 = "TestGroup1"
+        val group1 = Group()
+        group1.name = newGroupName1
+        model.groupList.add(group1)
+        val note1 = Note()
+        note1.groupName = newGroupName1
+        val note2 = Note()
+        model.recentlyDeletedNoteList.add(note1)
+        model.recentlyDeletedNoteList.add(note2)
+        val notesToRecover = mutableListOf<Note>()
+        notesToRecover.add(note1)
+        notesToRecover.add(note2)
+        model.recoverNote(notesToRecover)
+        assert(model.noteList.containsValue(note2))
+        assert(group1.noteList.contains(note1))
+    }
 }

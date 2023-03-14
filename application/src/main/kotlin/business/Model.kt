@@ -11,6 +11,7 @@ class Model {
     // which additionally preserves the insertion order of entries during the iteration.
     var noteList = LinkedHashMap<String, Note>()
     var groupList = mutableListOf<Group>()
+    val recentlyDeletedNoteList = ArrayDeque<Note>()
     var testFlag: Boolean = false
 
     // currSelectedGroupIndex represents the index of the current group in groupList
@@ -102,6 +103,12 @@ class Model {
             if (noteList.containsKey(it)) {
                 // make currSelected field points to an empty note if removed
                 if (it == selectedNote) currSelectedNote = null
+                // put a copy of note deleted into recently deleted notes
+                val noteDeleted = noteList.getValue(it)
+                recentlyDeletedNoteList.add(noteDeleted)
+                if (recentlyDeletedNoteList.size >= 6) {
+                    recentlyDeletedNoteList.removeAt(0)
+                }
                 noteList.remove(it)
             } else {
                 var flag = false
@@ -112,6 +119,11 @@ class Model {
                         if (note.dateCreated == it) {
                             // make currSelected field points to an empty note if removed
                             if (it == selectedNote) currSelectedNote = null
+                            // put a copy of note deleted into recently deleted notes
+                            recentlyDeletedNoteList.add(noteList[i])
+                            if (recentlyDeletedNoteList.size >= 6) {
+                                recentlyDeletedNoteList.removeAt(0)
+                            }
                             noteList.removeAt(i)
                             flag = true
                             break
@@ -123,6 +135,23 @@ class Model {
         }
         saveData()
         notifyViews()
+    }
+
+    fun recoverNote(notesSelected: MutableList<Note>) {
+        notesSelected.forEach{
+            recentlyDeletedNoteList.remove(it)
+            if (it.groupName == "") {
+                noteList[it.dateCreated] = it
+            } else {
+                for (group in groupList) {
+                    if (group.name == it.groupName) {
+                        group.noteList.add(it)
+                        break
+                    }
+                }
+            }
+            notifyViews()
+        }
     }
 
     fun getCurrSelectedNote() = currSelectedNote
