@@ -58,10 +58,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         lockOrUnlockNote.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.CONTROL_DOWN)
         groupNotes.accelerator = KeyCodeCombination(KeyCode.G, KeyCodeCombination.CONTROL_DOWN)
         moveNotes.accelerator = KeyCodeCombination(KeyCode.M, KeyCodeCombination.CONTROL_DOWN)
-<<<<<<< HEAD
         sortNotes.accelerator = KeyCodeCombination(KeyCode.S, KeyCodeCombination.ALT_DOWN)
-=======
->>>>>>> e4a369dbb8b15d192f2a289e882c549e3a258681
         recoverNote.accelerator = KeyCodeCombination(KeyCode.R, KeyCodeCombination.CONTROL_DOWN)
         addGroup.accelerator = KeyCodeCombination(KeyCode.A, KeyCodeCombination.ALT_DOWN)
         deleteGroup.accelerator = KeyCodeCombination(KeyCode.D, KeyCodeCombination.ALT_DOWN)
