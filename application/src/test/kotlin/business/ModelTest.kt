@@ -411,8 +411,8 @@ class ModelTest {
         val note1 = Note()
         note1.groupName = newGroupName1
         val note2 = Note()
-        model.recentlyDeletedNoteList.add(note1)
-        model.recentlyDeletedNoteList.add(note2)
+        model.recentlyDeletedNoteList.put(note1.dateCreated, note1)
+        model.recentlyDeletedNoteList.put(note2.dateCreated, note2)
         val notesToRecover = mutableListOf<Note>()
         notesToRecover.add(note1)
         notesToRecover.add(note2)
