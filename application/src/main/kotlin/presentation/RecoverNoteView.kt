@@ -13,18 +13,20 @@ class RecoverNoteView(model: Model) : ListView<String>() {
         this.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
         for (entry in recentlyDeletedNoteList) {
+            val note = entry.value
             // add the name and datecreated of every note in recentlyDeletedNoteList to ListView.items for displaying
-            val noteItem = "${entry.title}: ${entry.dateCreated}"
+            val noteItem = "${note.title}: ${note.dateCreated}"
             this.items.add(noteItem)
         }
     }
 
     fun getRecentlyDeletedNotesSelected(): MutableList<Note> {
         val selectedIndices = this.selectionModel.selectedIndices
+        val notes = recentlyDeletedNoteList.values.toMutableList()
         val selectedItems = mutableListOf<Note>()
         // add the user selected note to selectedItems
         selectedIndices.forEach{
-            selectedItems.add(recentlyDeletedNoteList[it])
+            selectedItems.add(notes[it])
         }
         return selectedItems
     }

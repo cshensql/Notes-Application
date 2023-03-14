@@ -11,7 +11,8 @@ class Model {
     // which additionally preserves the insertion order of entries during the iteration.
     var noteList = LinkedHashMap<String, Note>()
     var groupList = mutableListOf<Group>()
-    val recentlyDeletedNoteList = ArrayDeque<Note>()
+    // Only contains 5 recently deleted notes
+    var recentlyDeletedNoteList = LinkedHashMap<String, Note>()
     var testFlag: Boolean = false
 
     // currSelectedGroupIndex represents the index of the current group in groupList
@@ -103,11 +104,9 @@ class Model {
             if (noteList.containsKey(it)) {
                 // make currSelected field points to an empty note if removed
                 if (it == selectedNote) currSelectedNote = null
-                // put a copy of note deleted into recently deleted notes
-                val noteDeleted = noteList.getValue(it)
-                recentlyDeletedNoteList.add(noteDeleted)
-                if (recentlyDeletedNoteList.size >= 6) {
-                    recentlyDeletedNoteList.removeAt(0)
+                // put note deleted into recently deleted notes
+                if (noteList[it] != null) {
+                    updateRecentlyDeletedNote(noteList[it]!!)
                 }
                 noteList.remove(it)
             } else {
@@ -120,10 +119,7 @@ class Model {
                             // make currSelected field points to an empty note if removed
                             if (it == selectedNote) currSelectedNote = null
                             // put a copy of note deleted into recently deleted notes
-                            recentlyDeletedNoteList.add(noteList[i])
-                            if (recentlyDeletedNoteList.size >= 6) {
-                                recentlyDeletedNoteList.removeAt(0)
-                            }
+                            updateRecentlyDeletedNote(noteList[i])
                             noteList.removeAt(i)
                             flag = true
                             break
@@ -137,21 +133,41 @@ class Model {
         notifyViews()
     }
 
+    private fun updateRecentlyDeletedNote(noteAdded: Note) {
+        recentlyDeletedNoteList.put(noteAdded.dateCreated, noteAdded)
+        if (recentlyDeletedNoteList.size > 5) {
+            val keys = recentlyDeletedNoteList.keys
+            recentlyDeletedNoteList.remove(keys.first())
+        }
+        saveData(saveRecentlyDeleted = true)
+    }
+
     fun recoverNote(notesSelected: MutableList<Note>) {
         notesSelected.forEach{
-            recentlyDeletedNoteList.remove(it)
+            recentlyDeletedNoteList.remove(it.dateCreated)
+
             if (it.groupName == "") {
+                // If the note never belongs to any group
                 noteList[it.dateCreated] = it
             } else {
+                var addedBack = false
                 for (group in groupList) {
                     if (group.name == it.groupName) {
                         group.noteList.add(it)
+                        addedBack = true
                         break
                     }
                 }
+
+                // If the group that the note initially belongs to does not exist any more
+                // just put it back to the notes section
+                if (!addedBack) {
+                    noteList[it.dateCreated] = it
+                }
             }
-            notifyViews()
         }
+        notifyViews()
+        saveData(saveRecentlyDeleted = true)
     }
 
     fun getCurrSelectedNote() = currSelectedNote
@@ -234,10 +250,14 @@ class Model {
             if (currSelectedGroupIndex >= 0) groupList[currSelectedGroupIndex].name
             else ""
         var removed = false
-        for (entry in groupSelectedList) {
-            groupList.remove(entry)
+        for (group in groupSelectedList) {
+            groupList.remove(group)
+            group.noteList.forEach {
+                it.groupName = ""
+                updateRecentlyDeletedNote(it)
+            }
 
-            if (entry.name == currGroupName) {
+            if (group.name == currGroupName) {
                 currSelectedGroupIndex = -1
                 if (currSelectedNote != null) currSelectedNote = null
                 removed = true
@@ -388,11 +408,12 @@ class Model {
         }
     }
 
-    private fun saveData() {
+    private fun saveData(saveRecentlyDeleted: Boolean = false) {
         val localSaving = LocalSaving()
         localSaving.testFlag = testFlag
         val notesToBeSaved = mutableListOf<Note>()
         val groupNamesToBeSaved = mutableListOf<String>()
+        val recentlyDeletedNoteToBeSaved = mutableListOf<Note>()
 
         // Get notes to be saved
         notesToBeSaved.addAll(noteList.values)
@@ -404,7 +425,13 @@ class Model {
         for (group in groupList) {
             groupNamesToBeSaved.add(group.name)
         }
+
         localSaving.saveNotes(notesToBeSaved)
         localSaving.saveGroupNames(groupNamesToBeSaved)
+
+        if (saveRecentlyDeleted) {
+            recentlyDeletedNoteToBeSaved.addAll(recentlyDeletedNoteList.values)
+            localSaving.saveRecentlyDeletedNotes(recentlyDeletedNoteToBeSaved)
+        }
     }
 }

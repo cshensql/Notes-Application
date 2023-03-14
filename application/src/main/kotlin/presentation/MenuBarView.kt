@@ -102,6 +102,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         noteMenu.items.add(groupNotes)
         noteMenu.items.add(moveNotes)
         noteMenu.items.add(sortNotes)
+        noteMenu.items.add(recoverNote)
         groupMenu.items.add(addGroup)
         groupMenu.items.add(deleteGroup)
         groupMenu.items.add(renameGroup)
@@ -168,13 +169,9 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
             val result = alert.showAndWait()
 
-            if (!result.isPresent) {
-                // alert is exited, no button has been pressed.
-            } else if (result.get() == ButtonType.OK) {
+            if (result.isPresent && result.get() == ButtonType.OK) {
                 val selectedItems = deleteNoteView.getDateCreatedList()
                 model.deleteNote(selectedItems)
-            } else if (result.get() == ButtonType.CANCEL){
-                // cancel button is pressed
             }
         }
 
@@ -212,13 +209,9 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
             val result = alert.showAndWait()
 
-            if (!result.isPresent) {
-                // alert is exited, no button has been pressed.
-            } else if (result.get() == ButtonType.OK) {
+            if (result.isPresent && result.get() == ButtonType.OK) {
                 val selectedItems = recoverNoteView.getRecentlyDeletedNotesSelected()
                 model.recoverNote(selectedItems)
-            } else if (result.get() == ButtonType.CANCEL){
-                // cancel button is pressed
             }
         }
 
@@ -249,13 +242,9 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
             val result = alert.showAndWait()
 
-            if (!result.isPresent) {
-                // alert is exited, no button has been pressed.
-            } else if (result.get() == ButtonType.OK) {
+            if (result.isPresent && result.get() == ButtonType.OK) {
                 val selectedItems = deleteGroupView.getGroupSelectedList()
                 model.deleteGroup(selectedItems)
-            } else if (result.get() == ButtonType.CANCEL){
-                // cancel button is pressed
             }
         }
 
