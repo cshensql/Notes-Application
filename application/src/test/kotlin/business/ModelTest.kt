@@ -402,8 +402,14 @@ class ModelTest {
         assert(model.groupList[0].noteList.count() == 1)
         assert(model.groupList[0].noteList.contains(note1))
     }
-        @Test
-    fun testRecoverNote() {
+
+    // This test tests the case where
+    // - if the note does not belong to any group, when recovered, it is put back to noteList
+    // - if the note belongs to a group and the group still exists, when recovered, it is put back to
+    //   that group
+
+    @Test
+    fun testRecoverNotesGroupExists() {
         val newGroupName1 = "TestGroup1"
         val group1 = Group()
         group1.name = newGroupName1
@@ -418,6 +424,21 @@ class ModelTest {
         notesToRecover.add(note2)
         model.recoverNote(notesToRecover)
         assert(model.noteList.containsValue(note2))
+        assert(!model.noteList.containsValue(note1))
         assert(group1.noteList.contains(note1))
+    }
+
+    // This test tests the case where the group that the recovered note belongs to does not exist any more
+    // in this case, the note should be added to noteList
+    @Test
+    fun testRecoverNotesGroupNotExist() {
+        val note1 = Note()
+        note1.groupName = "group1"
+        model.recentlyDeletedNoteList.put(note1.dateCreated, note1)
+        val notesToRecover = mutableListOf<Note>()
+        notesToRecover.add(note1)
+        model.recoverNote(notesToRecover)
+        assert(model.noteList.containsValue(note1))
+        assert(model.groupList.isEmpty())
     }
 }
