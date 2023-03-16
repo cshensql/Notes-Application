@@ -22,7 +22,7 @@ class RecoverNoteView(model: Model) : ListView<String>() {
 
     fun getRecentlyDeletedNotesSelected(): MutableList<Note> {
         val selectedIndices = this.selectionModel.selectedIndices
-        val notes = recentlyDeletedNoteList.values.toMutableList()
+        val notes = recentlyDeletedNoteList.values.toList()
         val selectedItems = mutableListOf<Note>()
         // add the user selected note to selectedItems
         selectedIndices.forEach{

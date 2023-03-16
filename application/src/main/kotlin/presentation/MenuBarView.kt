@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import net.codebot.application.ConfigData
 import org.controlsfx.control.textfield.CustomTextField
 import java.util.*
 
@@ -204,8 +205,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             dialogPane.content = recoverNoteView
             alert.title = "Recover"
             alert.isResizable = true
-            alert.width = 300.0
-            alert.height = 400.0
+            alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+            alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
 
             val result = alert.showAndWait()
 
