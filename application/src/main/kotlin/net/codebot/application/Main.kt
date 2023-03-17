@@ -169,8 +169,17 @@ class Main : Application() {
                 groupList[groupName] = newGroup
             }
         }
+
+
+        val savedRecentlyDeletedNotes = localSaving.loadRecentlyDeletedNotes()
+        var recentlyDeletedNotes = LinkedHashMap<String, Note>()
+        savedRecentlyDeletedNotes.forEach {
+            recentlyDeletedNotes.put(it.dateCreated, it)
+        }
+
         model.noteList = noteList
         model.groupList = groupList.values.toMutableList()
+        model.recentlyDeletedNoteList = recentlyDeletedNotes
         model.notifyViews()
 
 
