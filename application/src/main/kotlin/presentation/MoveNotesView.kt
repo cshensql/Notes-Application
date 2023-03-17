@@ -4,6 +4,7 @@ import business.Model
 import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.scene.control.*
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 
@@ -11,6 +12,8 @@ class MoveNotesView(model: Model): IView, VBox() {
     private val modelPassed = model
     private val noteListView = ListView<String>()
     private val groupList = model.groupList
+    private val fromGroupLabel = Label("from group")
+    private val toGroupLabel = Label("to group")
     private var fromGroupSelectionBox = ComboBox(FXCollections.observableArrayList(mutableListOf<String>()))
     private var toGroupSelectionBox = ComboBox(FXCollections.observableArrayList(mutableListOf<String>()))
     private val createNewGroupButton = Button("Create a new group?")
@@ -27,16 +30,43 @@ class MoveNotesView(model: Model): IView, VBox() {
 
     }
 
+    fun getSelectedFromGroupName(): String {
+        if (fromGroupSelectionBox.items.isNotEmpty()) {
+            return fromGroupSelectionBox.selectionModel.selectedItem
+        } else {
+            return ""
+        }
+    }
+
+    fun getSelectedToGroupName(): String {
+        if (toGroupSelectionBox.items.isNotEmpty()) {
+            return toGroupSelectionBox.selectionModel.selectedItem
+        } else {
+            return ""
+        }
+    }
+
     private fun setupNoteViewAndGroupSelectionBox() {
         val groupNames = mutableListOf<String>()
         groupList.forEach {
             groupNames.add(it.name)
         }
-        fromGroupSelectionBox.prefWidthProperty().bind(this.widthProperty())
         fromGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
-
-        toGroupSelectionBox.prefWidthProperty().bind(this.widthProperty())
         toGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
+        fromGroupSelectionBox.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+            if (newValue.isNotEmpty()) {
+                for (group in groupList) {
+                    if (group.name == newValue) {
+                        noteListView.items.clear()
+                        group.noteList.forEach {
+                            val noteItem = "${it.title}: ${it.dateCreated}"
+                            noteListView.items.add(noteItem)
+                            dateCreated.add(it.dateCreated)
+                        }
+                    }
+                }
+            }
+        }
 
         if (groupNames.isNotEmpty()) {
             fromGroupSelectionBox.selectionModel.select(0)
@@ -49,25 +79,25 @@ class MoveNotesView(model: Model): IView, VBox() {
             toGroupSelectionBox.isVisible = false
         }
 
-        fromGroupSelectionBox.selectionModelProperty().addListener { observable, oldValue, newValue ->
-            if (newValue.selectedIndex != -1) {
-                for (group in groupList) {
-                    if (group.name == newValue.selectedItem) {
-                        noteListView.items.clear()
-                        group.noteList.forEach {
-                            val noteItem = "${it.title}: ${it.dateCreated}"
-                            noteListView.items.add(noteItem)
-                            dateCreated.add(it.dateCreated)
-                        }
-                    }
-                }
-            }
-        }
+        val fromGroupSection = HBox()
+        val toGroupSection = HBox()
 
+        fromGroupSection.alignment = Pos.TOP_LEFT
+        fromGroupSection.spacing = 5.0
+        toGroupSection.alignment = Pos.TOP_LEFT
+        toGroupSection.spacing = 5.0
 
-        this.children.add(fromGroupSelectionBox)
+        fromGroupSection.children.add(fromGroupLabel)
+        fromGroupSection.children.add(fromGroupSelectionBox)
+        toGroupSection.children.add(toGroupLabel)
+        toGroupSection.children.add(toGroupSelectionBox)
+
+        fromGroupSection.prefWidthProperty().bind(this.widthProperty())
+        toGroupSection.prefWidthProperty().bind(this.widthProperty())
+
+        this.children.add(fromGroupSection)
         this.children.add(noteListView)
-        this.children.add(toGroupSelectionBox)
+        this.children.add(toGroupSection)
 
 
     }

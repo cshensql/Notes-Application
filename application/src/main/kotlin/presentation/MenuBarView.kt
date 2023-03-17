@@ -194,7 +194,19 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         }
 
         moveNotes.setOnAction {
-            println("Move notes pressed")
+            var shouldStop = false
+            while (!shouldStop) {
+                val alert = Alert(AlertType.CONFIRMATION)
+                val dialogPane = alert.dialogPane
+                val moveNotesView = MoveNotesView(model)
+
+                dialogPane.content = moveNotesView
+                alert.title = "Move Notes"
+                alert.isResizable = true
+                alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+                alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
+                shouldStop = successfullyMovedNotes(alert.showAndWait(), moveNotesView)
+            }
         }
 
         recoverNote.setOnAction {
@@ -361,6 +373,28 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 return false
             } else {
                 model.moveNotes(selectedNotesDates, selectedGroupName)
+                return true
+            }
+        }
+        return true
+    }
+
+    private fun successfullyMovedNotes(result: Optional<ButtonType>, moveNotesView: MoveNotesView): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            val selectedNotesDates = moveNotesView.getDateCreatedList()
+
+            val selectedFromGroupName = moveNotesView.getSelectedFromGroupName()
+            val selectedToGroupName = moveNotesView.getSelectedToGroupName()
+            if (selectedFromGroupName.isEmpty() || selectedToGroupName.isEmpty()) {
+                val warningAlertView = WarningAlertView("Missing Group Option", "You haven't selected 'from group' or 'to group'. Please check your selection and try again")
+                warningAlertView.present()
+                return false
+            } else if (selectedNotesDates.isEmpty()){
+                val warningAlertView = WarningAlertView("No Note Selected", "You haven't selected any note yet. Please select some notes and try again")
+                warningAlertView.present()
+                return false
+            } else {
+                model.moveNotes(selectedNotesDates, selectedToGroupName, selectedFromGroupName)
                 return true
             }
         }
