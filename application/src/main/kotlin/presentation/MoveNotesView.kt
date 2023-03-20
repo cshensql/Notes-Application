@@ -74,6 +74,7 @@ class MoveNotesView(model: Model): IView, VBox() {
                             noteListView.items.add(noteItem)
                             dateCreated.add(it.dateCreated)
                         }
+                        break
                     }
                 }
             }
