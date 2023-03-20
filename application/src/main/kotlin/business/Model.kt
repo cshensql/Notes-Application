@@ -315,9 +315,12 @@ class Model {
 
     // notesToBeMoved will be a list of dateCreated of notes
     // toGroup will be the group name that we want to move the notes into
+    // fromGroup is optional. If you are grouping notes, then no need to set this value
+    // if you are moving notes between groups, then you need to pass the group name where the notes are moved from
     fun moveNotes(notesToBeMoved: MutableList<String>, toGroup: String, fromGroup: String = "") {
         val notesMoved = mutableListOf<Note>()
         if (fromGroup.isEmpty()) {
+            // If we are grouping notes
             for (date in notesToBeMoved) {
                 val note  = noteList[date]
                 if (note != null) {
@@ -330,6 +333,7 @@ class Model {
                 noteList.remove(date)
             }
         } else {
+            // If we are moving notes between groups
             val fromGroupIndex = groupList.indexOfFirst { it.name == fromGroup }
             val group = groupList[fromGroupIndex]
             for (note in group.noteList) {

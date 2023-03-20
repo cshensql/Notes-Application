@@ -361,6 +361,8 @@ class ModelTest {
         assert(model.getCurrSelectedNote()?.isLocked == false)
     }
 
+
+    // Group Notes tests
     @Test
     fun moveNotesToGroupWithNotes() {
         // Arrange
@@ -402,6 +404,46 @@ class ModelTest {
         assert(model.groupList[0].noteList.count() == 1)
         assert(model.groupList[0].noteList.contains(note1))
     }
+
+    // Move notes between groups tests
+    @Test
+    fun moveNotesFromOneGroupToAnotherGroup() {
+        // Arrange
+        val note1 = Note("notes1", groupName = "group1")
+        val group1 = Group("group1", mutableListOf<Note>(note1))
+        val group2 = Group("group2", mutableListOf<Note>())
+        model.groupList.add(group1)
+        model.groupList.add(group2)
+
+        // Act
+        model.moveNotes(mutableListOf<String>(note1.dateCreated), "group2", "group1")
+
+        // Assert
+        assert(model.groupList.count() == 2)
+        assert(model.groupList[0].noteList.count() == 0)
+        assert(model.groupList[1].noteList.count() == 1)
+        assert(model.groupList[1].noteList.contains(note1))
+    }
+
+    @Test
+    fun moveNotesFromAndToSameGroup() {
+        // Arrange
+        val note1 = Note("notes1", groupName = "group1")
+        val group1 = Group("group1", mutableListOf<Note>(note1))
+        val group2 = Group("group2", mutableListOf<Note>())
+        model.groupList.add(group1)
+        model.groupList.add(group2)
+
+        // Act
+        model.moveNotes(mutableListOf<String>(note1.dateCreated), "group1", "group1")
+
+        // Assert
+        assert(model.groupList.count() == 2)
+        assert(model.groupList[0].noteList.count() == 1)
+        assert(model.groupList[0].noteList.contains(note1))
+        assert(model.groupList[1].noteList.count() == 0)
+    }
+
 
     // This test tests the case where
     // - if the note does not belong to any group, when recovered, it is put back to noteList

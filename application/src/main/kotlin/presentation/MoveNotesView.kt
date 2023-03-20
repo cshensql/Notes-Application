@@ -20,6 +20,12 @@ class MoveNotesView(model: Model): IView, VBox() {
     // list of dateCreated to help locate the correct note in model
     private val dateCreated = mutableListOf<String>()
 
+    // Constants used
+    // We need to subtract these value from the view's width so that the label
+    // and selection box can be presented properly
+    private val fromSelectionBoxWidthSubtractionConstant: Double = 90.0
+    private val toSelectionBoxWidthSubtractionConstant: Double = 75.0
+
     init {
         this.alignment = Pos.CENTER
         this.spacing = 10.0
@@ -53,8 +59,13 @@ class MoveNotesView(model: Model): IView, VBox() {
         }
         fromGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
         toGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
+
+        // Once the "from group" selection changes, the noteList will be updated to show the
+        // notes in that group
         fromGroupSelectionBox.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
-            if (newValue.isNotEmpty()) {
+            if (!newValue.isNullOrEmpty()) {
+                // clear the old notes in dateCreated list
+                dateCreated.clear()
                 for (group in groupList) {
                     if (group.name == newValue) {
                         noteListView.items.clear()
@@ -69,16 +80,20 @@ class MoveNotesView(model: Model): IView, VBox() {
         }
 
         if (groupNames.isNotEmpty()) {
+            // If there are groups, we set the default selection to be the first group
+            // so that the selection box will not show empty string
             fromGroupSelectionBox.selectionModel.select(0)
             fromGroupSelectionBox.isVisible = true
 
             toGroupSelectionBox.selectionModel.select(0)
             toGroupSelectionBox.isVisible = true
         } else {
+            // If there is no group, then we hide both selection boxes
             fromGroupSelectionBox.isVisible = false
             toGroupSelectionBox.isVisible = false
         }
 
+        // put the label and selection box into a HBox
         val fromGroupSection = HBox()
         val toGroupSection = HBox()
 
@@ -92,8 +107,12 @@ class MoveNotesView(model: Model): IView, VBox() {
         toGroupSection.children.add(toGroupLabel)
         toGroupSection.children.add(toGroupSelectionBox)
 
+        // bind the width of the selection box to the width of this view
         fromGroupSection.prefWidthProperty().bind(this.widthProperty())
         toGroupSection.prefWidthProperty().bind(this.widthProperty())
+
+        fromGroupSelectionBox.prefWidthProperty().bind(this.widthProperty().subtract(fromGroupLabel.width + fromSelectionBoxWidthSubtractionConstant))
+        toGroupSelectionBox.prefWidthProperty().bind(this.widthProperty().subtract(toGroupLabel.width + toSelectionBoxWidthSubtractionConstant))
 
         this.children.add(fromGroupSection)
         this.children.add(noteListView)
