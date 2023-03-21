@@ -2,6 +2,7 @@ package business
 
 import presentation.IView
 import persistence.LocalSaving
+import presentation.WarningAlertView
 
 class Model {
 
@@ -426,6 +427,23 @@ class Model {
         for (view in views) {
             view.updateView()
         }
+    }
+
+    // Used by other views to check if the group name is valid or not
+    fun isAllowedGroupName(inputGroupName: String): Boolean {
+        if (inputGroupName == "") {
+            val warningAlert = WarningAlertView("Empty Group Name", "Empty Group names are not allowed")
+            warningAlert.present()
+            return false
+        }
+        for (group in groupList) {
+            if (group.name == inputGroupName) {
+                val warningAlert = WarningAlertView("Duplicate Group Name", "Duplicate group names are not allowed")
+                warningAlert.present()
+                return false
+            }
+        }
+        return true
     }
 
     private fun saveData(saveRecentlyDeleted: Boolean = false) {

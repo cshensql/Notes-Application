@@ -135,29 +135,11 @@ class MoveNotesView(model: Model): IView, VBox() {
             var newGroupName: String = ""
             if (result.isPresent) {
                 newGroupName = createGroupPrompt.editor.text
-                if (isAllowedGroupName(newGroupName)) {
+                if (modelPassed.isAllowedGroupName(newGroupName)) {
                     modelPassed.addGroup(newGroupName)
                 }
             }
         }
-    }
-
-    // check for duplicate group name
-
-    private fun isAllowedGroupName(inputGroupName: String): Boolean {
-        if (inputGroupName == "") {
-            val warningAlert = WarningAlertView("Empty Group Name", "Empty Group names are not allowed")
-            warningAlert.present()
-            return false
-        }
-        for (group in modelPassed.groupList) {
-            if (group.name == inputGroupName) {
-                val warningAlert = WarningAlertView("Duplicate Group Name", "Duplicate group names are not allowed")
-                warningAlert.present()
-                return false
-            }
-        }
-        return true
     }
 
     fun getDateCreatedList(): MutableList<String> {
