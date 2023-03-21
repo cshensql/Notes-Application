@@ -16,7 +16,7 @@ class LocalSaving() {
     // stores local config data
     fun saveConfig(config: WindowConfig) {
 
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/config.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/config.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/config.json"
@@ -33,7 +33,7 @@ class LocalSaving() {
     // loads local config data
     fun loadConfig(): WindowConfig {
         checkDir()
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/config.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/config.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/config.json"
@@ -51,7 +51,7 @@ class LocalSaving() {
 
     // stores local notes data
     fun saveNotes(notes: MutableList<Note>) {
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/notes.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/notes.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/notes.json"
@@ -69,7 +69,7 @@ class LocalSaving() {
     fun loadNotes(): MutableList<Note> {
         checkDir()
 
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/notes.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/notes.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/notes.json"
@@ -87,7 +87,7 @@ class LocalSaving() {
 
     // saves group names data locally
     fun saveGroupNames(group: MutableList<String>) {
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/groupNames.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/groupNames.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/groupNames.json"
@@ -104,7 +104,7 @@ class LocalSaving() {
     // loads local group names data
     fun loadGroupNames(): MutableList<String> {
         checkDir()
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/groupNames.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/groupNames.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/groupNames.json"
@@ -121,7 +121,7 @@ class LocalSaving() {
 
     // saves recently deleted notes data locally
     fun saveRecentlyDeletedNotes(notes: MutableList<Note>) {
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/recentlyDeleted.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/recentlyDeleted.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
@@ -138,7 +138,7 @@ class LocalSaving() {
     // loads recently deleted notes data
     fun loadRecentlyDeletedNotes(): MutableList<Note> {
         checkDir()
-        var fileName = "${System.getProperty("user.dir")}/cs346Data/persistence/saves/recentlyDeleted.json"
+        var fileName = "${System.getProperty("user.home")}/cs346Data/persistence/saves/recentlyDeleted.json"
 
         if (testFlag) {
             fileName = "src/test/kotlin/persistence/saves/recentlyDeleted.json"
@@ -157,9 +157,9 @@ class LocalSaving() {
 
     private fun checkDir() {
         if (!testFlag) {
-            val dir = File( "${System.getProperty("user.dir")}/cs346Data/persistence/saves")
+            val dir = File( "${System.getProperty("user.home")}/cs346Data/persistence/saves")
             if (!dir.exists()) {
-                Files.createDirectories(Paths.get("${System.getProperty("user.dir")}/cs346Data/persistence/saves"))
+                Files.createDirectories(Paths.get("${System.getProperty("user.home")}/cs346Data/persistence/saves"))
             }
         }
     }

@@ -53,6 +53,15 @@ jlink {
     launcher {
         name = "Notes"
     }
+    jpackage {
+        // Since windows and mac needs different icon format, we need to check
+        if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+            icon = "src/main/resources/notes.icns"
+        } else if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
+            icon = "src/main/resources/notes.ico"
+        } // Otherwise, we will use the default one
+
+    }
 }
 
 java {
