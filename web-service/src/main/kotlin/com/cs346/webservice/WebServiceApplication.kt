@@ -59,7 +59,7 @@ class NoteResource() {
 }
 
 @RestController
-@RequestMapping("groups")
+@RequestMapping("/groups")
 class GroupsResource() {
 
 	val resource = ClassPathResource("cs346-notes-app-key.json")
@@ -93,7 +93,7 @@ class GroupsResource() {
 }
 
 @RestController
-@RequestMapping("recently-deleted")
+@RequestMapping("/recently-deleted")
 class RecentlyDeletedResource() {
 	val resource = ClassPathResource("cs346-notes-app-key.json")
 	val inputStream = FileInputStream(resource.file)
