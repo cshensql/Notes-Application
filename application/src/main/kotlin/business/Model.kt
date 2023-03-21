@@ -2,6 +2,7 @@ package business
 
 import presentation.IView
 import persistence.LocalSaving
+import presentation.WarningAlertView
 
 class Model {
 
@@ -315,31 +316,51 @@ class Model {
 
     // notesToBeMoved will be a list of dateCreated of notes
     // toGroup will be the group name that we want to move the notes into
-    fun moveNotes(notesToBeMoved: MutableList<String>, toGroup: String) {
-        val notesGrouped = mutableListOf<Note>()
-        for (date in notesToBeMoved) {
-            val note  = noteList[date]
-            if (note != null) {
-                note.groupName = toGroup
-                notesGrouped.add(note)
+    // fromGroup is optional. If you are grouping notes, then no need to set this value
+    // if you are moving notes between groups, then you need to pass the group name where the notes are moved from
+    fun moveNotes(notesToBeMoved: MutableList<String>, toGroup: String, fromGroup: String = "") {
+        val notesMoved = mutableListOf<Note>()
+        if (fromGroup.isEmpty()) {
+            // If we are grouping notes
+            for (date in notesToBeMoved) {
+                val note  = noteList[date]
+                if (note != null) {
+                    note.groupName = toGroup
+                    notesMoved.add(note)
+                }
             }
+
+            for (date in notesToBeMoved) {
+                noteList.remove(date)
+            }
+        } else {
+            // If we are moving notes between groups
+            val fromGroupIndex = groupList.indexOfFirst { it.name == fromGroup }
+            val group = groupList[fromGroupIndex]
+            for (note in group.noteList) {
+                if (notesToBeMoved.contains(note.dateCreated)) {
+                    note.groupName = toGroup
+                    notesMoved.add(note)
+                }
+            }
+            group.noteList.removeAll(notesMoved)
+
         }
 
-        for (date in notesToBeMoved) {
-            noteList.remove(date)
-        }
 
         // the given toGroup is guaranteed to be a valid group name
         // by how the UI is set up
         for (group in groupList) {
             if (group.name == toGroup) {
-                group.noteList.addAll(notesGrouped)
+                group.noteList.addAll(notesMoved)
                 break
             }
         }
         saveData()
         notifyViews()
     }
+
+
 
     fun getSearchFlag() = searchFlag
 
@@ -406,6 +427,23 @@ class Model {
         for (view in views) {
             view.updateView()
         }
+    }
+
+    // Used by other views to check if the group name is valid or not
+    fun isAllowedGroupName(inputGroupName: String): Boolean {
+        if (inputGroupName == "") {
+            val warningAlert = WarningAlertView("Empty Group Name", "Empty Group names are not allowed")
+            warningAlert.present()
+            return false
+        }
+        for (group in groupList) {
+            if (group.name == inputGroupName) {
+                val warningAlert = WarningAlertView("Duplicate Group Name", "Duplicate group names are not allowed")
+                warningAlert.present()
+                return false
+            }
+        }
+        return true
     }
 
     private fun saveData(saveRecentlyDeleted: Boolean = false) {

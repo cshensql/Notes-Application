@@ -120,30 +120,14 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             dialogPane.content = sortSettingsView
             alert.title = "Sort Settings"
             alert.isResizable = true
-            alert.width = 300.0
-            alert.height = 400.0
+            alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+            alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
             val result = alert.showAndWait()
 
             if (result.isPresent && result.get() == ButtonType.OK){
                 val (sortOption, sortOrder, sortRange) = sortSettingsView.getSelections()
                 model.sort(sortOption, sortOrder, sortRange)
             }
-        }
-
-        // check for duplicate group name
-
-        fun isAllowedGroupName(inputGroupName: String): Boolean {
-            if (inputGroupName == "") {
-                showErrorMessage("Empty Group names are not allowed")
-                return false
-            }
-            for (group in this.model.groupList) {
-                if (group.name == inputGroupName) {
-                    showErrorMessage("Duplicate Group names are not allowed")
-                    return false
-                }
-            }
-            return true
         }
 
         addNote.setOnAction {
@@ -165,8 +149,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             dialogPane.content = deleteNoteView
             alert.title = "Delete"
             alert.isResizable = true
-            alert.width = 300.0
-            alert.height = 400.0
+            alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+            alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
 
             val result = alert.showAndWait()
 
@@ -186,15 +170,27 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 dialogPane.content = groupNotesView
                 alert.title = "Group Notes"
                 alert.isResizable = true
-                alert.width = 300.0
-                alert.height = 400.0
+                alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+                alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
                 shouldStop = successfullyGroupedNotes(alert.showAndWait(), groupNotesView)
             }
 
         }
 
         moveNotes.setOnAction {
-            println("Move notes pressed")
+            var shouldStop = false
+            while (!shouldStop) {
+                val alert = Alert(AlertType.CONFIRMATION)
+                val dialogPane = alert.dialogPane
+                val moveNotesView = MoveNotesView(model)
+
+                dialogPane.content = moveNotesView
+                alert.title = "Move Notes"
+                alert.isResizable = true
+                alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+                alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
+                shouldStop = successfullyMovedNotes(alert.showAndWait(), moveNotesView)
+            }
         }
 
         recoverNote.setOnAction {
@@ -224,7 +220,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             var newGroupName: String = ""
             if (result.isPresent) {
                 newGroupName = renamePrompt.editor.text
-                if (isAllowedGroupName(newGroupName)) {
+                if (model.isAllowedGroupName(newGroupName)) {
                     model.addGroup(newGroupName)
                 }
             }
@@ -238,8 +234,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             dialogPane.content = deleteGroupView
             alert.title = "Delete"
             alert.isResizable = true
-            alert.width = 300.0
-            alert.height = 400.0
+            alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+            alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
 
             val result = alert.showAndWait()
 
@@ -257,8 +253,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
             dialogPane.content = renameGroupView
             alert.title = "Rename"
             alert.isResizable = true
-            alert.width = 300.0
-            alert.height = 400.0
+            alert.width = ConfigData.DEFAULT_POPUP_WIDTH
+            alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
 
             val result = alert.showAndWait()
 
@@ -272,7 +268,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 var newGroupName: String = ""
                 if (renamePromptResult.isPresent) {
                     newGroupName = renamePrompt.editor.text
-                    if (isAllowedGroupName(newGroupName)) {
+                    if (model.isAllowedGroupName(newGroupName)) {
                         model.renameGroup(newGroupName, selectedGroup)
                     }
                 }
@@ -330,22 +326,6 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         alert.showAndWait()
     }
 
-    // check for duplicate group name
-
-    private fun isAllowedGroupName(inputGroupName: String): Boolean {
-        if (inputGroupName == "") {
-            showErrorMessage("Empty Group names are not allowed")
-            return false
-        }
-        for (group in this.model.groupList) {
-            if (group.name == inputGroupName) {
-                showErrorMessage("Duplicate Group names are not allowed")
-                return false
-            }
-        }
-        return true
-    }
-
     private fun successfullyGroupedNotes(result: Optional<ButtonType>, groupNotesView: GroupNotesView): Boolean {
         if (result.isPresent && result.get() == ButtonType.OK) {
             val selectedNotesDates = groupNotesView.getDateCreatedList()
@@ -361,6 +341,28 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 return false
             } else {
                 model.moveNotes(selectedNotesDates, selectedGroupName)
+                return true
+            }
+        }
+        return true
+    }
+
+    private fun successfullyMovedNotes(result: Optional<ButtonType>, moveNotesView: MoveNotesView): Boolean {
+        if (result.isPresent && result.get() == ButtonType.OK) {
+            val selectedNotesDates = moveNotesView.getDateCreatedList()
+
+            val selectedFromGroupName = moveNotesView.getSelectedFromGroupName()
+            val selectedToGroupName = moveNotesView.getSelectedToGroupName()
+            if (selectedFromGroupName.isEmpty() || selectedToGroupName.isEmpty()) {
+                val warningAlertView = WarningAlertView("Missing Group Option", "You haven't selected 'from group' or 'to group'. Please check your selection and try again")
+                warningAlertView.present()
+                return false
+            } else if (selectedNotesDates.isEmpty()){
+                val warningAlertView = WarningAlertView("No Note Selected", "You haven't selected any note yet. Please select some notes and try again")
+                warningAlertView.present()
+                return false
+            } else {
+                model.moveNotes(selectedNotesDates, selectedToGroupName, selectedFromGroupName)
                 return true
             }
         }
