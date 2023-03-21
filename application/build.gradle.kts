@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version "1.6.20"
     kotlin("plugin.serialization") version "1.6.10"
     id("org.openjfx.javafxplugin") version "0.0.13"
-    id("org.beryx.jlink") version "2.25.0"
+    id("org.beryx.jlink") version "2.26.0"
 }
 
 group = "net.codebot"
@@ -50,6 +50,18 @@ javafx {
 // https://stackoverflow.com/questions/74453018/jlink-package-kotlin-in-both-merged-module-and-kotlin-stdlib
 jlink {
     forceMerge("kotlin")
+    launcher {
+        name = "Notes"
+    }
+    jpackage {
+        // Since windows and mac needs different icon format, we need to check
+        if (org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+            icon = "src/main/resources/notes.icns"
+        } else if (org.gradle.internal.os.OperatingSystem.current().isWindows) {
+            icon = "src/main/resources/notes.ico"
+        } // Otherwise, we will use the default one
+
+    }
 }
 
 java {
