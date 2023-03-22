@@ -1,5 +1,6 @@
 package net.codebot.application
 
+import Service.ServiceManager
 import business.Model
 import persistence.LocalSaving
 import business.Note
@@ -16,6 +17,8 @@ import javafx.stage.Stage
 import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
+import java.security.Provider.Service
+
 
 class Main : Application() {
     override fun start(stage: Stage) {
@@ -142,10 +145,42 @@ class Main : Application() {
             windowConfig.height = stage.height
 
             localSaving.saveConfig(windowConfig)
+            saveData(model)
+
+
         }
 
-        // load the data from local saved file to Model
-        val savedNoteList = localSaving.loadNotes()
+        fetchData(model)
+        model.notifyViews()
+
+        stage.show()
+    }
+
+    private fun saveData(model: Model) {
+        val notesToBeSaved = mutableListOf<Note>()
+        val groupNamesToBeSaved = mutableListOf<String>()
+        val recentlyDeletedNoteToBeSaved = mutableListOf<Note>()
+
+        // Get notes to be saved
+        notesToBeSaved.addAll(model.noteList.values)
+        for (group in model.groupList) {
+            notesToBeSaved.addAll(group.noteList)
+        }
+
+        // Get group names to be saved
+        for (group in model.groupList) {
+            groupNamesToBeSaved.add(group.name)
+        }
+
+        ServiceManager.updateNotesData(notesToBeSaved)
+        ServiceManager.updateGroupsData(groupNamesToBeSaved)
+
+        recentlyDeletedNoteToBeSaved.addAll(model.recentlyDeletedNoteList.values)
+        ServiceManager.updateRecentlyDeletedNotesData(recentlyDeletedNoteToBeSaved)
+    }
+
+    private fun fetchData(model: Model) {
+        val savedNoteList = ServiceManager.getNotesData()
         var noteList = LinkedHashMap<String, Note>()
         var groupList = LinkedHashMap<String, Group>()
         for (note in savedNoteList) {
@@ -162,7 +197,7 @@ class Main : Application() {
             }
         }
 
-        val savedGroupNamesList = localSaving.loadGroupNames()
+        val savedGroupNamesList = ServiceManager.getGroupsData()
         for (groupName in savedGroupNamesList) {
             if (!groupList.containsKey(groupName)) {
                 val newGroup = Group(groupName, mutableListOf<Note>())
@@ -171,7 +206,7 @@ class Main : Application() {
         }
 
 
-        val savedRecentlyDeletedNotes = localSaving.loadRecentlyDeletedNotes()
+        val savedRecentlyDeletedNotes = ServiceManager.getRecentlyDeletedNotesData()
         var recentlyDeletedNotes = LinkedHashMap<String, Note>()
         savedRecentlyDeletedNotes.forEach {
             recentlyDeletedNotes.put(it.dateCreated, it)
@@ -180,9 +215,5 @@ class Main : Application() {
         model.noteList = noteList
         model.groupList = groupList.values.toMutableList()
         model.recentlyDeletedNoteList = recentlyDeletedNotes
-        model.notifyViews()
-
-
-        stage.show()
     }
 }

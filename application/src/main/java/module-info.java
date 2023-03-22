@@ -9,6 +9,7 @@ module application {
     requires kotlinx.serialization.core;
     requires kotlinx.serialization.json;
     requires org.controlsfx.controls;
+    requires java.net.http;
     exports business;
     exports net.codebot.application;
 }
