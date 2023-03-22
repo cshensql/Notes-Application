@@ -23,6 +23,7 @@ Optional, but often helpful to have a screenshot or demo-video for new users.
    - Add notes under a group: https://drive.google.com/file/d/1euT0NHgOt3mLLzN4b9huFprZcCC8ka_j/view?usp=sharing 
    - Search notes: https://drive.google.com/file/d/16qvf1SFVvK0bErisBdXSLV3vKZu1XHwE/view?usp=sharing
    - Sort notes: https://drive.google.com/file/d/1sp9FvwWAOXMq3xWID2MR3t0awy9EXSok/view?usp=share_link
+3. Sprint 3 Demo Video: https://drive.google.com/file/d/1m9iah8dUdXidUGHBxYsgP1Tzn6jTdRSs/view?usp=sharing
 
 ## Releases
 Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
