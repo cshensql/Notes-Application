@@ -1,5 +1,6 @@
 package business
 
+import Service.ServiceManager
 import presentation.IView
 import persistence.LocalSaving
 import presentation.WarningAlertView
@@ -14,7 +15,6 @@ class Model {
     var groupList = mutableListOf<Group>()
     // Only contains 5 recently deleted notes
     var recentlyDeletedNoteList = LinkedHashMap<String, Note>()
-    var testFlag: Boolean = false
 
     // currSelectedGroupIndex represents the index of the current group in groupList
     // if selected note is not null and index >= 0, a note under a group is selected
@@ -73,7 +73,6 @@ class Model {
             currSelectedGroupIndex = -1
 
             isAdded = true
-            saveData()
             notifyViews()
         }
         return isAdded
@@ -93,7 +92,6 @@ class Model {
             currSelectedNote = newNote
 
             isAdded = true
-            saveData()
             notifyViews()
         }
         return isAdded
@@ -130,7 +128,6 @@ class Model {
                 }
             }
         }
-        saveData()
         notifyViews()
     }
 
@@ -140,7 +137,6 @@ class Model {
             val keys = recentlyDeletedNoteList.keys
             recentlyDeletedNoteList.remove(keys.first())
         }
-        saveData(saveRecentlyDeleted = true)
     }
 
     fun recoverNote(notesSelected: MutableList<Note>) {
@@ -168,7 +164,6 @@ class Model {
             }
         }
         notifyViews()
-        saveData(saveRecentlyDeleted = true)
     }
 
     fun getCurrSelectedNote() = currSelectedNote
@@ -228,7 +223,6 @@ class Model {
     fun changeSelectionContent(title: String, body: String) {
         currSelectedNote?.title = title
         currSelectedNote?.body = body
-        saveData()
         notifyViews()
     }
 
@@ -241,7 +235,6 @@ class Model {
         // update selection to the newGroup
         currSelectedNote = null
         currSelectedGroupIndex = groupList.size - 1
-        saveData()
         notifyViews()
     }
 
@@ -273,7 +266,6 @@ class Model {
                 }
             }
         }
-        saveData()
         notifyViews()
     }
 
@@ -287,7 +279,6 @@ class Model {
                 break
             }
         }
-        saveData()
         notifyViews()
     }
 
@@ -302,14 +293,12 @@ class Model {
             // Old password exists
             currSelectedNote?.isLocked = true
         }
-        saveData()
         notifyViews()
     }
 
     fun unlockNote() {
         if (currSelectedNote != null) {
             currSelectedNote?.isLocked = false
-            saveData()
             notifyViews()
         }
     }
@@ -356,7 +345,6 @@ class Model {
                 break
             }
         }
-        saveData()
         notifyViews()
     }
 
@@ -388,7 +376,6 @@ class Model {
         if (sortRange > 2) {
             sortListOfNotes(groupList[sortRange - 3].noteList, sortOption, sortOrder)
         }
-        saveData()
         notifyViews()
     }
 
@@ -444,32 +431,5 @@ class Model {
             }
         }
         return true
-    }
-
-    private fun saveData(saveRecentlyDeleted: Boolean = false) {
-        val localSaving = LocalSaving()
-        localSaving.testFlag = testFlag
-        val notesToBeSaved = mutableListOf<Note>()
-        val groupNamesToBeSaved = mutableListOf<String>()
-        val recentlyDeletedNoteToBeSaved = mutableListOf<Note>()
-
-        // Get notes to be saved
-        notesToBeSaved.addAll(noteList.values)
-        for (group in groupList) {
-            notesToBeSaved.addAll(group.noteList)
-        }
-
-        // Get group names to be saved
-        for (group in groupList) {
-            groupNamesToBeSaved.add(group.name)
-        }
-
-        localSaving.saveNotes(notesToBeSaved)
-        localSaving.saveGroupNames(groupNamesToBeSaved)
-
-        if (saveRecentlyDeleted) {
-            recentlyDeletedNoteToBeSaved.addAll(recentlyDeletedNoteList.values)
-            localSaving.saveRecentlyDeletedNotes(recentlyDeletedNoteToBeSaved)
-        }
     }
 }

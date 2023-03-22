@@ -9,7 +9,6 @@ class ModelTest {
     @BeforeEach
     fun setUp() {
         model = Model()
-        model.testFlag = true
     }
     
 
