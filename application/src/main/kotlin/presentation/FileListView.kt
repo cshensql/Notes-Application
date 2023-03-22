@@ -84,10 +84,10 @@ class FileListView(model: Model) : IView, HBox() {
                     val title = group.noteList[noteIndex].title
                     val body = Jsoup.parse(group.noteList[noteIndex].body).wholeText()
                     val titleIndex = body.indexOf(title)
-                    val content = body.substring(0, titleIndex) + body.substring(title.length)
+                    val content = body.substring(0, titleIndex) + body.substring(titleIndex + title.length)
 
                     val index = content.indexOf(input)
-                    if (index > 0) {
+                    if (index >= 0) {
                         searchByContentResults.add(Pair("", Pair(groupIndex,noteIndex)))
                     }
                 }
@@ -103,7 +103,7 @@ class FileListView(model: Model) : IView, HBox() {
                 val title = entry.value.title
                 val body = Jsoup.parse(entry.value.body).wholeText()
                 val titleIndex = body.indexOf(title)
-                val content = body.substring(0, titleIndex) + body.substring(title.length)
+                val content = body.substring(0, titleIndex) + body.substring(titleIndex + title.length)
 
                 val index = content.indexOf(input)
                 if (index >= 0) {
