@@ -3,6 +3,7 @@ package presentation
 import business.Model
 import javafx.scene.control.Button
 import javafx.scene.control.ToolBar
+import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
@@ -12,6 +13,7 @@ import org.jsoup.Jsoup
 class ContentView(private val model: Model) : IView, VBox() {
     private val toolbar = ToolBar()
     private val saveButton = Button("Save")
+    private val saveButtonToolTip = Tooltip("The first line of the note will be set as the title")
     private val htmlEditor = HTMLEditor()
 
     init {
@@ -24,6 +26,7 @@ class ContentView(private val model: Model) : IView, VBox() {
 
         saveButton.isFocusTraversable = false
         saveButton.graphic = ImageView(Image("save.png", 18.0, 18.0, true, true))
+        saveButton.tooltip = saveButtonToolTip
 
         toolbar.items.add(saveButton)
 
