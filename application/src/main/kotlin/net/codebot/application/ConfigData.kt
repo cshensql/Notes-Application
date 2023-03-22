@@ -10,4 +10,10 @@ object ConfigData {
     val SORT_OPTIONS = listOf<String>("Title", "Date Modified", "Date Created")
     val SORT_ORDERS = listOf<String>("Ascending", "Descending")
     val SORT_RANGES_DEFAULT = listOf<String>("All Notes", "Groups", "Notes")
+    val invisibleControlsUnderLightweight =
+        listOf<String>(".html-editor-cut", ".html-editor-copy",".html-editor-paste",".html-editor-align-left",
+            ".html-editor-align-right",".html-editor-align-center",".html-editor-align-justify", ".html-editor-outdent",
+            ".html-editor-indent", ".html-editor-bullets", ".html-editor-numbers", ".format-menu-button",
+            ".font-family-menu-button", ".font-size-menu-button", ".html-editor-strike", ".html-editor-hr",
+            ".html-editor-background")
 }
