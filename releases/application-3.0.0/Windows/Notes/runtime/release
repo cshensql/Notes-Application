@@ -1,0 +1,2 @@
+JAVA_VERSION="17.0.6"
+MODULES="java.base java.net.http java.xml java.prefs java.datatransfer java.desktop javafx.base jdk.unsupported javafx.graphics javafx.controls javafx.media jdk.jsobject jdk.xml.dom javafx.web java.instrument net.codebot.merged.module kotlin.stdlib kotlinx.coroutines.core.jvm kotlinx.serialization.core kotlinx.serialization.json java.logging org.controlsfx.controls org.jsoup shared application"
