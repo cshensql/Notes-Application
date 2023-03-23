@@ -32,6 +32,7 @@ Each sprint should produce a software release. Your README should include a list
    (Sprint 1 Client Installer: https://git.uwaterloo.ca/y2786li/cs346/-/tree/main/releases/application-1.0.0/bin)
 2. Sprint 2 Release Note: https://docs.google.com/document/d/1ZWt9AT4D2OfroXCth0i8RAkhIaQuSvvKBgioV4Jpz24/edit?usp=sharing <br />
    (Sprint 2 Client Installer: https://git.uwaterloo.ca/y2786li/cs346/-/tree/main/releases/application-2.0.0/bin)
+3. Sprint 3 Release Note: https://docs.google.com/document/d/1qjn1o_CF1fyFPTgThamhK1ndf4a1sQxUS17kzOEaS5M/edit?usp=sharing <br />
 
 
 ## EVERYTHING BELOW THIS IS DEFAULTED (REMOVE IF WE DONT SEE USE FOR THE TIPS)
