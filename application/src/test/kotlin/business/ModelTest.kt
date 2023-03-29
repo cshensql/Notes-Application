@@ -443,6 +443,24 @@ class ModelTest {
         assert(model.groupList[1].noteList.count() == 0)
     }
 
+    @Test
+    fun moveNotesBackToNotesSection() {
+        // Arrange
+        val note1 = Note("notes1", groupName = "group1")
+        val group1 = Group("group1", mutableListOf<Note>(note1))
+        model.groupList.add(group1)
+
+        // Act
+        // if toGroup is empty string while fromGroup is not, it means move the notes back to Notes section
+        model.moveNotes(mutableListOf<String>(note1.dateCreated), "", "group1")
+
+        // Assert
+        assert(model.groupList.count() == 1)
+        assert(model.groupList[0].noteList.count() == 0)
+        assert(model.noteList.count() == 1)
+        assert(model.noteList.contains(note1.dateCreated))
+    }
+
 
     // This test tests the case where
     // - if the note does not belong to any group, when recovered, it is put back to noteList

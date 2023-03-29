@@ -187,8 +187,8 @@ class MenuBarView(model: Model) : IView, BorderPane() {
                 dialogPane.content = moveNotesView
                 alert.title = "Move Notes"
                 alert.isResizable = true
-                alert.width = ConfigData.DEFAULT_POPUP_WIDTH
-                alert.height = ConfigData.DEFAULT_POPUP_HEIGHT
+                alert.width = ConfigData.MOVE_NOTES_POPUP_WIDTH
+                alert.height = ConfigData.MOVE_NOTES_POPUP_HEIGHT
                 shouldStop = successfullyMovedNotes(alert.showAndWait(), moveNotesView)
             }
         }
@@ -353,7 +353,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
             val selectedFromGroupName = moveNotesView.getSelectedFromGroupName()
             val selectedToGroupName = moveNotesView.getSelectedToGroupName()
-            if (selectedFromGroupName.isEmpty() || selectedToGroupName.isEmpty()) {
+            if (selectedFromGroupName.isEmpty()) {
                 val warningAlertView = WarningAlertView("Missing Group Option", "You haven't selected 'from group' or 'to group'. Please check your selection and try again")
                 warningAlertView.present()
                 return false
