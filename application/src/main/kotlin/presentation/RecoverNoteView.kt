@@ -5,6 +5,7 @@ import business.Note
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 class RecoverNoteView(model: Model) : ListView<String>() {
     private val recentlyDeletedNoteList = model.recentlyDeletedNoteList
 

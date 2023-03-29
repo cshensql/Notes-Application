@@ -3,6 +3,8 @@ package business
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class GroupTest {
     private var group = Group()
     @BeforeEach

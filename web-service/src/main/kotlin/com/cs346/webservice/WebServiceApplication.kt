@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*
 import java.io.FileInputStream
 import java.nio.charset.StandardCharsets
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 @SpringBootApplication
 class WebServiceApplication
 

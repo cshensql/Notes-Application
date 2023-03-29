@@ -4,6 +4,8 @@ import business.Model
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class DeleteNoteView(model: Model) : ListView<String>() {
     private val groupList = model.groupList
     private val noteList = model.noteList

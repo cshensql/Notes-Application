@@ -8,6 +8,8 @@ import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.paint.Color
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class GroupNotesView(model: Model): IView, VBox() {
     private val modelPassed = model
     private val noteListView = ListView<String>()

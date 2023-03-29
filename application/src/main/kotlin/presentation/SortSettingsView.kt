@@ -7,6 +7,8 @@ import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import net.codebot.application.ConfigData
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class SortSettingsView(val model: Model): GridPane() {
     // labels
     private val sortOptionsLabel = Label("       Sort Notes By: ")

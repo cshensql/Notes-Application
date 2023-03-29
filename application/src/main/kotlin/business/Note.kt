@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 @Serializable
 class Note(
     var title: String = "New Note",
