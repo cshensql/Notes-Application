@@ -7,6 +7,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.text.Text
 
 class MoveNotesView(model: Model): IView, VBox() {
     private val modelPassed = model
@@ -14,6 +15,7 @@ class MoveNotesView(model: Model): IView, VBox() {
     private val groupList = model.groupList
     private val fromGroupLabel = Label("from group")
     private val toGroupLabel = Label("to group")
+    private val infoText = Text("If you do not choose any group for 'to group', then the selected note(s) will be moved back to the 'Notes' section.")
     private var fromGroupSelectionBox = ComboBox(FXCollections.observableArrayList(mutableListOf<String>()))
     private var toGroupSelectionBox = ComboBox(FXCollections.observableArrayList(mutableListOf<String>()))
     private val createNewGroupButton = Button("Create a new group?")
@@ -25,6 +27,9 @@ class MoveNotesView(model: Model): IView, VBox() {
     // and selection box can be presented properly
     private val fromSelectionBoxWidthSubtractionConstant: Double = 90.0
     private val toSelectionBoxWidthSubtractionConstant: Double = 75.0
+
+    // the wrapping width for the info text
+    private val wrappingWidth: Double = 300.0
 
     init {
         this.alignment = Pos.CENTER
@@ -57,8 +62,14 @@ class MoveNotesView(model: Model): IView, VBox() {
         groupList.forEach {
             groupNames.add(it.name)
         }
+
+        val toGroupBoxGroupNames = mutableListOf<String>()
+        // The "" means move the notes back the "Notes" section
+        toGroupBoxGroupNames.add("")
+        toGroupBoxGroupNames.addAll(groupNames)
+
         fromGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
-        toGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
+        toGroupSelectionBox.items = FXCollections.observableArrayList(toGroupBoxGroupNames)
 
         // Once the "from group" selection changes, the noteList will be updated to show the
         // notes in that group
@@ -114,10 +125,12 @@ class MoveNotesView(model: Model): IView, VBox() {
 
         fromGroupSelectionBox.prefWidthProperty().bind(this.widthProperty().subtract(fromGroupLabel.width + fromSelectionBoxWidthSubtractionConstant))
         toGroupSelectionBox.prefWidthProperty().bind(this.widthProperty().subtract(toGroupLabel.width + toSelectionBoxWidthSubtractionConstant))
+        infoText.wrappingWidth = wrappingWidth
 
         this.children.add(fromGroupSection)
         this.children.add(noteListView)
         this.children.add(toGroupSection)
+        this.children.add(infoText)
 
 
     }
@@ -157,10 +170,16 @@ class MoveNotesView(model: Model): IView, VBox() {
         groupList.forEach {
             groupNames.add(it.name)
         }
+
+        val toGroupBoxGroupNames = mutableListOf<String>()
+        // The "" means move the notes back the "Notes" section
+        toGroupBoxGroupNames.add("")
+        toGroupBoxGroupNames.addAll(groupNames)
+
         if (groupNames.isNotEmpty()) {
             val previousCount = fromGroupSelectionBox.items.count()
             fromGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
-            toGroupSelectionBox.items = FXCollections.observableArrayList(groupNames)
+            toGroupSelectionBox.items = FXCollections.observableArrayList(toGroupBoxGroupNames)
 
             // If previously there is no item in the selection box, when we add new items
             // the selection will still shown as empty unless the user choose some item in the list

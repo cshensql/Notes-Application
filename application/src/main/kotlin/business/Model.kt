@@ -323,7 +323,7 @@ class Model {
                 noteList.remove(date)
             }
         } else {
-            // If we are moving notes between groups
+            // If we are moving notes between groups / moving notes back to "Notes" section
             val fromGroupIndex = groupList.indexOfFirst { it.name == fromGroup }
             val group = groupList[fromGroupIndex]
             for (note in group.noteList) {
@@ -337,12 +337,18 @@ class Model {
         }
 
 
-        // the given toGroup is guaranteed to be a valid group name
-        // by how the UI is set up
-        for (group in groupList) {
-            if (group.name == toGroup) {
-                group.noteList.addAll(notesMoved)
-                break
+        if (toGroup.isEmpty()) {
+            // This case will only happen when we move notes instead of grouping notes by how the UI is set up
+            // If the name of "toGroup" is empty, it means that the user wants to move the notes back to "Notes" section
+            for (note in notesMoved) {
+                noteList.put(note.dateCreated, note)
+            }
+        } else {
+            for (group in groupList) {
+                if (group.name == toGroup) {
+                    group.noteList.addAll(notesMoved)
+                    break
+                }
             }
         }
         notifyViews()

@@ -7,6 +7,8 @@ object ConfigData {
     const val MAX_FILELIST_WIDTH: Double = 200.0
     const val DEFAULT_POPUP_WIDTH: Double = 300.0
     const val DEFAULT_POPUP_HEIGHT: Double = 400.0
+    const val MOVE_NOTES_POPUP_WIDTH: Double = 400.0
+    const val MOVE_NOTES_POPUP_HEIGHT: Double = 500.0
     const val SERVER_NOTES_GET_ADDRESS = "http://127.0.0.1:8080/notes/get"
     const val SERVER_NOTES_POST_ADDRESS = "http://127.0.0.1:8080/notes/add"
     const val SERVER_NOTES_DELETE_ADDRESS = "http://127.0.0.1:8080/notes/delete"
