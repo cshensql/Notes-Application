@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import kotlin.io.path.Path
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class LocalSavingTest {
 
     // setup

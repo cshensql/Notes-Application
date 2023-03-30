@@ -18,6 +18,7 @@ import presentation.ContentView
 import presentation.FileListView
 import presentation.MenuBarView
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 
 class Main : Application() {
     override fun start(stage: Stage) {

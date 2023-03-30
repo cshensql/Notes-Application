@@ -1,5 +1,6 @@
 package net.codebot.application
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 object ConfigData {
     const val DEFAULT_WIDTH: Double = 870.0
     const val DEFAULT_HEIGHT: Double = 720.0

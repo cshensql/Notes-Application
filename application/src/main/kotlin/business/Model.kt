@@ -1,9 +1,9 @@
 package business
 
-import Service.ServiceManager
 import presentation.IView
-import persistence.LocalSaving
 import presentation.WarningAlertView
+
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 
 class Model {
 

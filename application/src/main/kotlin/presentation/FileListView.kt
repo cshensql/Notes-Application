@@ -13,6 +13,8 @@ import org.jsoup.Jsoup
 import java.util.*
 import kotlin.collections.HashMap
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class FileListView(model: Model) : IView, HBox() {
     private val model = model
 

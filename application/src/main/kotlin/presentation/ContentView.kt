@@ -12,6 +12,7 @@ import net.codebot.application.ConfigData
 import org.controlsfx.control.ToggleSwitch
 import org.jsoup.Jsoup
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 
 class ContentView(private val model: Model) : IView, VBox() {
     private val toolbar = ToolBar()

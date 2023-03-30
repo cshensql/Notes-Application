@@ -1,5 +1,5 @@
 package presentation
-import javafx.geometry.Insets
+
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
@@ -8,6 +8,8 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
+
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 
 class LockNoteView(): VBox() {
     private val passwordEnterField = PasswordField()

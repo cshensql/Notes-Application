@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class MoveNotesView(model: Model): IView, VBox() {
     private val modelPassed = model
     private val noteListView = ListView<String>()

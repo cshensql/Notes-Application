@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
+
 class NoteTest {
     private var note = Note()
     private var currTime = ""

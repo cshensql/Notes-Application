@@ -1,9 +1,7 @@
 package presentation
 
-import business.Group
 import business.Model
 import javafx.geometry.Insets
-import business.Note
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.image.Image
@@ -15,6 +13,8 @@ import javafx.scene.paint.Color
 import net.codebot.application.ConfigData
 import org.controlsfx.control.textfield.CustomTextField
 import java.util.*
+
+// Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
 
 class MenuBarView(model: Model) : IView, BorderPane() {
     // Model
