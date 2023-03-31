@@ -222,8 +222,10 @@ class FileListView(model: Model) : IView, HBox() {
         fileListView.contextMenu = contextMenu
         fileListView.setOnContextMenuRequested {
             if (fileListView.selectionModel.selectedIndex >= 0 && fileListView.selectionModel.selectedItem.parent == groupRoot) {
+                // If the selected item is a group
                 fileListView.contextMenu.hide()
-            } else if (fileListView.selectionModel.selectedIndex >= 0 && fileListView.selectionModel.selectedItem.parent == noteRoot) {
+            } else if (fileListView.selectionModel.selectedIndex >= 0) {
+                // If the selected item is a note (either inside a group or not)
                 val currSelectedNote = model.getCurrSelectedNote()
                 val noteIsLocked = currSelectedNote?.isLocked ?: false
                 contextMenu.items.clear()
