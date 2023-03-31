@@ -30,9 +30,8 @@ fun main(args: Array<String>) {
 @RequestMapping("/notes")
 class NoteResource() {
 
-	val resource = ClassPathResource("cs346-notes-app-key.json")
-	val inputStream = FileInputStream(resource.file)
-	val credentials: GoogleCredentials = GoogleCredentials.fromStream(inputStream)
+	val resource = ClassPathResource("cs346-notes-app-key.json").inputStream
+	val credentials: GoogleCredentials = GoogleCredentials.fromStream(resource)
 
 	val storage: Storage = StorageOptions.newBuilder().setCredentials(credentials).build().service
 	val id: BlobId = BlobId.of("spring-bucket-aydna66", "notes.json")
@@ -64,9 +63,8 @@ class NoteResource() {
 @RequestMapping("/groups")
 class GroupsResource() {
 
-	val resource = ClassPathResource("cs346-notes-app-key.json")
-	val inputStream = FileInputStream(resource.file)
-	val credentials: GoogleCredentials = GoogleCredentials.fromStream(inputStream)
+	val resource = ClassPathResource("cs346-notes-app-key.json").inputStream
+	val credentials: GoogleCredentials = GoogleCredentials.fromStream(resource)
 
 	val storage: Storage = StorageOptions.newBuilder().setCredentials(credentials).build().service
 	val id: BlobId = BlobId.of("spring-bucket-aydna66", "groupNames.json")
@@ -97,9 +95,8 @@ class GroupsResource() {
 @RestController
 @RequestMapping("/recently-deleted")
 class RecentlyDeletedResource() {
-	val resource = ClassPathResource("cs346-notes-app-key.json")
-	val inputStream = FileInputStream(resource.file)
-	val credentials: GoogleCredentials = GoogleCredentials.fromStream(inputStream)
+	val resource = ClassPathResource("cs346-notes-app-key.json").inputStream
+	val credentials: GoogleCredentials = GoogleCredentials.fromStream(resource)
 
 	val storage: Storage = StorageOptions.newBuilder().setCredentials(credentials).build().service
 	val id: BlobId = BlobId.of("spring-bucket-aydna66", "recentlyDeleted.json")
