@@ -59,7 +59,7 @@ class ContentView(private val model: Model) : IView, VBox() {
             }
         }
 
-        toggleSwitch.selectedProperty().addListener { observable, oldValue, newValue ->
+        toggleSwitch.selectedProperty().addListener{ observable, oldValue, newValue ->
             changeMode(lightweight = newValue)
         }
 
