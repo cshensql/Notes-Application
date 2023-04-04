@@ -66,6 +66,7 @@ class Main : Application() {
         // set up event handler for searchBar in menuBar
         menuBar.searchBar.setOnKeyPressed {
             if (it.code == KeyCode.ENTER) {
+                menuBar.searchBar.isEditable = false
                 val text = menuBar.searchBar.text
                 if (text != "") {
                     val (byTitle, byContent) = menuBar.searchOptions
@@ -79,6 +80,7 @@ class Main : Application() {
         menuBar.cancelButton.setOnMouseClicked {
             menuBar.searchBar.text = ""
             menuBar.searchBar.border = null
+            menuBar.searchBar.isEditable = false
             // exit search
             fileList.exitSearch()
         }
