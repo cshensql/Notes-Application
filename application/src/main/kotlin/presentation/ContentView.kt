@@ -6,6 +6,7 @@ import javafx.scene.control.ToolBar
 import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.*
 import javafx.scene.layout.VBox
 import javafx.scene.web.HTMLEditor
 import net.codebot.application.ConfigData
@@ -17,12 +18,11 @@ import org.jsoup.Jsoup
 class ContentView(private val model: Model) : IView, VBox() {
     private val toolbar = ToolBar()
     private val saveButton = Button("Save")
-    private val toggleSwitch = ToggleSwitch("Lightweight Mode:")
+    val toggleSwitch = ToggleSwitch("Lightweight Mode:")
     private val saveButtonToolTip = Tooltip("The first line of the note will be set as the title")
     private val htmlEditor = HTMLEditor()
     private val bottomToolBar = htmlEditor.lookup(".bottom-toolbar")
     private val topToolBar = htmlEditor.lookup(".top-toolbar")
-
     init {
         this.children.addAll(toolbar, htmlEditor)
 

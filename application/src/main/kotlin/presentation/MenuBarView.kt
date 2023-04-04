@@ -11,7 +11,9 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import net.codebot.application.ConfigData
+import org.controlsfx.control.ToggleSwitch
 import org.controlsfx.control.textfield.CustomTextField
+import presentation.ContentView
 import java.util.*
 
 // Copyright (c) 2023. Andy Yang, Benjamin Du, Charles Shen, Yuying Li
@@ -32,6 +34,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val noteMenu = Menu("Note")
     private val groupMenu = Menu("Group")
     private val searchMenu = Menu("Search")
+    private val viewMenu = Menu("View")
 
     // Note Menu Sub options
     private val addNote = MenuItem("Add Note")
@@ -52,6 +55,9 @@ class MenuBarView(model: Model) : IView, BorderPane() {
     private val searchByTitle = MenuItem("Search By Note Title")
     private val searchByContent = MenuItem("Search By Note Content")
 
+    // View Menu Sub options
+    val toggleL = MenuItem("Toggle Lightweight Mode")
+
     init {
         // Set hotkeys for each feature
         addNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCodeCombination.CONTROL_DOWN)
@@ -67,7 +73,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         searchAll.accelerator = KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN)
         searchByContent.accelerator = KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN)
         searchByTitle.accelerator = KeyCodeCombination(KeyCode.T, KeyCodeCombination.CONTROL_DOWN)
-
+        toggleL.accelerator = KeyCodeCombination(KeyCode.L, KeyCodeCombination.ALT_DOWN)
 
         // add css stylesheet
         this.stylesheets.add("MenuBarView.css")
@@ -95,6 +101,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         menu.menus.add(noteMenu)
         menu.menus.add(groupMenu)
         menu.menus.add(searchMenu)
+        menu.menus.add(viewMenu)
 
         // Add submenu to their corresponding menu
         noteMenu.items.add(addNote)
@@ -110,6 +117,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         searchMenu.items.add(searchAll)
         searchMenu.items.add(searchByTitle)
         searchMenu.items.add(searchByContent)
+        viewMenu.items.add(toggleL)
 
 
         sortNotes.setOnAction {

@@ -83,6 +83,11 @@ class Main : Application() {
             fileList.exitSearch()
         }
 
+        menuBar.toggleL.setOnAction{
+            val curvalue = contentView.toggleSwitch.isSelected
+            contentView.toggleSwitch.isSelected = !curvalue
+        }
+
         // Bind the width and height properties for each view
         layout.prefWidthProperty().bind(scene.widthProperty())
         layout.prefHeightProperty().bind(scene.heightProperty())
