@@ -91,6 +91,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
         searchBar.promptText = "Search"
 
         searchBar.isFocusTraversable = false
+        searchBar.isEditable = false
 
         // set positions in BorderPane
         this.padding = Insets(0.0,10.0,0.0,0.0)
@@ -323,6 +324,7 @@ class MenuBarView(model: Model) : IView, BorderPane() {
 
         searchBar.setOnMouseClicked {
             searchBar.border = null
+            searchBar.isEditable = true
         }
     }
 
