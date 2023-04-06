@@ -14,11 +14,13 @@ https://docs.google.com/document/d/1t-xZfA8tPVKafwNlTAlWANI3tw-mf2jXsbvjtk_wxWA/
 
 ## Instructions
 Here is the link to the instructions about how to install and run the application, how to run the web service, and how to test all features of the application:
-https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing. You can also find a copy of this doc inside releases/application-4.0.0 and it is named "instructions"
+https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing. You can also find a copy of this doc inside releases/application-4.0.0 and it is named "instructions".
+Here is the link to the demo videos for all features and how to install and run the application: https://drive.google.com/drive/folders/1xycpsd4Em0CNGLbFwzcxzO4jjukDim28?usp=share_link
 
-Key Points to note:
-1. This application saves your data and stores it to the cloud platform when you close the application window. Hence, when you close the application window, there will be around 1 second delay. 
-2. You must explicitly click the "Save" button to save the content of the note. Otherwise, if you switch to another note before saving the current editing note, the content you modified won't be saved.
+Key Points to Note:
+1. Before you run the application, please make sure that the web service is running (for how to run the web service, please see the instructions doc: https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing). Otherwise, the application won't be able to run since it needs to communicate with the web service to get and update data.
+2. This application saves your data and stores it to the cloud platform when you close the application window. Hence, when you close the application window, there will be around 1 second delay. 
+3. You must explicitly click the "Save" button to save the content of the note. Otherwise, if you switch to another note before saving the current editing note, the content you modified won't be saved.
 
 ## Screenshots/videos
 Optional, but often helpful to have a screenshot or demo-video for new users.
