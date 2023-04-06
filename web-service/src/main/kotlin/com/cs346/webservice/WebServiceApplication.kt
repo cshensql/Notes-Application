@@ -49,7 +49,6 @@ class NoteResource() {
 		val blob: Blob = storage.get(id)
 		val fileContent = blob.getContent()
 		val ret = String(fileContent, StandardCharsets.UTF_8)
-		println(ret)
 		return ret
 	}
 
@@ -82,7 +81,6 @@ class GroupsResource() {
 		val blob: Blob = storage.get(id)
 		val fileContent = blob.getContent()
 		val ret = String(fileContent, StandardCharsets.UTF_8)
-		println(ret)
 		return ret
 	}
 
@@ -114,7 +112,6 @@ class RecentlyDeletedResource() {
 		val blob: Blob = storage.get(id)
 		val fileContent = blob.getContent()
 		val ret = String(fileContent, StandardCharsets.UTF_8)
-		println(ret)
 		return ret
 	}
 
