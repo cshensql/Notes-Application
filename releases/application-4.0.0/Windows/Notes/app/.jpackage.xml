@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
 <jpackage-state version="17.0.6" platform="windows">
-  <app-version>3.0.0</app-version>
+  <app-version>4.0.0</app-version>
   <main-launcher>Notes</main-launcher>
   <signed>false</signed></jpackage-state>
