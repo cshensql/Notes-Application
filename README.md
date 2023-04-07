@@ -21,6 +21,7 @@ Key Points to Note:
 1. Before you run the application, please make sure that the web service is running (for how to run the web service, please see the instructions doc: https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing). Otherwise, the application won't be able to run since it needs to communicate with the web service to get and update data.
 2. This application saves your data and stores it to the cloud platform when you close the application window. Hence, when you close the application window, there will be around 1 second delay. 
 3. You must explicitly click the "Save" button to save the content of the note. Otherwise, if you switch to another note before saving the current editing note, the content you modified won't be saved.
+4. The first line in the content of a note is the title of the note, and you can not save the note with an empty or blank first line.
 
 ## Screenshots/videos
 Optional, but often helpful to have a screenshot or demo-video for new users.
