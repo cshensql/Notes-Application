@@ -45,10 +45,10 @@ class NoteResource() {
 	}
 
 	@GetMapping("/get")
-	fun getNotes(): String {
-		val blob: Blob = storage.get(id)
-		val fileContent = blob.getContent()
-		val ret = String(fileContent, StandardCharsets.UTF_8)
+	fun getNotes(): String? {
+		val blob: Blob? = storage.get(id)
+		val fileContent = blob?.getContent()
+		val ret = fileContent?.let { String(it, StandardCharsets.UTF_8) }
 		return ret
 	}
 
@@ -77,10 +77,10 @@ class GroupsResource() {
 	}
 
 	@GetMapping("/get")
-	fun getGroupNames(): String {
-		val blob: Blob = storage.get(id)
-		val fileContent = blob.getContent()
-		val ret = String(fileContent, StandardCharsets.UTF_8)
+	fun getGroupNames(): String? {
+		val blob: Blob? = storage.get(id)
+		val fileContent = blob?.getContent()
+		val ret = fileContent?.let { String(it, StandardCharsets.UTF_8) }
 		return ret
 	}
 
@@ -108,10 +108,10 @@ class RecentlyDeletedResource() {
 	}
 
 	@GetMapping("/get")
-	fun getRecentlyDeleted(): String {
-		val blob: Blob = storage.get(id)
-		val fileContent = blob.getContent()
-		val ret = String(fileContent, StandardCharsets.UTF_8)
+	fun getRecentlyDeleted(): String? {
+		val blob: Blob? = storage.get(id)
+		val fileContent = blob?.getContent()
+		val ret = fileContent?.let { String(it, StandardCharsets.UTF_8) }
 		return ret
 	}
 
