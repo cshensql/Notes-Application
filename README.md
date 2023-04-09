@@ -13,15 +13,18 @@ Yuying Li - y2786li@uwaterloo.ca
 https://docs.google.com/document/d/1t-xZfA8tPVKafwNlTAlWANI3tw-mf2jXsbvjtk_wxWA/edit
 
 ## Instructions
+**Before following the instructions below, please make sure that your computer is connected to network since the application needs to save data to the remote Cloud end** <br />
 Here is the link to the instructions about how to install and run the application, how to run the web service, and how to test all features of the application:
 https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing. You can also find a copy of this doc inside releases/application-4.0.0 and it is named "Instructions".
 Here is the link to the demo videos for all features and how to install and run the application: https://drive.google.com/drive/folders/1xycpsd4Em0CNGLbFwzcxzO4jjukDim28?usp=share_link
 
 **Key Points to Note:**
 1. Before you run the application, please make sure that the web service is running (for how to run the web service, please see the instructions doc: https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing). Otherwise, the application won't be able to run since it needs to communicate with the web service to get and update data.
-2. This application saves your data and stores it to the cloud platform when you close the application window. Hence, when you close the application window, there will be around 1 second delay. Also, to test the feature that the data is saved remotely, you can modify some data first, close the application to send and store the data on the cloud platform, and then open the application again. You can see that your modifications are saved. You can also follow the instructions in this doc https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing to test the feature that the data is saved remotely by using two machines.
+2. This application saves your data and stores it to the cloud platform when you close the application window. Hence, when you close the application window, there will be around 2 seconds delay. Also, to test the feature that the data is saved remotely, you can modify some data first, close the application to send and store the data on the cloud platform, and then open the application again. You can see that your modifications are saved. You can also follow the instructions in this doc https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing to test the feature that the data is saved remotely by using two machines.
 3. You must explicitly click the "Save" button to save the content of the note. Otherwise, if you switch to another note before saving the current editing note, the content you modified won't be saved.
 4. The first line in the content of a note is the title of the note, and you can not save the note with an empty or blank first line.
+5. If you have already created a new note with empty content, you cannot create a second new note unless you put some content in the first new note and save that content.
+6. When you run the unit tests for the application, the tests in LocalSavingTest will modify the local test data files which will cause git to track those changes. Feel free to ignore those changes.
 
 **Additional Features Completed:** <br />
 (instructions and demo videos for these addition features are also included in the above shared Google doc and folder)
