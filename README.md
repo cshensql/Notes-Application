@@ -13,7 +13,7 @@ Yuying Li - y2786li@uwaterloo.ca
 https://docs.google.com/document/d/1t-xZfA8tPVKafwNlTAlWANI3tw-mf2jXsbvjtk_wxWA/edit
 
 ## Instructions
-**Before following the instructions below, please make sure that your computer is connected to network since the application needs to save data to the remote Cloud end** <br />
+**Before following the instructions below, please make sure that your computer is connected to a Wi-Fi network since the application needs to save data to the remote Cloud end** <br />
 Here is the link to the instructions about how to install and run the application, how to run the web service, and how to test all features of the application:
 https://docs.google.com/document/d/13vS-iEMVQ-AlIvGeDwtdzvYNdbUZJN4lDgqeUlMeJg4/edit?usp=sharing. You can also find a copy of this doc inside releases/application-4.0.0 and it is named "Instructions".
 Here is the link to the demo videos for all features and how to install and run the application: https://drive.google.com/drive/folders/1xycpsd4Em0CNGLbFwzcxzO4jjukDim28?usp=share_link
