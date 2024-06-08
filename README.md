@@ -35,7 +35,7 @@ Here is the link to the demo videos for all features and how to install and run 
 3. Lightweight/heavyweight feature toggle
 
 ## Screenshots/videos
-Optional, but often helpful to have a screenshot or demo-video for new users.
+
 1. Sprint 1 Demo Video: https://drive.google.com/file/d/1LsTiXdP9FUuRdxhWlns2XkmkJr_Fmo6o/view?usp=sharing 
 2. Sprint 2 Demo Video: https://drive.google.com/file/d/1knlenc1R8X-3gHzdX8KCX7pFt9WtSuRO/view?usp=share_link 
    - Group related notes: https://drive.google.com/file/d/1ZJAxs7OveGtnbKNIvc2V1TAkOOU1zsnL/view?usp=share_link
@@ -46,8 +46,6 @@ Optional, but often helpful to have a screenshot or demo-video for new users.
 4. Sprint 4 Demo Video: https://drive.google.com/file/d/161J6uVJRunUHaZLAjgqyZnUHPocx9ptt/view?usp=sharing
 
 ## Releases
-Each sprint should produce a software release. Your README should include a list of each release, with a link to the release-notes. 
-* see ![release page](assets/release-page.png) <br />
 1. Sprint 1 Release Note: https://docs.google.com/document/d/1hh97z5v7OMlaif3IH1kHK93rcIUQVf9ReFG0zE3yVtE/edit?usp=sharing <br />
    (Sprint 1 Client Installer: https://git.uwaterloo.ca/y2786li/cs346/-/tree/main/releases/application-1.0.0/bin)
 2. Sprint 2 Release Note: https://docs.google.com/document/d/1ZWt9AT4D2OfroXCth0i8RAkhIaQuSvvKBgioV4Jpz24/edit?usp=sharing <br />
